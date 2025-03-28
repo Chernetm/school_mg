@@ -1,5 +1,5 @@
 "use client";
-import { BarChart, Bell, Book, Calendar, ChevronDown, ChevronUp, DollarSign, Home, Users } from "lucide-react";
+import { BarChart, Bell, Book, Calendar, ChevronDown, ChevronUp, DollarSign, Home, LayoutGridIcon, Users } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
 
@@ -10,7 +10,12 @@ export const Navbar = () => {
       <nav className="flex-1">
         <ul className="space-y-2">
           <NavItem href="/" icon={<Home />} label="Dashboard" />
-
+          
+          <DropdownNav label="Academic" icon={<LayoutGridIcon />} items={[
+            { href: "/year", label: "Year View/Edit" },
+            { href: "/grade_section", label: "Register Grade & Section" },
+            { href: "/grade_section/edit", label: "Edit Grade & Section" },
+          ]}/>
           <DropdownNav label="Students" icon={<Users />} items={[
             { href: "/students/view", label: "View/Edit Details" },
             { href: "/students/promote", label: "Promote Students" },
@@ -18,6 +23,7 @@ export const Navbar = () => {
             { href: "/students/discipline", label: "Discipline Records" },
             { href: "/students/communication", label: "Parent Communication" }
           ]} />
+
 
           <DropdownNav label="Teachers" icon={<Users />} items={[
             { href: "/teachers/register", label: "Register Teacher" },
