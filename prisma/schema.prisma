@@ -63,3 +63,26 @@ enum YearEnum {
   active
   inactive
 }
+
+model Staff {
+  id              Int      @id @default(autoincrement())
+  staffID         Int      @unique
+  firstName       String
+  middleName      String  // Optional, if not provided
+  lastName        String
+  phoneNumber     String
+  username        String   @unique
+  email           String   @unique
+  password        String
+  userType        String   @default("staff")
+  image           String?  // Optional field to store image filename
+  role            RoleEnum
+  createdAt       DateTime @default(now())
+}
+enum RoleEnum{
+  head
+  admin
+  register
+  staff
+  teacher
+}
