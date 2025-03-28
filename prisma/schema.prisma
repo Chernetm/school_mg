@@ -9,6 +9,57 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
+
+  provider = "mysql"
   url      = env("DATABASE_URL")
+}
+
+
+
+model Grade {
+  id       Int             @id @default(autoincrement())
+  grade    Int             @unique
+  sections GradeSection[]  // Relationship to GradeSection
+
+  // ✅ Add inverse relation to Assignment
+  
+}
+
+model Section {
+  id       Int             @id @default(autoincrement())
+  section  String          @unique
+  grades   GradeSection[]  // Relationship to GradeSection
+
+  // ✅ Add inverse relation to Assignment
+ 
+}
+
+model GradeSection {
+  id        Int      @id @default(autoincrement())
+  grade     Grade    @relation(fields: [gradeId], references: [id])
+  gradeId   Int
+  section   Section  @relation(fields: [sectionId], references: [id])
+  sectionId Int
+  status    GradeSectionEnum
+
+  @@unique([gradeId, sectionId])
+}
+
+enum GradeSectionEnum {
+  active
+  inactive
+}
+
+
+
+
+model Year {
+  id          Int      @id @default(autoincrement())
+  year        Int      @unique
+  status      YearEnum
+}
+
+enum YearEnum {
+  active
+  inactive
 }

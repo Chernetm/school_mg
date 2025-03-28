@@ -12,7 +12,6 @@ export const Navbar = () => {
           <NavItem href="/" icon={<Home />} label="Dashboard" />
 
           <DropdownNav label="Students" icon={<Users />} items={[
-            { href: "/students/register", label: "Register Student" },
             { href: "/students/view", label: "View/Edit Details" },
             { href: "/students/promote", label: "Promote Students" },
             { href: "/students/attendance", label: "Attendance Tracking" },
