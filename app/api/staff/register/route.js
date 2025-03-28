@@ -1,6 +1,6 @@
  // Assuming Prisma is used for DB operations
 const { prisma } = require("@/utils/prisma");
-import { sendEmail } from "@/utils/email"; // ✅ Import email function
+const { sendEmail } =require("@/utils/email"); // ✅ Import email function
 import { hash } from "bcryptjs";
 import crypto from "crypto";
 
@@ -15,17 +15,25 @@ export async function POST(req) {
       const phoneNumber = formData.get("phoneNumber");
       const username = formData.get("username");
       const email = formData.get("email");
-      const password = formData.get("password");
       const role = formData.get("role");
       const image = formData.get("image"); // File upload (optional)
   
       // Validate required fields
-      if (!staffID || !firstName || !middleName || !lastName || !phoneNumber || !username || !email || !password || !role) {
+      if (!staffID || !firstName || !middleName || !lastName || !phoneNumber || !username || !email || !role) {
         return new Response(JSON.stringify({ error: "All required fields must be filled!" }), {
           status: 400,
           headers: { "Content-Type": "application/json" },
         });
       }
+
+      const existingStaff = await prisma.staff.findUnique({
+        where: { email }
+      });
+  
+      if (existingStaff) {
+        return new Response(JSON.stringify({ error: "Email already exists!" }), { status: 400 });
+      }
+  
       const randomPassword = crypto.randomBytes(5).toString("hex");
 
       // ✅ Hash the password before saving
