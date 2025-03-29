@@ -105,20 +105,20 @@ enum statusEnum{
 
 model Assignment {
   id         Int      @id @default(autoincrement())
-  staffId    Int
+  staffID    Int
   gradeId    Int
   sectionId  Int
   subjectId  Int
 
   // Relationships
-  staff      Staff    @relation(fields: [staffId], references: [id])
+  staff      Staff    @relation(fields: [staffID], references: [staffID])
   grade      Grade    @relation(fields: [gradeId], references: [id])
   section    Section  @relation(fields: [sectionId], references: [id])
   subject    Subject  @relation(fields: [subjectId], references: [id])
 
-  @@index([staffId, gradeId, sectionId]) // Index for faster querying
-  @@unique([staffId, gradeId, sectionId]) // Ensure a staff member is assigned to a grade and section only once
-  @@unique([staffId, gradeId, subjectId]) // Ensure unique grade-subject for staff
-  @@unique([staffId, gradeId]) // Ensure unique grade-subject for staff
+  @@index([staffID, gradeId, sectionId]) // Index for faster querying
+  @@unique([staffID, gradeId, sectionId]) // Ensure a staff member is assigned to a grade and section only once
+  
+  
  
 }

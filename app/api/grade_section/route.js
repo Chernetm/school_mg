@@ -17,7 +17,7 @@ export async function GET() {
       grade: gs.grade.grade,      // Assuming 'grade' field exists in Grade model
       section: gs.section.section // Assuming 'section' field exists in Section model
     }));
-
+   console.log(formattedData);
     return NextResponse.json(formattedData);
   } catch (error) {
     return NextResponse.json(

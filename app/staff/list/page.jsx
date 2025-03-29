@@ -1,18 +1,18 @@
-"use client"
-
+"use client";
 import { useEffect, useState } from "react";
+import AssignForm from "../../../components/Assign"; // Import the AssignForm component
 
 export default function StaffPage() {
   const [staff, setStaff] = useState([]);
-  const [updates, setUpdates] = useState({}); // Track updates before submitting
+  const [updates, setUpdates] = useState({});
+  const [assigningStaff, setAssigningStaff] = useState(null); // Store staff for assignment
 
   useEffect(() => {
     fetch("/api/staff/list")
       .then((res) => res.json())
-      .then((data) => setStaff(data));
+      .then(setStaff);
   }, []);
 
-  // Store selected role & status before updating
   const handleChange = (staffID, field, value) => {
     setUpdates((prev) => ({
       ...prev,
@@ -20,7 +20,6 @@ export default function StaffPage() {
     }));
   };
 
-  // Submit changes to API
   const handleUpdate = async (staffID) => {
     const updatedData = updates[staffID];
 
@@ -44,7 +43,6 @@ export default function StaffPage() {
       )
     );
 
-    // Clear updates for this staff
     setUpdates((prev) => {
       const newUpdates = { ...prev };
       delete newUpdates[staffID];
@@ -64,16 +62,17 @@ export default function StaffPage() {
               <th className="border px-6 py-3">Last Name</th>
               <th className="border px-6 py-3">Role</th>
               <th className="border px-6 py-3">Status</th>
-
               <th className="border px-6 py-3">Role</th>
               <th className="border px-6 py-3">Status</th>
-              <th className="border px-6 py-3">Action</th>
+              <th className="border px-6 py-3">Actions</th>
+              <th className="border px-6 py-3">Assign</th>
+              
             </tr>
           </thead>
           <tbody>
             {staff.map((member, index) => (
               <tr
-                key={member.id}
+                key={member.staffID}
                 className={index % 2 === 0 ? "bg-gray-100" : "bg-white"}
               >
                 <td className="border px-6 py-3 text-gray-700">{member.staffID}</td>
@@ -102,12 +101,21 @@ export default function StaffPage() {
                     <option value="inactive">Inactive</option>
                   </select>
                 </td>
-                <td className="border px-6 py-3">
+                <td className="border px-6 py-3 space-x-2">
                   <button
                     className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded"
                     onClick={() => handleUpdate(member.staffID)}
                   >
                     Update
+                  </button>
+                  
+                </td>
+                <td className="border px-6 py-3 space-x-2">
+                  <button
+                    className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded"
+                    onClick={() => setAssigningStaff(member)}
+                  >
+                    Assign
                   </button>
                 </td>
               </tr>
@@ -115,6 +123,12 @@ export default function StaffPage() {
           </tbody>
         </table>
       </div>
+
+      {/* Assign Section Modal */}
+      {assigningStaff && (
+        <AssignForm staff={assigningStaff} onClose={() => setAssigningStaff(null)} />
+      )}
     </div>
   );
 }
+

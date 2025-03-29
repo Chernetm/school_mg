@@ -1,0 +1,108 @@
+const { prisma } = require("@/utils/prisma");
+import bcrypt from "bcryptjs";
+import { serialize } from "cookie";
+import jwt from "jsonwebtoken";
+import { NextResponse } from "next/server";
+
+export async function POST(req) {
+  try {
+    console.log("🔹 Received POST request to /api/login/admin");
+
+    // Parse request body
+    const { staffID, username, password } = await req.json();
+    console.log("🔹 Request body received");
+
+    if (!staffID || !username || !password) {
+      console.log("❌ Missing required fields");
+      return NextResponse.json({ message: "All fields are required" }, { status: 400 });
+    }
+
+    // 🔹 Fetch staff from the database
+    console.log(`🔹 Searching for staff: ${username}`);
+    const staff = await prisma.staff.findUnique({
+      where: { username },
+      select: {
+        id: true,
+        staffID: true,
+        username: true,
+        password: true,
+        role: true,
+        assignment: {
+          select: {
+            gradeId: true,
+            sectionId: true,
+            subjectId: true,
+          },
+        },
+      },
+    });
+
+    if (!staff) {
+      console.log("❌ Staff not found");
+      return NextResponse.json({ message: "Invalid credentials" }, { status: 401 });
+    }
+
+    if (staff.staffID !== Number(staffID)) {
+      console.log("❌ Staff ID does not match");
+      return NextResponse.json({ message: "Invalid credentials" }, { status: 401 });
+    }
+
+    // 🔹 Verify password
+    console.log("🔹 Comparing passwords...");
+    const passwordMatch = await bcrypt.compare(password, staff.password);
+    if (!passwordMatch) {
+      console.log("❌ Password mismatch");
+      return NextResponse.json({ message: "Invalid credentials" }, { status: 401 });
+    }
+
+    // 🔹 Extract assigned subjects, grades, and sections
+    const assignments = staff.assignment.map((a) => ({
+      gradeId: a.gradeId,
+      sectionId: a.sectionId,
+      subjectId: a.subjectId,
+    }));
+    console.log("🔹 Assignments retrieved:", assignments);
+
+    // 🔹 Generate JWT token
+    console.log("🔹 Generating JWT token...");
+    const token = jwt.sign(
+      {
+        id: staff.id,
+        username: staff.username,
+        role: staff.role,
+        assignments,
+      },
+      process.env.JWT_SECRET,
+      { expiresIn: "7d" }
+    );
+
+    // 🔹 Set authentication cookie
+    console.log("🔹 Setting authentication cookie...");
+    const response = NextResponse.json({
+      message: "Login successful",
+      staff: {
+        id: staff.id,
+        username: staff.username,
+        role: staff.role,
+        assignments,
+      },
+    });
+
+    response.headers.set(
+      "Set-Cookie",
+      serialize("staffToken", token, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === "production",
+        sameSite: "strict",
+        path: "/",
+        maxAge: 7 * 24 * 60 * 60, // 7 days
+      })
+    );
+
+    console.log("✅ Login successful!");
+    return response;
+  } catch (error) {
+    console.error("❌ Internal Server Error:", error);
+    return NextResponse.json({ message: "Internal Server Error" }, { status: 500 });
+  }
+}
