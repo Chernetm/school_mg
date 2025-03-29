@@ -77,7 +77,7 @@ model Staff {
   email           String   @unique
   password        String
   userType        String   @default("staff")
-  image           String?  // Optional field to store image filename
+  image           String  // Optional field to store image filename
   role            RoleEnum
   status          statusEnum @default(inactive)
   createdAt       DateTime @default(now())
@@ -121,4 +121,64 @@ model Assignment {
   
   
  
+}
+
+
+model Parent {
+  id               Int      @id @default(autoincrement())  // Parent unique ID
+  firstName        String   // Parent first name
+  lastName         String   // Parent last name
+  email            String   @unique // Parent email for login
+  password         String   // Encrypted password
+  phoneNumber      String?  // Optional phone number
+  address          String?  // Optional address
+  createdAt        DateTime @default(now()) // Account creation date
+
+// One parent can have multiple students
+  children         Student[] // Relationship with the students
+}
+
+model Student {
+  id               Int     @id @default(autoincrement())
+  studentID        String    @unique // ✅ Ensure studentID is unique for foreign key reference
+  firstName        String
+  middleName       String
+  lastName         String
+  age              Int
+  phoneNumber      String
+  email            String @unique
+  password         String
+  parentID         Int?    // Foreign key linking to the Parent table
+  image            String?
+  status           enumSStatus @default(active)
+  createdAt        DateTime @default(now())
+  parent           Parent?  @relation(fields: [parentID], references: [id]) 
+  registrations    Registration[] 
+}
+
+
+model Registration {
+  id                Int      @id @default(autoincrement())
+  studentID         String      // Foreign key to Student.studentID
+  stream            enumStream @default(science)
+  year              Int
+  grade             Int
+  section           String
+  isActive          Boolean  @default(true) // ✅ Track active students
+  createdAt         DateTime @default(now())
+
+  student           Student  @relation(fields: [studentID], references: [studentID]) // ✅ Correct relation
+
+}
+
+
+enum enumSStatus{
+  active
+  inactive
+  block
+}
+enum enumStream{
+  science
+  natural
+  social
 }
