@@ -1,0 +1,14 @@
+
+
+model ResultDetail {
+  id             Int         @id @default(autoincrement())
+  registrationID Int         // Foreign key to Registration
+  staffID        Int         // Staff who uploaded this result
+  subject        String      // e.g., "English", "Physics"
+  score          Int?
+
+  registration   Registration @relation(fields: [registrationID], references: [id])
+  staff          Staff        @relation(fields: [staffID], references: [id])
+
+  @@unique([registrationID, subject]) // Ensure one result per subject
+}

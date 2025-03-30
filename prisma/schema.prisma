@@ -52,6 +52,16 @@ enum GradeSectionEnum {
   inactive
 }
 
+model Semester{
+  id       Int @id @default(autoincrement())
+  semester  Int
+  status     SemesterEnum
+}
+
+enum  SemesterEnum{
+  active
+  inactive
+}
 
 
 
@@ -170,6 +180,7 @@ model Registration {
   student           Student  @relation(fields: [studentID], references: [studentID]) // ✅ Correct relation
 
 }
+
 
 
 enum enumSStatus{

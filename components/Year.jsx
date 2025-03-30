@@ -3,7 +3,6 @@
 import { useEffect, useState } from "react";
 
 export default function YearManager() {
-  // ✅ Change to default export
   const [years, setYears] = useState([]);
   const [year, setYear] = useState("");
   const [status, setStatus] = useState("active");
@@ -50,7 +49,7 @@ export default function YearManager() {
   };
 
   return (
-    <div className="p-6 bg-gray-100 min-h-screen">
+    <div className="p-6 bg-gray-200 min-h-screen">
       <h1 className="text-2xl font-bold mb-4 text-gray-900">Year Manager</h1>
       <div className="flex gap-2 mb-4">
         <input
@@ -58,12 +57,12 @@ export default function YearManager() {
           placeholder="Enter Year"
           value={year}
           onChange={(e) => setYear(e.target.value)}
-          className="border p-2 rounded w-40 text-black placeholder-gray-500"
+          className="border border-gray-500 p-2 rounded w-40 bg-white text-gray-900 placeholder-gray-600"
         />
         <select
           value={status}
           onChange={(e) => setStatus(e.target.value)}
-          className="border p-2 rounded text-black"
+          className="border border-gray-500 p-2 rounded bg-white text-gray-900"
         >
           <option value="active">Active</option>
           <option value="inactive">Inactive</option>
@@ -71,30 +70,32 @@ export default function YearManager() {
 
         <button
           onClick={handleCreate}
-          className="bg-blue-500 text-white px-4 py-2 rounded"
+          className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
           disabled={loading}
         >
           {loading ? "Adding..." : "Add Year"}
         </button>
       </div>
 
-      <div className="bg-white p-4 rounded shadow">
-        <h2 className="text-lg font-semibold mb-3">Years List</h2>
+      <div className="bg-white p-4 rounded shadow border border-gray-500">
+        <h2 className="text-lg font-semibold mb-3 bg-gray-300 p-2 rounded text-gray-900">
+          Years List
+        </h2>
         {years.length === 0 ? (
-          <p>No years added yet.</p>
+          <p className="text-gray-700">No years added yet.</p>
         ) : (
           <ul>
             {years.map((y) => (
               <li
                 key={y.id}
-                className="flex justify-between items-center p-2 border-b"
+                className="flex justify-between items-center p-2 border-b border-gray-500 bg-gray-100 text-gray-900"
               >
                 <span>
-                  {y.year} - <span className="text-gray-500">{y.status}</span>
+                  {y.year} - <span className="text-gray-700">{y.status}</span>
                 </span>
                 <button
                   onClick={() => handleDelete(y.id)}
-                  className="bg-red-500 text-white px-3 py-1 rounded"
+                  className="bg-red-600 text-white px-3 py-1 rounded hover:bg-red-700"
                 >
                   Delete
                 </button>

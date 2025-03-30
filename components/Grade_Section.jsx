@@ -7,12 +7,11 @@ export const GradeSectionList = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
-  // Fetch grade sections from API
   useEffect(() => {
     const fetchGradeSections = async () => {
       setLoading(true);
       try {
-        const res = await fetch("/api/grade_section"); // API to get grade sections
+        const res = await fetch("/api/grade_section");
         if (!res.ok) {
           throw new Error("Failed to fetch grade sections");
         }
@@ -28,58 +27,59 @@ export const GradeSectionList = () => {
     fetchGradeSections();
   }, []);
 
-  // Delete grade section by ID
   const handleDelete = async (id) => {
     if (!window.confirm("Are you sure you want to delete this record?")) return;
-  
+
     try {
       const res = await fetch(`/api/grade_section`, {
         method: "DELETE",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ id }), // ✅ Send `id` in the request body
+        body: JSON.stringify({ id }),
       });
-  
+
       if (!res.ok) {
         throw new Error("Failed to delete grade section");
       }
-  
-      // Remove deleted record from UI
+
       setGradeSections((prev) => prev.filter((item) => item.id !== id));
     } catch (err) {
       console.error("Error deleting grade section:", err);
     }
   };
-  
 
   return (
-    <div className="max-w-2xl mx-auto mt-10 p-6 bg-white shadow-lg rounded-lg">
-      <h2 className="text-2xl font-bold text-gray-800 text-center mb-4">Grade Sections</h2>
+    <div className="max-w-2xl mx-auto mt-10 p-6 bg-gray-200 min-h-screen">
+      <h2 className="text-2xl font-bold text-gray-900 text-center mb-4 bg-gray-300 p-3 rounded">
+        Grade Sections
+      </h2>
 
-      {loading && <p className="text-center text-gray-600">Loading grade sections...</p>}
+      {loading && <p className="text-center text-gray-700">Loading grade sections...</p>}
       {error && <p className="text-center text-red-600">{error}</p>}
-      
-      {gradeSections.length === 0 && !loading && !error ? (
-        <p className="text-center text-gray-500">No grade sections found.</p>
-      ) : (
-        <ul className="divide-y divide-gray-200">
-          {gradeSections.map(({ id, grade, section }) => (
-            <li key={id} className="flex justify-between items-center p-3">
-              <div>
-                <p className="text-lg font-semibold text-gray-700">Grade: {grade}</p>
-                <p className="text-sm text-gray-500">Section: {section}</p>
-              </div>
-              <button
-                onClick={() => handleDelete(id)}
-                className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-500 transition"
-              >
-                Delete
-              </button>
-            </li>
-          ))}
-        </ul>
-      )}
+
+      <div className="bg-white p-4 rounded shadow border border-gray-400">
+        {gradeSections.length === 0 && !loading && !error ? (
+          <p className="text-center text-gray-600">No grade sections found.</p>
+        ) : (
+          <ul className="divide-y divide-gray-400">
+            {gradeSections.map(({ id, grade, section }) => (
+              <li key={id} className="flex justify-between items-center p-3 bg-gray-100 border border-gray-400 rounded mb-2">
+                <div>
+                  <p className="text-lg font-semibold text-gray-900">Grade: {grade}</p>
+                  <p className="text-sm text-gray-700">Section: {section}</p>
+                </div>
+                <button
+                  onClick={() => handleDelete(id)}
+                  className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition"
+                >
+                  Delete
+                </button>
+              </li>
+            ))}
+          </ul>
+        )}
+      </div>
     </div>
   );
 };

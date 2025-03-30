@@ -1,7 +1,7 @@
 const { prisma } = require("@/utils/prisma");
 export async function DELETE(req, { params }) {
   try {
-    const { id } = params; // ✅ Get ID from params
+    const { id } =  await params; // ✅ Get ID from params
     await prisma.year.delete({
       where: { id: parseInt(id) },
     });
