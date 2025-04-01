@@ -54,8 +54,9 @@ enum GradeSectionEnum {
 
 model Semester{
   id       Int @id @default(autoincrement())
-  semester  Int
+  semester  Int @unique
   status     SemesterEnum
+  resultDetail ResultDetail[]
 }
 
 enum  SemesterEnum{
@@ -69,6 +70,12 @@ model Year {
   id          Int      @id @default(autoincrement())
   year        Int      @unique
   status      YearEnum
+}
+
+model Subject {
+  id   Int    @id @default(autoincrement())
+  name String @unique
+  assignment Assignment[]
 }
 
 enum YearEnum {
@@ -92,13 +99,13 @@ model Staff {
   status          statusEnum @default(inactive)
   createdAt       DateTime @default(now())
   assignment      Assignment []
+  attendance      Attendance []
+  resultDetail    ResultDetail[]
+  exam            Exam []
+  Staff_Recorded          StaffAttendance[] @relation("Staff_Attended")
+  recordedAttendances StaffAttendance[] @relation(name: "Staff_Recorded") // Staff recording attendance
 }
 
-model Subject {
-  id   Int    @id @default(autoincrement())
-  name String @unique
-  assignment Assignment[]
-}
 
 enum RoleEnum{
   head
@@ -164,11 +171,14 @@ model Student {
   createdAt        DateTime @default(now())
   parent           Parent?  @relation(fields: [parentID], references: [id]) 
   registrations    Registration[] 
+  attendance       Attendance[]
+  response         Response[]
+  studentSession   StudentSession[]
 }
 
 
 model Registration {
-  id                Int      @id @default(autoincrement())
+  registrationID    Int      @id @default(autoincrement())
   studentID         String      // Foreign key to Student.studentID
   stream            enumStream @default(science)
   year              Int
@@ -178,8 +188,110 @@ model Registration {
   createdAt         DateTime @default(now())
 
   student           Student  @relation(fields: [studentID], references: [studentID]) // ✅ Correct relation
+  resultDetail      ResultDetail[]
+}
+
+
+model Attendance {
+  id              Int      @id @default(autoincrement())
+  date            DateTime @default(now()) // Date of attendance
+  status          attendanceStatus 
+  studentID       String      // Foreign key to Student
+  staffID         Int      // Foreign key to Staff
+  student         Student  @relation(fields: [studentID], references: [studentID])
+  staff           Staff    @relation(fields: [staffID], references: [staffID])
 
 }
+
+model ResultDetail {
+  id             Int         @id @default(autoincrement())
+  registrationID Int         // Foreign key to Registration
+  staffID        Int         // Staff who uploaded this result
+  semesterID     Int
+  subject        String      // e.g., "English", "Physics"
+  score          Int?
+
+  registration   Registration @relation(fields: [registrationID], references: [registrationID])
+  staff          Staff        @relation(fields: [staffID], references: [staffID])
+  semester       Semester     @relation(fields: [semesterID], references: [semester])
+
+  @@unique([registrationID, subject]) // Ensure one result per subject
+}
+
+model StaffAttendance {
+  id        Int      @id @default(autoincrement())
+  date      DateTime @default(now()) // Date of attendance
+  status    staffEnum
+
+  staffID   Int  // Foreign key to Staff (attended staff)
+  userID    Int  // Foreign key to the user who recorded the attendance
+
+  staff     Staff @relation(fields: [staffID], references: [staffID], name: "Staff_Attended")
+  recordedBy Staff @relation(fields: [userID], references: [staffID], name: "Staff_Recorded")
+}
+
+
+model Exam {
+  id          Int       @id @default(autoincrement())
+  title       String    @unique
+  description String?
+  startTime   DateTime
+  endTime     DateTime
+  createdBy   Int       // Staff who created the exam
+  staff       Staff     @relation(fields: [createdBy], references: [staffID])
+  questions   Question[]
+  responses   Response[]
+}
+
+model Question {
+  id        Int      @id @default(autoincrement())
+  examId    Int
+  content   String   // Question text
+  optionA      String
+  optionB      String
+  optionC      String
+  optionD      String
+  correct   String   // Correct option (e.g., "A")
+  exam      Exam     @relation(fields: [examId], references: [id])
+  response Response[]
+}
+
+model Response {
+  id          Int       @id @default(autoincrement())
+  examId      Int
+  studentID   String
+  questionId  Int
+  answer      String?   // Student's chosen option
+  submittedAt DateTime? // Auto-submit if time runs out
+  student     Student   @relation(fields: [studentID], references: [studentID])
+  exam        Exam      @relation(fields: [examId], references: [id])
+  question    Question  @relation(fields: [questionId], references: [id])
+   @@unique([studentID, questionId, examId])  // ✅ Ensure this unique constraint exists
+}
+
+
+model StudentSession {
+  studentID        String    @id @unique
+  deviceFingerprint String
+  student          Student @relation(fields: [studentID], references: [studentID])
+}
+
+
+
+
+
+enum   staffEnum{
+  present
+  absent
+  late
+}
+
+enum  attendanceStatus{
+  present
+  absent
+  late
+}
+
 
 
 

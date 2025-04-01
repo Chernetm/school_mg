@@ -68,6 +68,7 @@ export async function POST(req) {
     const token = jwt.sign(
       {
         id: staff.id,
+        staffID:staff.staffID,
         username: staff.username,
         role: staff.role,
         assignments,
@@ -82,6 +83,7 @@ export async function POST(req) {
       message: "Login successful",
       staff: {
         id: staff.id,
+        staffID:staff.staffID,
         username: staff.username,
         role: staff.role,
         assignments,

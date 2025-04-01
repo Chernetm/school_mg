@@ -26,7 +26,7 @@ export default function StaffLogin() {
       if (!res.ok) throw new Error(data.message);
 
       // ✅ Redirect to dashboard after login
-      router.push("/dashboard");
+      router.push("/staff/teacher_section");
     } catch (err) {
       setError(err.message);
     } finally {

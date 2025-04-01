@@ -13,30 +13,30 @@ export const Navbar = () => {
           
           <DropdownNav label="Academic" icon={<LayoutGridIcon />} items={[
             { href: "/year", label: "Year View/Edit" },
+            { href: "/semester", label: "Semester View/Edit" },
             { href: "/grade_section", label: "Register Grade & Section" },
             { href: "/grade_section/edit", label: "Edit Grade & Section" },
           ]}/>
           <DropdownNav label="Students" icon={<Users />} items={[
-            { href: "/students/view", label: "View/Edit Details" },
-            { href: "/students/promote", label: "Promote Students" },
-            { href: "/students/attendance", label: "Attendance Tracking" },
-            { href: "/students/discipline", label: "Discipline Records" },
+            { href: "/student/edit", label: "View/Edit Details" },
+            { href: "/student/register", label: "Register Student" },
+            
             { href: "/students/communication", label: "Parent Communication" }
           ]} />
 
 
-          <DropdownNav label="Teachers" icon={<Users />} items={[
-            { href: "/teachers/register", label: "Register Teacher" },
-            { href: "/teachers/attendance", label: "Manage Attendance" },
-            { href: "/teachers/payroll", label: "Payroll" },
-            { href: "/teachers/assignments", label: "Class Assignments" },
-            { href: "/teachers/performance", label: "Performance Tracking" }
+          <DropdownNav label="Staff" icon={<Users />} items={[
+            { href: "/staff/register", label: "Register Staff" },
+            { href: "/staff/assign", label: "Manage Staff" },
+            { href: "/staff", label: "Teacher Assigned Section" },
+            { href: "/staff/teacher_section", label: "Class Assignments" },
+            
           ]} />
 
           <DropdownNav label="Attendance" icon={<Calendar />} items={[
-            { href: "/attendance/daily", label: "Daily Reports" },
-            { href: "/attendance/alerts", label: "Automated Alerts" },
-            { href: "/attendance/biometric", label: "Biometric Entry" }
+            { href: "/attendance/", label: "Student Attendance Reports" },
+            { href: "/attendance/staff", label: "Taking Staff Attendance" },
+            { href: "/attendance/staff/record", label: "Staff Attendance Reports" }
           ]} />
 
           <DropdownNav label="Exams" icon={<Book />} items={[
@@ -51,6 +51,11 @@ export const Navbar = () => {
             { href: "/fees/invoices", label: "Generate Invoices" },
             { href: "/fees/reminders", label: "Send Reminders" }
           ]} />
+          <DropdownNav label="Parent" icon={<Users />} items={[
+            { href: "/parent", label: "List & Register Parent" },
+            { href: "/parent/edit", label: "Parent Edit" },
+          ]} />
+
 
           <DropdownNav label="Reports" icon={<BarChart />} items={[
             { href: "/reports/attendance", label: "Attendance Reports" },

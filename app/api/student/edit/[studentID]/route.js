@@ -3,16 +3,14 @@ import { prisma } from '@/utils/prisma';
 import { hash } from "bcryptjs";
 import { NextResponse } from 'next/server';
 
-export async function GET(req, {params}) {
+export async function GET(req, { params }) {
+  const { studentID } = await params;
 
-  const {studentID} = await params;
-
-  if (!params) {
+  if (!studentID) {
     return NextResponse.json({ error: "Invalid student ID" }, { status: 400 });
   }
 
   try {
-    
     console.log("Fetching student:", studentID); // Debugging
 
     const student = await prisma.student.findUnique({
@@ -23,7 +21,10 @@ export async function GET(req, {params}) {
       return NextResponse.json({ error: "Student not found" }, { status: 404 });
     }
 
-    return NextResponse.json(student);
+    // Exclude password before sending response
+    const { password, ...studentWithoutPassword } = student;
+
+    return NextResponse.json(studentWithoutPassword);
   } catch (error) {
     console.error("Error fetching student:", error);
     return NextResponse.json({ error: "Error fetching student" }, { status: 500 });
@@ -51,6 +52,7 @@ export async function PUT(req, {params}) {
     const parentID = formData.get("parentID");
 
     let password = formData.get("password");
+    console.log(password)
 
     // 🔹 Handle image (extract new file if exists)
     let imageUrl = formData.get("image"); // Existing image or new file

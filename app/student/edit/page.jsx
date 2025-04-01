@@ -44,11 +44,10 @@ export default function EditStudent() {
       setImage(e.target.files[0]);
     }
   };
-
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!student || !studentID) return alert("No student data available.");
-
+  
     setUpdating(true);
     try {
       const formData = new FormData();
@@ -58,29 +57,31 @@ export default function EditStudent() {
           formData.append(key, String(value));
         }
       });
-
+  
       if (image) {
         formData.append("image", image);
       }
-
+  
       if (password) {
-        formData.append("password", password);
+        console.log("🔹 Sending plain password:", password); // Debugging
+        formData.append("password", password); // Ensure it's sent as raw text
       }
-
+  
       const response = await fetch(`/api/student/edit/${studentID}`, {
         method: "PUT",
         body: formData,
       });
-
+  
       if (!response.ok) throw new Error("Failed to update student");
-
+  
       alert("Student updated successfully!");
     } catch (err) {
-      console.error("Error fetching student:", err);
+      console.error("❌ Error updating student:", err);
       alert("Failed to update student");
     }
     setUpdating(false);
   };
+  
 
   return (
     <div className="p-6 bg-gray-100 min-h-screen">
@@ -111,7 +112,8 @@ export default function EditStudent() {
             <input name="age" type="number" value={student.age} onChange={handleChange} className="border p-2 rounded bg-white text-black" placeholder="Age" />
             <input name="phoneNumber" value={student.phoneNumber} onChange={handleChange} className="border p-2 rounded bg-white text-black" placeholder="Phone Number" />
             <input name="email" type="email" value={student.email} onChange={handleChange} className="border p-2 rounded bg-white text-black" placeholder="Email" />
-            <input name="Parent ID" type="number" value={student.parentID} onChange={handleChange} className="border p-2 rounded bg-white text-black" placeholder="ParentID" />
+            <input name="grade" type="number" value={student.grade} onChange={handleChange} className="border p-2 rounded bg-white text-black" placeholder="Grade" />
+            
           </div>
 
           <div className="mt-4">
