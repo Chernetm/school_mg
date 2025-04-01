@@ -3,11 +3,11 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev",
-    "build": "next build",
-    "start": "next start",
-    "lint": "next lint"
-  },
+  "dev": "concurrently \"next dev\" \"node server.js\"",
+  "build": "next build",
+  "start": "node server.js"
+}
+,
   "dependencies": {
     "@fingerprintjs/fingerprintjs": "^4.6.1",
     "@prisma/client": "^6.5.0",
@@ -21,6 +21,7 @@
     "dotenv": "^16.4.7",
     "express": "^4.21.2",
     "formidable": "^3.5.2",
+    "http": "^0.0.1-security",
     "js-cookie": "^3.0.5",
     "jsonwebtoken": "^9.0.2",
     "jwt-decode": "^4.0.0",
@@ -41,6 +42,7 @@
     "@tailwindcss/postcss": "^4",
     "@types/node": "22.13.14",
     "@types/react": "19.0.12",
+    "concurrently": "^9.1.2",
     "eslint": "^9",
     "eslint-config-next": "15.2.4",
     "prisma": "^6.5.0",
