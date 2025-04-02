@@ -1,4 +1,3 @@
-import { Navbar } from "@/components/NavBar";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 
@@ -25,14 +24,15 @@ export default function RootLayout({ children }) {
       >
         <div className="flex h-screen">
           {/* Sidebar Navbar */}
-          <div className="w-64 bg-gray-800 text-white">
+          {/* <div className="w-64 bg-gray-800 text-white">
             <Navbar />
-          </div>
+          </div> */}
 
           {/* Main Content */}
-          <div className="flex-1 p-6">
-            {children}
-          </div>
+          {children}
+          {/* <div className="flex-1 p-6">
+           
+          </div> */}
         </div>
       </body>
     </html>
