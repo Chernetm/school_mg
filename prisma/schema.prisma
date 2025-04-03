@@ -183,12 +183,21 @@ model Registration {
   stream            enumStream @default(science)
   year              Int
   grade             Int
-  section           String
+  section           String?
   isActive          Boolean  @default(true) // ✅ Track active students
+
   createdAt         DateTime @default(now())
+  status            regEnum  @default(undetermined)
 
   student           Student  @relation(fields: [studentID], references: [studentID]) // ✅ Correct relation
   resultDetail      ResultDetail[]
+}
+enum    regEnum{
+  passed
+  failed
+  incomplete
+  undetermined
+
 }
 
 

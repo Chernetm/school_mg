@@ -1,111 +1,96 @@
 "use client";
-import { BarChart, Bell, Book, Calendar, ChevronDown, ChevronUp, DollarSign, Home, LayoutGridIcon, Users } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
-
-export const Navbar = () => {
-  return (
-    <div className="h-screen w-64 bg-gray-900 text-white flex flex-col p-4 shadow-lg">
-      <h2 className="text-2xl font-bold text-center mb-6">Admin Panel</h2>
-      <nav className="flex-1">
-        <ul className="space-y-2">
-          <NavItem href="/" icon={<Home />} label="Dashboard" />
-          
-          <DropdownNav label="Academic" icon={<LayoutGridIcon />} items={[
-            { href: "/year", label: "Year View/Edit" },
-            { href: "/semester", label: "Semester View/Edit" },
-            { href: "/grade_section", label: "Register Grade & Section" },
-            { href: "/grade_section/edit", label: "Edit Grade & Section" },
-          ]}/>
-          <DropdownNav label="Students" icon={<Users />} items={[
-            { href: "/student/edit", label: "View/Edit Details" },
-            { href: "/student/register", label: "Register Student" },
-            
-            { href: "/students/communication", label: "Parent Communication" }
-          ]} />
+import { FaBars, FaEnvelope, FaHome, FaInfoCircle, FaSignInAlt, FaSignOutAlt, FaTimes, FaUser } from "react-icons/fa";
 
 
-          <DropdownNav label="Staff" icon={<Users />} items={[
-            { href: "/staff/register", label: "Register Staff" },
-            { href: "/staff/assign", label: "Manage Staff" },
-            { href: "/staff", label: "Teacher Assigned Section" },
-            { href: "/staff/teacher_section", label: "Class Assignments" },
-            
-          ]} />
+export const Navbar=() => {
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState(false); // Simulated auth state
 
-          <DropdownNav label="Attendance" icon={<Calendar />} items={[
-            { href: "/attendance/", label: "Student Attendance Reports" },
-            { href: "/attendance/staff", label: "Taking Staff Attendance" },
-            { href: "/attendance/staff/record", label: "Staff Attendance Reports" }
-          ]} />
+  const navLinks = [
+    { name: "Home", href: "#", icon: <FaHome className="mr-2" /> },
+    { name: "About", href: "#", icon: <FaInfoCircle className="mr-2" /> },
+    { name: "Contact", href: "#", icon: <FaEnvelope className="mr-2" /> },
+    { name: "Login", href: "/login", icon: <FaSignInAlt className="mr-2" /> },
+  ];
 
-          <DropdownNav label="Exams" icon={<Book />} items={[
-            { href: "/exams/schedule", label: "Schedule Exams" },
-            { href: "/exams/invigilators", label: "Assign Invigilators" },
-            { href: "/exams/results", label: "Manage Results" },
-            { href: "/exams/reports", label: "Generate Report Cards" }
-          ]} />
-
-          <DropdownNav label="Fees" icon={<DollarSign />} items={[
-            { href: "/fees/payments", label: "Track Payments" },
-            { href: "/fees/invoices", label: "Generate Invoices" },
-            { href: "/fees/reminders", label: "Send Reminders" }
-          ]} />
-          <DropdownNav label="Parent" icon={<Users />} items={[
-            { href: "/parent", label: "List & Register Parent" },
-            { href: "/parent/edit", label: "Parent Edit" },
-          ]} />
-
-
-          <DropdownNav label="Reports" icon={<BarChart />} items={[
-            { href: "/reports/attendance", label: "Attendance Reports" },
-            { href: "/reports/academic", label: "Academic Reports" },
-            { href: "/reports/finance", label: "Financial Reports" }
-          ]} />
-
-          <NavItem href="/notifications" icon={<Bell />} label="Notifications" />
-        </ul>
-      </nav>
-    </div>
-  );
-};
-
-// Standard Nav Item (Without Dropdown)
-const NavItem = ({ href, icon, label }) => (
-  <li className="flex items-center space-x-3 px-4 py-2 rounded-lg hover:bg-gray-700 transition-all duration-200">
-    {icon}
-    <Link href={href} className="text-lg">{label}</Link>
-  </li>
-);
-
-// Dropdown Menu for Sections with Sub-Links
-const DropdownNav = ({ label, icon, items }) => {
-  const [isOpen, setIsOpen] = useState(false);
+  // Add Logout if user is logged in
+  const allLinks = isLoggedIn
+    ? [
+        ...navLinks.filter(link => link.name !== "Login"), 
+        { 
+          name: "Logout", 
+          href: "#", 
+          icon: <FaSignOutAlt className="mr-2" />,
+          onClick: () => setIsLoggedIn(false) 
+        }
+      ]
+    : navLinks;
 
   return (
-    <li>
-      <button
-        onClick={() => setIsOpen(!isOpen)}
-        className="flex justify-between items-center w-full px-4 py-2 rounded-lg hover:bg-gray-700 transition-all duration-200"
-      >
-        <span className="flex items-center space-x-3">
-          {icon}
-          <span className="text-lg">{label}</span>
-        </span>
-        {isOpen ? <ChevronUp size={18} /> : <ChevronDown size={18} />}
-      </button>
-
-      {isOpen && (
-        <ul className="ml-8 mt-1 space-y-1">
-          {items.map((item, index) => (
-            <li key={index}>
-              <Link href={item.href} className="block px-4 py-2 text-gray-300 hover:bg-gray-700 rounded-lg transition-all duration-200">
-                {item.label}
-              </Link>
-            </li>
+    <div>
+      
+    <header className="bg-blue-900 text-white p-4 fixed w-full top-0 z-50 shadow-lg">
+      <div className="container mx-auto flex justify-between items-center">
+        <div className="flex items-center space-x-2">
+          <FaUser className="text-xl" />
+          <h2 className="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-yellow-300 to-yellow-100">
+            School Portal
+          </h2>
+        </div>
+        
+        {/* Desktop Navigation */}
+        <nav className="hidden md:flex space-x-2 items-center">
+          {allLinks.map((link) => (
+            <Link
+              key={link.name}
+              href={link.href}
+              className="flex items-center px-4 py-2 rounded-lg hover:bg-white/20 transition-all duration-300 hover:scale-105 group"
+              onClick={link.onClick}
+            >
+              {link.icon}
+              <span className="group-hover:text-yellow-200 transition-colors">
+                {link.name}
+              </span>
+            </Link>
           ))}
-        </ul>
+        </nav>
+
+        {/* Mobile Menu Button */}
+        <button 
+          onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+          className="md:hidden text-2xl focus:outline-none p-2 rounded-full hover:bg-white/20 transition-colors"
+          aria-label="Toggle menu"
+        >
+          {isMobileMenuOpen ? <FaTimes /> : <FaBars />}
+        </button>
+      </div>
+
+      {/* Mobile Dropdown Menu */}
+      {isMobileMenuOpen && (
+        <div className="md:hidden absolute top-16 left-0 w-full bg-blue-600 shadow-xl transition-all duration-300 animate-fadeIn">
+          <div className="flex flex-col space-y-1 p-2">
+            {allLinks.map((link) => (
+              <a
+                key={link.name}
+                href={link.href}
+                className="flex items-center py-3 px-6 hover:bg-white/10 rounded-lg transition-all duration-200 active:scale-95"
+                onClick={() => {
+                  if (link.onClick) link.onClick();
+                  setIsMobileMenuOpen(false);
+                }}
+              >
+                {link.icon}
+                <span className="ml-2">{link.name}</span>
+              </a>
+            ))}
+          </div>
+        </div>
       )}
-    </li>
+    </header>
+    </div>
+
+
   );
-};
+}

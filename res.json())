@@ -12,3 +12,9 @@ model ResultDetail {
 
   @@unique([registrationID, subject]) // Ensure one result per subject
 }
+
+Prisma#
+npx prisma migrate dev --name init
+npx prisma migrate reset
+npx prisma studio
+npx prisma generate

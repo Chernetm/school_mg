@@ -9,15 +9,31 @@ export default function StudentExam() {
   const [answers, setAnswers] = useState({});
   const [currentIndex, setCurrentIndex] = useState(0);
   const [timeLeft, setTimeLeft] = useState(null);
-
-  const studentId = "22"; // Replace with actual student ID from authentication
+  const [studentId, setStudentId]=useState(null)
+ 
+  
+  const fetchExam = async () => {
+    try {
+      const res = await fetch(`/api/exam/take_exam?title=${examTitle}`);
+      if (!res.ok) throw new Error("Exam not found");
+      const data = await res.json();
+    
+      setExam(data.exam);
+      setStudentId(data.studentID)
+      setTimeLeft(calculateTimeLeft(data.startTime, data.endTime));
+    } catch (error) {
+      console.error("Error fetching exam:", error);
+    }
+  };
 
   useEffect(() => {
+    if (!studentId) return;
+    
     const newSocket = io("http://localhost:4000");
 
     newSocket.on("connect", () => {
-      console.log("✅ Connected to WebSocket");
-      newSocket.emit("studentOnline", { studentId });
+      console.log("✅ Connected to WebSocket",studentId);
+      newSocket.emit("studentOnline", {studentId} );
     });
 
     newSocket.on("forceLogout", () => {
@@ -49,19 +65,7 @@ export default function StudentExam() {
       window.removeEventListener("focus", handleWindowFocus);
       newSocket.disconnect();
     };
-  }, []);
-
-  const fetchExam = async () => {
-    try {
-      const res = await fetch(`/api/exam/take_exam?title=${examTitle}`);
-      if (!res.ok) throw new Error("Exam not found");
-      const data = await res.json();
-      setExam(data);
-      setTimeLeft(calculateTimeLeft(data.startTime, data.endTime));
-    } catch (error) {
-      console.error("Error fetching exam:", error);
-    }
-  };
+  }, [studentId]);
 
   const calculateTimeLeft = (start, end) => {
     const startTime = new Date(start).getTime();

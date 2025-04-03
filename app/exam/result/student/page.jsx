@@ -4,7 +4,6 @@ import { useState } from "react";
 
 export default function StudentExamResults() {
   const [examTitle, setExamTitle] = useState("");
-  const [studentID, setStudentID] = useState("");
   const [questions, setQuestions] = useState([]);
   const [totalQuestions, setTotalQuestions] = useState(0);
   const [totalCorrect, setTotalCorrect] = useState(0);
@@ -12,7 +11,7 @@ export default function StudentExamResults() {
   const [error, setError] = useState(null);
 
   const fetchResults = async () => {
-    if (!examTitle.trim() || !studentID.trim()) return;
+    if (!examTitle.trim()) return;
 
     setLoading(true);
     setError(null);
@@ -22,7 +21,7 @@ export default function StudentExamResults() {
 
     try {
       const response = await fetch(
-        `/api/exam/get_result/id?title=${encodeURIComponent(examTitle)}&studentID=${encodeURIComponent(studentID)}`
+        `/api/exam/get_result/id?title=${encodeURIComponent(examTitle)}`
       );
       if (!response.ok) throw new Error("Exam or Student not found");
 
@@ -53,16 +52,9 @@ export default function StudentExamResults() {
           onChange={(e) => setExamTitle(e.target.value)}
           className="border border-gray-500 p-3 rounded w-full bg-white text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-400"
         />
-        <input
-          type="text"
-          placeholder="🎓 Enter Student ID"
-          value={studentID}
-          onChange={(e) => setStudentID(e.target.value)}
-          className="border border-gray-500 p-3 rounded w-full bg-white text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-400"
-        />
         <button
           onClick={fetchResults}
-          disabled={loading || !examTitle.trim() || !studentID.trim()}
+          disabled={loading || !examTitle.trim()}
           className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 disabled:opacity-50 transition-all duration-300 ease-in-out"
         >
           {loading ? "🔄 Loading..." : "🎯 Fetch Results"}

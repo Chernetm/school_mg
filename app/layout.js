@@ -1,3 +1,5 @@
+
+import { Navbar } from "@/components/Navbar";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 
@@ -22,27 +24,16 @@ export default function RootLayout({ children }) {
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        <div className="flex h-screen">
-          {/* Sidebar Navbar */}
-          {/* <div className="w-64 bg-gray-800 text-white">
-            <Navbar />
-          </div> */}
-
-          {/* Main Content */}
-          {children}
-          {/* <div className="flex-1 p-6">
-           
-          </div> */}
+        <div className="flex flex-col min-h-screen">
+          <Navbar/>
+          <div className="flex-1 pt-15"> {/* Adjust this value if needed */}
+            {children}
+          </div>
         </div>
       </body>
     </html>
   );
 }
-
-
-
-
-
 
 
 
