@@ -1,4 +1,4 @@
-import YearManager from "../../components/Year"; // ✅ Adjust this path
+import YearManager from "@/components/Year"; // ✅ Adjust this path
 
 export default function YearPage() {
   return (

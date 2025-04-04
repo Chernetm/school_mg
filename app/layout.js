@@ -37,6 +37,84 @@ export default function RootLayout({ children }) {
 
 
 
+
+
+// "use client";
+
+// import { useState, useEffect } from "react";
+// import { useRouter } from "next/navigation"; // For redirects
+// import { Dashboard } from "@/components/Dashboard";
+// import { Navbar } from "@/components/Navbar";
+// import { Geist, Geist_Mono } from "next/font/google";
+// import "./globals.css";
+
+// const geistSans = Geist({
+//   variable: "--font-geist-sans",
+//   subsets: ["latin"],
+// });
+
+// const geistMono = Geist_Mono({
+//   variable: "--font-geist-mono",
+//   subsets: ["latin"],
+// });
+
+// export const metadata = {
+//   title: "Admin Dashboard",
+//   description: "Secure Admin Panel",
+// };
+
+// export default function RootLayout({ children }) {
+//   const [isAdmin, setIsAdmin] = useState(null);
+//   const router = useRouter();
+
+//   useEffect(() => {
+//     // Fetch authentication status from backend
+//     const checkAuth = async () => {
+//       try {
+//         const response = await fetch("/api/auth");
+//         const data = await response.json();
+
+//         if (data.authenticated) {
+//           setIsAdmin(true);
+//         } else {
+//           setIsAdmin(false);
+//         }
+//       } catch (error) {
+//         console.error("Error checking auth:", error);
+//         setIsAdmin(false);
+//       }
+//     };
+
+//     checkAuth();
+//   }, []);
+
+//   return (
+//     <html lang="en">
+//       <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
+//         <div className="flex flex-col min-h-screen">
+//           {/* Navbar is always visible */}
+//           <Navbar />
+
+//           <div className="flex flex-row flex-1">
+//             {/* Show Sidebar only if Admin is logged in */}
+//             {isAdmin && (
+//               <div className="w-64">
+//                 <Dashboard />
+//               </div>
+//             )}
+
+//             {/* Main Content Area */}
+//             <div className={`flex-1 p-6 bg-gray-100 ${isAdmin ? "" : "w-full"}`}>
+//               {children}
+//             </div>
+//           </div>
+//         </div>
+//       </body>
+//     </html>
+//   );
+// }
+
+
 // import { Navbar } from "@/components/NavBar";
 // import { Geist, Geist_Mono } from "next/font/google";
 // import "./globals.css";

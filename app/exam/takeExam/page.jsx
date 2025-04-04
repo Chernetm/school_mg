@@ -95,7 +95,6 @@ export default function StudentExam() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           examId: exam.id,
-          studentId: 22, // Replace with actual student ID
           answers: Object.entries(answers).map(([questionId, answer]) => ({
             questionId: Number(questionId),
             answer,

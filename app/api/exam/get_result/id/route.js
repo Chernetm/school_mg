@@ -6,7 +6,8 @@ export async function GET(req) {
   try {
     const { searchParams } = new URL(req.url);
     const title = searchParams.get("title");
-    const studentID = getStudentIDFromToken();
+    const studentID = await getStudentIDFromToken();
+    console.log(studentID,"StudentId from get result")
 
     if (!title || !studentID) {
       return NextResponse.json({ message: "Exam title and studentID are required" }, { status: 400 });

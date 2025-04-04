@@ -40,6 +40,7 @@ model GradeSection {
   id        Int      @id @default(autoincrement())
   grade     Grade    @relation(fields: [gradeId], references: [id])
   gradeId   Int
+  capacity   Int?   default(40)
   section   Section  @relation(fields: [sectionId], references: [id])
   sectionId Int
   status    GradeSectionEnum
@@ -185,13 +186,30 @@ model Registration {
   grade             Int
   section           String?
   isActive          Boolean  @default(true) // ✅ Track active students
-
+  averageScore      Float? // 🆕 Store calculated average score
+  rank              Int?     // 🆕 Store calculated rank
   createdAt         DateTime @default(now())
   status            regEnum  @default(undetermined)
 
   student           Student  @relation(fields: [studentID], references: [studentID]) // ✅ Correct relation
   resultDetail      ResultDetail[]
 }
+
+model ResultDetail {
+  id             Int         @id @default(autoincrement())
+  registrationID Int         // Foreign key to Registration
+  staffID        Int         // Staff who uploaded this result
+  semesterID     Int
+  subject        String      // e.g., "English", "Physics"
+  score          Int?
+
+  registration   Registration @relation(fields: [registrationID], references: [registrationID])
+  staff          Staff        @relation(fields: [staffID], references: [staffID])
+  semester       Semester     @relation(fields: [semesterID], references: [semester])
+
+  @@unique([registrationID, subject]) // Ensure one result per subject
+}
+
 enum    regEnum{
   passed
   failed
@@ -212,20 +230,6 @@ model Attendance {
 
 }
 
-model ResultDetail {
-  id             Int         @id @default(autoincrement())
-  registrationID Int         // Foreign key to Registration
-  staffID        Int         // Staff who uploaded this result
-  semesterID     Int
-  subject        String      // e.g., "English", "Physics"
-  score          Int?
-
-  registration   Registration @relation(fields: [registrationID], references: [registrationID])
-  staff          Staff        @relation(fields: [staffID], references: [staffID])
-  semester       Semester     @relation(fields: [semesterID], references: [semester])
-
-  @@unique([registrationID, subject]) // Ensure one result per subject
-}
 
 model StaffAttendance {
   id        Int      @id @default(autoincrement())
@@ -313,4 +317,10 @@ enum enumStream{
   science
   natural
   social
+}
+enum passStatusEnum{
+  passed
+  failed
+  incomplete
+
 }
