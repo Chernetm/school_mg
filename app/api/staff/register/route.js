@@ -27,7 +27,7 @@ export async function POST(req) {
       }
 
       const existingStaff = await prisma.staff.findUnique({
-        where: { email }
+        where: { username }
       });
   
       if (existingStaff) {

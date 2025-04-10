@@ -10,10 +10,10 @@ const SECRET_KEY = process.env.JWT_SECRET || "supersecretkey";
 export async function POST(req) {
   try {
     const body = await req.json();
-    const { email, password } = body;
-    console.log(email,password)
+    const { studentID, password } = body;
+    console.log(studentID,password)
 
-    if (!email || !password ) {
+    if (!studentID || !password ) {
       return new NextResponse(
         JSON.stringify({ message: "Missing credentials" }),
         { status: 400, headers: { "student-exam": "error" } }
@@ -21,7 +21,7 @@ export async function POST(req) {
     }
 
     const student = await prisma.student.findUnique({
-      where: { email },
+      where: { studentID },
       select: {
         studentID: true,
         firstName: true,

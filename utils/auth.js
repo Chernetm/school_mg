@@ -24,7 +24,7 @@ export async function getStudentIDFromExamToken() {
   try {
     const cookieStore = await cookies(); // Use `await cookies()`
     const token = cookieStore.get("examToken"); // Safely get the token
-
+    console.log(token, "examToken");
     if (!token) {
       // If the token is missing, redirect to login page
       return null // Redirect to login page

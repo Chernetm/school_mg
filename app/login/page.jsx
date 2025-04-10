@@ -3,7 +3,7 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 
 export default function LoginPage() {
-  const [email, setEmail] = useState("");
+  const [studentID, setStudentID] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const router = useRouter();
@@ -14,7 +14,7 @@ export default function LoginPage() {
     const res = await fetch("/api/login", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ email, password }),
+      body: JSON.stringify({ studentID, password }),
     });
 
     if (res.ok) {
@@ -32,11 +32,11 @@ export default function LoginPage() {
         {error && <p className="text-red-500 text-center">{error}</p>}
         <form onSubmit={handleLogin}>
           <input
-            type="email"
-            placeholder="Email"
+            type="number"
+            placeholder="studentID"
             className="w-full border border-gray-300 text-gray-700 p-2 mb-4 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
+            value={studentID}
+            onChange={(e) => setStudentID(e.target.value)}
             required
           />
           <input

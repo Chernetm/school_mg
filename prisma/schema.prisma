@@ -40,7 +40,7 @@ model GradeSection {
   id        Int      @id @default(autoincrement())
   grade     Grade    @relation(fields: [gradeId], references: [id])
   gradeId   Int
-  capacity   Int?   default(40)
+  capacity   Int?   
   section   Section  @relation(fields: [sectionId], references: [id])
   sectionId Int
   status    GradeSectionEnum
@@ -58,11 +58,7 @@ model Semester{
   semester  Int @unique
   status     SemesterEnum
   resultDetail ResultDetail[]
-}
-
-enum  SemesterEnum{
-  active
-  inactive
+  resultSummary ResultSummary[]
 }
 
 
@@ -79,10 +75,6 @@ model Subject {
   assignment Assignment[]
 }
 
-enum YearEnum {
-  active
-  inactive
-}
 
 model Staff {
   id              Int      @id @default(autoincrement())
@@ -92,7 +84,7 @@ model Staff {
   lastName        String
   phoneNumber     String
   username        String   @unique
-  email           String   @unique
+  email           String   
   password        String
   userType        String   @default("staff")
   image           String  // Optional field to store image filename
@@ -100,26 +92,14 @@ model Staff {
   status          statusEnum @default(inactive)
   createdAt       DateTime @default(now())
   assignment      Assignment []
-  attendance      Attendance []
+  attendances     Attendance[]  
+  Staff_Attended  StaffAttendance[] @relation("FK_StaffAttendance_Staff")   
+  Staff_Recorded StaffAttendance[] @relation("FK_StaffAttendance_Recorder") 
   resultDetail    ResultDetail[]
   exam            Exam []
-  Staff_Recorded          StaffAttendance[] @relation("Staff_Attended")
-  recordedAttendances StaffAttendance[] @relation(name: "Staff_Recorded") // Staff recording attendance
+  
 }
 
-
-enum RoleEnum{
-  head
-  admin
-  register
-  staff
-  teacher
-}
-enum statusEnum{
-  active
-  inactive
-  block
-}
 
 model Assignment {
   id         Int      @id @default(autoincrement())
@@ -164,7 +144,7 @@ model Student {
   lastName         String
   age              Int
   phoneNumber      String
-  email            String @unique
+  email            String
   password         String
   parentID         Int?    // Foreign key linking to the Parent table
   image            String?
@@ -180,20 +160,18 @@ model Student {
 
 model Registration {
   registrationID    Int      @id @default(autoincrement())
-  studentID         String      // Foreign key to Student.studentID
+  studentID         String
   stream            enumStream @default(science)
   year              Int
   grade             Int
   section           String?
-  isActive          Boolean  @default(true) // ✅ Track active students
-  averageScore      Float? // 🆕 Store calculated average score
-  rank              Int?     // 🆕 Store calculated rank
+  isActive          Boolean  @default(true)
   createdAt         DateTime @default(now())
-  status            regEnum  @default(undetermined)
-
-  student           Student  @relation(fields: [studentID], references: [studentID]) // ✅ Correct relation
+  student           Student  @relation(fields: [studentID], references: [studentID])
   resultDetail      ResultDetail[]
+  resultSummary     ResultSummary[]
 }
+
 
 model ResultDetail {
   id             Int         @id @default(autoincrement())
@@ -202,20 +180,34 @@ model ResultDetail {
   semesterID     Int
   subject        String      // e.g., "English", "Physics"
   score          Int?
-
   registration   Registration @relation(fields: [registrationID], references: [registrationID])
   staff          Staff        @relation(fields: [staffID], references: [staffID])
   semester       Semester     @relation(fields: [semesterID], references: [semester])
 
-  @@unique([registrationID, subject]) // Ensure one result per subject
+  @@unique([registrationID, subject, semesterID], name: "registrationID_subject_semesterID") // ✅ Add name
 }
 
-enum    regEnum{
+
+model ResultSummary {
+  id             Int          @id @default(autoincrement())
+  
+  registrationID Int
+  semesterID     Int
+  average        Float
+  passStatus     passEnum     // e.g. "Passed" or "Failed"
+  rank           Int
+
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
+  registration   Registration @relation(fields: [registrationID], references: [registrationID])
+  semester       Semester     @relation(fields: [semesterID], references: [id])
+
+  @@unique([registrationID, semesterID]) // ensure one result summary per student per semester
+}
+enum passEnum {
   passed
   failed
   incomplete
-  undetermined
-
 }
 
 
@@ -226,11 +218,11 @@ model Attendance {
   studentID       String      // Foreign key to Student
   staffID         Int      // Foreign key to Staff
   student         Student  @relation(fields: [studentID], references: [studentID])
-  staff           Staff    @relation(fields: [staffID], references: [staffID])
+  staff     Staff @relation(fields: [staffID], references: [staffID])
+
+  
 
 }
-
-
 model StaffAttendance {
   id        Int      @id @default(autoincrement())
   date      DateTime @default(now()) // Date of attendance
@@ -239,9 +231,12 @@ model StaffAttendance {
   staffID   Int  // Foreign key to Staff (attended staff)
   userID    Int  // Foreign key to the user who recorded the attendance
 
-  staff     Staff @relation(fields: [staffID], references: [staffID], name: "Staff_Attended")
-  recordedBy Staff @relation(fields: [userID], references: [staffID], name: "Staff_Recorded")
+  
+ recordedBy Staff @relation(fields: [userID], references: [staffID], name: "FK_StaffAttendance_Recorder")
+ staff     Staff @relation(fields: [staffID], references: [staffID], name: "FK_StaffAttendance_Staff")
+
 }
+
 
 
 model Exam {
@@ -279,7 +274,7 @@ model Response {
   student     Student   @relation(fields: [studentID], references: [studentID])
   exam        Exam      @relation(fields: [examId], references: [id])
   question    Question  @relation(fields: [questionId], references: [id])
-   @@unique([studentID, questionId, examId])  // ✅ Ensure this unique constraint exists
+  @@unique([studentID, questionId, examId])  // ✅ Ensure this unique constraint exists
 }
 
 
@@ -323,4 +318,27 @@ enum passStatusEnum{
   failed
   incomplete
 
+}
+
+enum RoleEnum{
+  head
+  admin
+  register
+  staff
+  teacher
+}
+enum statusEnum{
+  active
+  inactive
+  block
+}
+
+enum  SemesterEnum{
+  active
+  inactive
+}
+
+enum YearEnum {
+  active
+  inactive
 }
