@@ -18,3 +18,348 @@ npx prisma migrate dev --name init
 npx prisma migrate reset
 npx prisma studio
 npx prisma generate
+
+
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+
+
+model Grade {
+  id       Int             @id @default(autoincrement())
+  grade    Int             @unique
+  sections GradeSection[]  // Relationship to GradeSection
+  assignment Assignment[]
+
+  // ✅ Add inverse relation to Assignment
+  
+}
+
+model Section {
+  id       Int             @id @default(autoincrement())
+  section  String          @unique
+  grades   GradeSection[]  // Relationship to GradeSection
+  assignment Assignment[]
+
+  // ✅ Add inverse relation to Assignment
+ 
+}
+
+model GradeSection {
+  id        Int      @id @default(autoincrement())
+  grade     Grade    @relation(fields: [gradeId], references: [id])
+  gradeId   Int
+  capacity   Int?   
+  section   Section  @relation(fields: [sectionId], references: [id])
+  sectionId Int
+  status    GradeSectionEnum
+
+  @@unique([gradeId, sectionId])
+}
+
+enum GradeSectionEnum {
+  active
+  inactive
+}
+
+model Semester{
+  id       Int @id @default(autoincrement())
+  semester  Int @unique
+  status     SemesterEnum
+  resultDetail ResultDetail[]
+  resultSummary ResultSummary[]
+}
+
+enum  SemesterEnum{
+  active
+  inactive
+}
+
+
+
+model Year {
+  id          Int      @id @default(autoincrement())
+  year        Int      @unique
+  status      YearEnum
+}
+
+model Subject {
+  id   Int    @id @default(autoincrement())
+  name String @unique
+  assignment Assignment[]
+}
+
+enum YearEnum {
+  active
+  inactive
+}
+
+model Staff {
+  id              Int      @id @default(autoincrement())
+  staffID         Int      @unique
+  firstName       String
+  middleName      String  // Optional, if not provided
+  lastName        String
+  phoneNumber     String
+  username        String   @unique
+  email           String   
+  password        String
+  userType        String   @default("staff")
+  image           String  // Optional field to store image filename
+  role            RoleEnum
+  status          statusEnum @default(inactive)
+  createdAt       DateTime @default(now())
+  assignment      Assignment []
+  attendances     Attendance[] @relation("FK_Attendance_Staff") // 👈 Fixes the validation error
+  Staff_Attended  StaffAttendance[] @relation("FK_StaffAttendance_Staff")   
+  Staff_Recorded StaffAttendance[] @relation("FK_StaffAttendance_Recorder") // 👈 Opposite of recordedBy
+  resultDetail    ResultDetail[]
+  exam            Exam []
+  
+}
+
+
+enum RoleEnum{
+  head
+  admin
+  register
+  staff
+  teacher
+}
+enum statusEnum{
+  active
+  inactive
+  block
+}
+
+model Assignment {
+  id         Int      @id @default(autoincrement())
+  staffID    Int
+  gradeId    Int
+  sectionId  Int
+  subjectId  Int
+
+  // Relationships
+  staff      Staff    @relation(fields: [staffID], references: [staffID])
+  grade      Grade    @relation(fields: [gradeId], references: [id])
+  section    Section  @relation(fields: [sectionId], references: [id])
+  subject    Subject  @relation(fields: [subjectId], references: [id])
+
+  @@index([staffID, gradeId, sectionId]) // Index for faster querying
+  @@unique([staffID, gradeId, sectionId]) // Ensure a staff member is assigned to a grade and section only once
+  
+  
+ 
+}
+
+
+model Parent {
+  id               Int      @id @default(autoincrement())  // Parent unique ID
+  firstName        String   // Parent first name
+  lastName         String   // Parent last name
+  email            String   @unique // Parent email for login
+  password         String   // Encrypted password
+  phoneNumber      String?  // Optional phone number
+  address          String?  // Optional address
+  createdAt        DateTime @default(now()) // Account creation date
+
+// One parent can have multiple students
+  children         Student[] // Relationship with the students
+}
+
+model Student {
+  id               Int     @id @default(autoincrement())
+  studentID        String    @unique // ✅ Ensure studentID is unique for foreign key reference
+  firstName        String
+  middleName       String
+  lastName         String
+  age              Int
+  phoneNumber      String
+  email            String
+  password         String
+  parentID         Int?    // Foreign key linking to the Parent table
+  image            String?
+  status           enumSStatus @default(active)
+  createdAt        DateTime @default(now())
+  parent           Parent?  @relation(fields: [parentID], references: [id]) 
+  registrations    Registration[] 
+  attendance       Attendance[]
+  response         Response[]
+  studentSession   StudentSession[]
+}
+
+
+model Registration {
+  registrationID    Int      @id @default(autoincrement())
+  studentID         String
+  stream            enumStream @default(science)
+  year              Int
+  grade             Int
+  section           String?
+  isActive          Boolean  @default(true)
+  createdAt         DateTime @default(now())
+  student           Student  @relation(fields: [studentID], references: [studentID])
+  resultDetail      ResultDetail[]
+  resultSummary     ResultSummary[]
+}
+
+
+model ResultDetail {
+  id             Int         @id @default(autoincrement())
+  registrationID Int         // Foreign key to Registration
+  staffID        Int         // Staff who uploaded this result
+  semesterID     Int
+  subject        String      // e.g., "English", "Physics"
+  score          Int?
+  registration   Registration @relation(fields: [registrationID], references: [registrationID])
+  staff          Staff        @relation(fields: [staffID], references: [staffID])
+  semester       Semester     @relation(fields: [semesterID], references: [semester])
+
+  @@unique([registrationID, subject, semesterID], name: "registrationID_subject_semesterID") // ✅ Add name
+}
+
+
+model ResultSummary {
+  id             Int          @id @default(autoincrement())
+  
+  registrationID Int
+  semesterID     Int
+  average        Float
+  passStatus     passEnum     // e.g. "Passed" or "Failed"
+  rank           Int
+
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
+  registration   Registration @relation(fields: [registrationID], references: [registrationID])
+  semester       Semester     @relation(fields: [semesterID], references: [id])
+
+  @@unique([registrationID, semesterID]) // ensure one result summary per student per semester
+}
+enum passEnum {
+  passed
+  failed
+  incomplete
+}
+
+
+model Attendance {
+  id              Int      @id @default(autoincrement())
+  date            DateTime @default(now()) // Date of attendance
+  status          attendanceStatus 
+  studentID       String      // Foreign key to Student
+  staffID         Int      // Foreign key to Staff
+  student         Student  @relation(fields: [studentID], references: [studentID])
+  staff     Staff @relation(fields: [staffID], references: [staffID], name: "FK_Attendance_Staff")
+
+  
+
+}
+model StaffAttendance {
+  id        Int      @id @default(autoincrement())
+  date      DateTime @default(now()) // Date of attendance
+  status    staffEnum
+
+  staffID   Int  // Foreign key to Staff (attended staff)
+  userID    Int  // Foreign key to the user who recorded the attendance
+
+  
+  recordedBy Staff @relation(fields: [userID], references: [staffID], name: "FK_StaffAttendance_Recorder")
+  staff     Staff @relation(fields: [staffID], references: [staffID], name: "FK_StaffAttendance_Staff")
+
+}
+
+
+
+model Exam {
+  id          Int       @id @default(autoincrement())
+  title       String    @unique
+  description String?
+  startTime   DateTime
+  endTime     DateTime
+  createdBy   Int       // Staff who created the exam
+  staff       Staff     @relation(fields: [createdBy], references: [staffID])
+  questions   Question[]
+  responses   Response[]
+}
+
+model Question {
+  id        Int      @id @default(autoincrement())
+  examId    Int
+  content   String   // Question text
+  optionA      String
+  optionB      String
+  optionC      String
+  optionD      String
+  correct   String   // Correct option (e.g., "A")
+  exam      Exam     @relation(fields: [examId], references: [id])
+  response Response[]
+}
+
+model Response {
+  id          Int       @id @default(autoincrement())
+  examId      Int
+  studentID   String
+  questionId  Int
+  answer      String?   // Student's chosen option
+  submittedAt DateTime? // Auto-submit if time runs out
+  student     Student   @relation(fields: [studentID], references: [studentID])
+  exam        Exam      @relation(fields: [examId], references: [id])
+  question    Question  @relation(fields: [questionId], references: [id])
+   @@unique([studentID, questionId, examId])  // ✅ Ensure this unique constraint exists
+}
+
+
+model StudentSession {
+  studentID        String    @id @unique
+  deviceFingerprint String
+  student          Student @relation(fields: [studentID], references: [studentID])
+}
+
+
+
+
+
+enum   staffEnum{
+  present
+  absent
+  late
+}
+
+enum  attendanceStatus{
+  present
+  absent
+  late
+}
+
+
+
+
+enum enumSStatus{
+  active
+  inactive
+  block
+}
+enum enumStream{
+  science
+  natural
+  social
+}
+enum passStatusEnum{
+  passed
+  failed
+  incomplete
+
+}

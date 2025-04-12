@@ -12,10 +12,11 @@ export const Dashboard = () => {
           <NavItem href="/" icon={<Home />} label="Dashboard" />
           
           <DropdownNav label="Academic" icon={<LayoutGridIcon />} items={[
-            { href: "/year", label: "Year View/Edit" },
-            { href: "/semester", label: "Semester View/Edit" },
-            { href: "/grade_section", label: "Register Grade & Section" },
-            { href: "/grade_section/edit", label: "Edit Grade & Section" },
+            { href: "/admin/year", label: "Year View/Edit" },
+            { href: "/admin/semester", label: "Semester View/Edit" },
+            { href: "/admin/subject", label: "Subject View/Edit" },
+            { href: "/admin/grade_section", label: "Register Grade & Section" },
+            { href: "/admin/grade_section/edit", label: "Edit Grade & Section" },
           ]}/>
           <DropdownNav label="Students" icon={<Users />} items={[
             { href: "/student/edit", label: "View/Edit Details" },
@@ -25,24 +26,24 @@ export const Dashboard = () => {
           ]} />
 
 
-          <DropdownNav label="Staff" icon={<Users />} items={[
-            { href: "/staff/register", label: "Register Staff" },
-            { href: "/staff/assign", label: "Manage Staff" },
-            { href: "/staff", label: "Teacher Assigned Section" },
-            { href: "/staff/teacher_section", label: "Class Assignments" },
+          <DropdownNav label="Admin" icon={<Users />} items={[
+            { href: "/admin/register", label: "Register Staff" },
+            { href: "/admin/teacher", label: "Manage Teacher" },
+            { href: "/admin/teacher/assign", label: "Teacher Assign" },
+            { href: "/admin/teacher", label: "Class Assignments" },
             
           ]} />
 
           <DropdownNav label="Attendance" icon={<Calendar />} items={[
-            { href: "/attendance/", label: "Student Attendance Reports" },
-            { href: "/attendance/staff", label: "Taking Staff Attendance" },
-            { href: "/attendance/staff/record", label: "Staff Attendance Reports" }
+           
+            { href: "/admin/attendance", label: "Taking Staff Attendance" },
+            { href: "/admin/attendance/student", label: "Student Attendance Reports" }
           ]} />
 
           <DropdownNav label="Exams" icon={<Book />} items={[
-            { href: "/exams/schedule", label: "Schedule Exams" },
-            { href: "/exams/invigilators", label: "Assign Invigilators" },
-            { href: "/exams/results", label: "Manage Results" },
+            { href: "/admin/exam/control", label: "Control Exams" },
+            { href: "/admin/exam/create", label: "Create Exam" },
+            { href: "/admin/exam/result", label: "Exam Result" },
             { href: "/exams/reports", label: "Generate Report Cards" }
           ]} />
 

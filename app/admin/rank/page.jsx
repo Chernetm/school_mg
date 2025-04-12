@@ -1,0 +1,89 @@
+"use client"
+import React, { useState } from "react";
+
+export default function StudentRankUpdater() {
+  const [year, setYear] = useState();
+  const [grade, setGrade] = useState("");
+  const [section, setSection] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [message, setMessage] = useState(null);
+  const [error, setError] = useState(null);
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+    setMessage(null);
+    setError(null);
+
+    try {
+      const res = await fetch("/api/admin/status-rank-average", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ year, grade, section }),
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        throw new Error(data.message || "Something went wrong");
+      }
+
+      setMessage(data.message);
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <div className="max-w-lg mx-auto mt-16 p-6 bg-white border border-gray-200 rounded-xl shadow-md space-y-6">
+      <h1 className="text-3xl font-semibold text-center text-gray-800">Update Student Ranks</h1>
+      <form onSubmit={handleSubmit} className="space-y-4">
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-1">Year</label>
+          <input
+            type="number"
+            placeholder="e.g. 2025"
+            className="w-full border border-gray-300 px-4 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+            value={year}
+            onChange={(e) => setYear(e.target.value)}
+            required
+          />
+        </div>
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-1">Grade</label>
+          <input
+            type="text"
+            placeholder="e.g. 10"
+            className="w-full border border-gray-300 px-4 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+            value={grade}
+            onChange={(e) => setGrade(e.target.value)}
+            required
+          />
+        </div>
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-1">Section</label>
+          <input
+            type="text"
+            placeholder="e.g. A"
+            className="w-full border border-gray-300 px-4 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+            value={section}
+            onChange={(e) => setSection(e.target.value)}
+            required
+          />
+        </div>
+        <button
+          type="submit"
+          className="w-full bg-blue-600 text-white py-2.5 text-lg font-semibold rounded-lg hover:bg-blue-700 transition disabled:opacity-50"
+          disabled={loading}
+        >
+          {loading ? "Updating..." : "Update Ranks"}
+        </button>
+      </form>
+
+      {message && <p className="text-green-600 font-medium text-center">{message}</p>}
+      {error && <p className="text-red-600 font-medium text-center">{error}</p>}
+    </div>
+  );
+}

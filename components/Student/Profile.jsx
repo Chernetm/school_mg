@@ -1,5 +1,3 @@
-
-
 "use client";
 import Link from "next/link";
 import { useEffect, useState } from "react";
@@ -42,13 +40,13 @@ export default function StudentDashboard() {
   }
 
   const services = [
-    { name: "Results", href:"/student/attendance", icon: <FaChartBar className="mr-3" /> },
-    { name: "Registration", href:"/student/attendance",icon: <FaFileAlt className="mr-3" /> },
+    { name: "Results", href:"/student/result", icon: <FaChartBar className="mr-3" /> },
+    { name: "Registration", href:"/student/registration",icon: <FaFileAlt className="mr-3" /> },
     { name: "Attendance", href:"/student/attendance",icon: <FaClipboardCheck className="mr-3" /> },
-    { name: "Fees", href:"/student/attendance",icon: <FaMoneyBillWave className="mr-3" /> },
-    { name: "Discipline",href:"/student/attendance", icon: <FaExclamationTriangle className="mr-3" /> },
-    { name: "Exam", href:"/exam/takeExam",icon: <FaPenAlt className="mr-3" /> },
-    { name: "Exam Result",href:"/exam/result/student", icon: <FaClipboardCheck className="mr-3" /> },
+    { name: "Fees", href:"/student/fee",icon: <FaMoneyBillWave className="mr-3" /> },
+    { name: "Discipline",href:"/student/discipline", icon: <FaExclamationTriangle className="mr-3" /> },
+    { name: "Exam", href:"/student/exam",icon: <FaPenAlt className="mr-3" /> },
+    { name: "Exam Result",href:"/exam/result", icon: <FaClipboardCheck className="mr-3" /> },
   ];
 
   return (

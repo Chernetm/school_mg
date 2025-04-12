@@ -1,107 +1,42 @@
-const { prisma } = require('@/utils/prisma');
-import { uploadToCloudinary } from "@/utils/cloudinary";
-import { sendEmail } from "@/utils/email";
-import { hash } from "bcryptjs";
-import crypto from "crypto";
+const {prisma}=require("@/utils/prisma")
 import { NextResponse } from "next/server";
+// Adjust the import based on your project
 
 export async function POST(req) {
   try {
-    console.log("📥 Receiving form data...");
-    const formData = await req.formData();
+    const { studentID, newGrade, newSection, newYear } = await req.json();
 
-    console.log("✅ Parsing student and parent data...");
-    const studentData = JSON.parse(formData.get("student"));
-    const parentData = JSON.parse(formData.get("parent"));
-    console.log(studentData.studentID);
-
-    if (!studentData.firstName || !studentData.email || !studentData.age || !studentData.grade) {
-      console.error("❌ Missing required student fields.");
-      return NextResponse.json({ error: "Missing required student fields" }, { status: 400 });
-    }
-
-    if ((studentData.grade === "11" || studentData.grade === "12") && !studentData.stream) {
-      console.error("❌ Stream is required for grade 11 or 12.");
-      return NextResponse.json({ error: "Stream is required for grade 11 or 12." }, { status: 400 });
-    }
-
-    console.log("🔐 Generating password...");
-    const randomPassword = crypto.randomBytes(5).toString("hex");
-    const hashedPassword = await hash(randomPassword, 10);
-    const parentPassword = await hash(parentData.firstName, 10);
-
-    console.log("🖼️ Handling image upload...");
-    let imageUrl = "";
-    const imageFile = formData.get("student.image");
-
-    if (!imageFile) {
-      console.error("❌ No image file provided!");
-      return NextResponse.json({ error: "Image is required for student registration" }, { status: 400 });
-    }
-    
-    imageUrl = await uploadToCloudinary(imageFile);
-    
-    console.log("👨‍👩‍👦 Checking if parent exists...");
-    let existingParent = await prisma.parent.findUnique({
-      where: { email: parentData.email },
+    // ✅ 1️⃣ Get latest registration record for the student
+    const latestRegistration = await prisma.registration.findFirst({
+      where: { studentID },
+      orderBy: { year: "desc" }, // Get the most recent year
     });
 
-    if (!existingParent) {
-      console.log("🆕 Creating new parent...");
-      existingParent = await prisma.parent.create({
-        data: {
-          firstName: parentData.firstName,
-          lastName: parentData.lastName,
-          email: parentData.email,
-          phoneNumber: parentData.phoneNumber,
-          password: parentPassword,
-          address: parentData.address,
-        },
-      });
+    // ❌ If no record found, student is not registered
+    if (!latestRegistration) {
+      return NextResponse.json({ message: "Student not found" }, { status: 404 });
     }
 
-    console.log("🎓 Registering new student...");
-    const newStudent = await prisma.student.create({
-      data: {
-        studentID: studentData.studentID,
-        firstName: studentData.firstName,
-        middleName: studentData.middleName,
-        lastName: studentData.lastName,
-        age: parseInt(studentData.age),
-        phoneNumber: studentData.phoneNumber,
-        email: studentData.email,
-        password: hashedPassword,
-        parentID: existingParent.id,
-        image: imageUrl,
-      },
-    });
+    // ✅ 2️⃣ Check if the student passed or failed
+    if (latestRegistration.passStatus !== "passed") {
+      return NextResponse.json({ message: "Student failed, cannot register for the next grade" }, { status: 403 });
+    }
 
-    console.log("📜 Creating student registration record...");
-    await prisma.registration.create({
+    // ✅ 3️⃣ Register student for the next grade
+    const newRegistration = await prisma.registration.create({
       data: {
-        studentID: newStudent.studentID,
-        stream: studentData.stream || "",
-        year: parseInt(studentData.year),
-        grade: parseInt(studentData.grade),
-        section: studentData.section,
+        studentID,
+        grade: newGrade,
+        section: newSection,
+        year: newYear,
         isActive: true,
+        status: "undetermined", // Set default status
       },
     });
 
-    console.log("📧 Sending confirmation email...");
-    await sendEmail(studentData.email, "Your Student Account Credentials", `
-      <h2>Welcome, ${studentData.firstName}!</h2>
-      <p>Your student account has been created successfully.</p>
-      <p><strong>Student ID:</strong> ${studentData.studentID}</p>
-      <p><strong>Password:</strong> ${randomPassword}</p>
-      <p>Please change your password after logging in.</p>
-    `);
-
-    console.log("✅ Student registered successfully!");
-    return NextResponse.json({ message: "Student registered successfully!", student: newStudent });
-
+    return NextResponse.json({ message: "Student registered for next grade", registration: newRegistration }, { status: 201 });
   } catch (error) {
-    console.error("❌ Registration Error:", error);
-    return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
+    console.error("Error processing registration:", error);
+    return NextResponse.json({ message: "Internal Server Error" }, { status: 500 });
   }
 }

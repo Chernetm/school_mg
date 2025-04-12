@@ -1,5 +1,3 @@
-// app/api/auth/route.js
-
 import jwt from "jsonwebtoken";
 import { cookies } from "next/headers";
 import { NextResponse } from "next/server";
@@ -7,8 +5,8 @@ import { NextResponse } from "next/server";
 const SECRET = process.env.JWT_SECRET || "super-secret";
 
 export async function GET() {
-   
-  const token = await cookies().get("staffToken")?.value;
+  const cookieStore = await cookies(); // 👈 Await this first!
+  const token = cookieStore.get("staffToken")?.value;
 
   if (!token) {
     return NextResponse.json({ authenticated: false });

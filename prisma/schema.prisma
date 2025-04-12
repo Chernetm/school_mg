@@ -21,6 +21,7 @@ model Grade {
   grade    Int             @unique
   sections GradeSection[]  // Relationship to GradeSection
   assignment Assignment[]
+  announcement Announcement[]
 
   // ✅ Add inverse relation to Assignment
   
@@ -75,6 +76,27 @@ model Subject {
   assignment Assignment[]
 }
 
+model Announcement {
+  id         String   @id @default(cuid())
+  title      String
+  message    String
+  createdAt  DateTime @default(now())
+  audience   Audience
+  gradeId     Int?      // optional for grade-specific
+  staffID     Int
+  grade      Grade?       @relation(fields: [gradeId], references: [grade])
+  staff      Staff @relation(fields: [staffID], references: [staffID])
+}
+
+enum Audience {
+  ALL         // everyone
+  STAFF       // only staff
+  STUDENTS    // only students
+  PARENTS     // only parents
+  GRADE       // for specific grade
+}
+
+
 
 model Staff {
   id              Int      @id @default(autoincrement())
@@ -86,9 +108,8 @@ model Staff {
   username        String   @unique
   email           String   
   password        String
-  userType        String   @default("staff")
   image           String  // Optional field to store image filename
-  role            RoleEnum
+  role            RoleEnum? @default(staff)
   status          statusEnum @default(inactive)
   createdAt       DateTime @default(now())
   assignment      Assignment []
@@ -97,7 +118,7 @@ model Staff {
   Staff_Recorded StaffAttendance[] @relation("FK_StaffAttendance_Recorder") 
   resultDetail    ResultDetail[]
   exam            Exam []
-  
+  announcement   Announcement[]
 }
 
 

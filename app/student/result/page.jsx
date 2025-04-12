@@ -4,13 +4,11 @@ import { useEffect, useState } from "react";
 
 export default function StudentResults() {
   const [results, setResults] = useState(null);
-  const studentID = 1212; // Replace with dynamic ID as needed
-
   useEffect(() => {
-    fetch(`/api/result/all_result?studentID=${studentID}`)
+    fetch(`/api/student/result`)
       .then((res) => res.json())
       .then((data) => setResults(data.results));
-  }, [studentID]);
+  }, []);
 
   if (!results)
     return <div className="text-center py-10 text-gray-600">Loading...</div>;

@@ -9,7 +9,7 @@ export default function AttendanceCard () {
   useEffect(() => {
     const fetchAttendance = async () => {
       try {
-        const res = await fetch("/api/attendance/student/id"); // No studentID needed
+        const res = await fetch("/api/student/attendance"); // No studentID needed
         const data = await res.json();
         setAttendance(data);
       } catch (error) {

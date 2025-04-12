@@ -9,28 +9,25 @@ export default function AssignForm({ staff, onClose }) {
   const [subjectId, setSubjectId] = useState(null);
   const [selectedSections, setSelectedSections] = useState([]);
 
-  // Fetch Grades
   useEffect(() => {
-    fetch("/api/grade_section/grade")
+    fetch("/api/admin/grade_section/grade")
       .then((res) => res.json())
       .then(setGrades)
       .catch((err) => console.error("Error fetching grades:", err));
   }, []);
 
-  // Fetch Subjects
   useEffect(() => {
-    fetch("/api/subject")
+    fetch("/api/admin/subject")
       .then((res) => res.json())
       .then(setSubjects)
       .catch((err) => console.error("Error fetching subjects:", err));
   }, []);
 
-  // Fetch Sections based on selected Grade
   useEffect(() => {
     if (gradeId) {
-      fetch(`/api/grade_section/section?gradeId=${gradeId}`)
+      fetch(`/api/admin/grade_section/section?gradeId=${gradeId}`)
         .then((res) => res.json())
-        .then((data) => setSections(data))
+        .then(setSections)
         .catch((err) => console.error("Error fetching sections:", err));
     } else {
       setSections([]);
@@ -51,7 +48,7 @@ export default function AssignForm({ staff, onClose }) {
     }
 
     try {
-      const response = await fetch("/api/staff/assign", {
+      const response = await fetch("/api/admin/assign", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -62,11 +59,9 @@ export default function AssignForm({ staff, onClose }) {
         }),
       });
 
-      if (!response.ok) {
-        throw new Error("Failed to assign staff.");
-      }
+      if (!response.ok) throw new Error("Failed to assign staff.");
 
-      alert("Assignment successful");
+      alert("✅ Assignment successful");
       onClose();
     } catch (error) {
       console.error("Error submitting assignment:", error);
@@ -74,14 +69,14 @@ export default function AssignForm({ staff, onClose }) {
   };
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4">
-      <div className="bg-gray-100 p-6 rounded-lg max-w-lg w-full">
-        <h3 className="text-xl mb-4 text-black">Assign</h3>
+    <div className="fixed inset-0 bg-gray-100 bg-opacity-50 flex items-center justify-center p-4">
+      <div className="bg-white p-6 rounded-lg max-w-lg w-full shadow-xl">
+        <h3 className="text-2xl font-bold mb-6 text-gray-900">Assign Staff</h3>
         <form onSubmit={handleSubmit}>
           {/* Grade Dropdown */}
-          <label className="block mb-2 text-gray-700">Grade</label>
+          <label className="block mb-1 text-sm font-semibold text-gray-800">Grade</label>
           <select
-            className="w-full p-2 border rounded mb-4 text-gray-700"
+            className="w-full p-3 border rounded-lg bg-gray-100 text-gray-800 mb-4"
             value={gradeId || ""}
             onChange={(e) => setGradeId(Number(e.target.value))}
           >
@@ -93,26 +88,27 @@ export default function AssignForm({ staff, onClose }) {
             ))}
           </select>
 
-          {/* Section Checkboxes */}
-          <label className="block mb-2 text-black">Sections</label>
-          <div className="mb-4">
+          {/* Sections */}
+          <label className="block mb-1 text-sm font-semibold text-gray-800">Sections</label>
+          <div className="mb-4 space-y-2">
             {sections.map((section) => (
-              <label key={section.id} className="block">
+              <label key={section.id} className="flex items-center space-x-2 text-gray-800">
                 <input
                   type="checkbox"
                   value={section.id}
                   checked={selectedSections.includes(section.id)}
                   onChange={() => handleSectionChange(section.id)}
+                  className="accent-blue-600"
                 />
-                <span className="ml-2 text-black">{section.name}</span>
+                <span>{section.name}</span>
               </label>
             ))}
           </div>
 
           {/* Subject Dropdown */}
-          <label className="block mb-2 text-black">Subject</label>
+          <label className="block mb-1 text-sm font-semibold text-gray-800">Subject</label>
           <select
-            className="w-full p-2 border rounded mb-4 text-black"
+            className="w-full p-3 border rounded-lg bg-gray-100 text-gray-800 mb-4"
             value={subjectId || ""}
             onChange={(e) => setSubjectId(Number(e.target.value))}
           >
@@ -124,12 +120,12 @@ export default function AssignForm({ staff, onClose }) {
             ))}
           </select>
 
-          {/* Submit and Cancel Buttons */}
+          {/* Buttons */}
           <div className="flex justify-end space-x-4 mt-6">
-            <button type="submit" className="px-4 py-2 bg-green-600 text-white rounded">
+            <button type="submit" className="px-4 py-2 bg-green-600 hover:bg-green-500 text-white rounded-lg">
               Submit
             </button>
-            <button onClick={onClose} type="button" className="px-4 py-2 bg-red-600 text-white rounded">
+            <button type="button" onClick={onClose} className="px-4 py-2 bg-red-600 hover:bg-red-500 text-white rounded-lg">
               Cancel
             </button>
           </div>
@@ -138,3 +134,146 @@ export default function AssignForm({ staff, onClose }) {
     </div>
   );
 }
+
+
+
+// "use client";
+// import { useEffect, useState } from "react";
+
+// export default function AssignForm({ staff, onClose }) {
+//   const [grades, setGrades] = useState([]);
+//   const [sections, setSections] = useState([]);
+//   const [subjects, setSubjects] = useState([]);
+//   const [gradeId, setGradeId] = useState(null);
+//   const [subjectId, setSubjectId] = useState(null);
+//   const [selectedSections, setSelectedSections] = useState([]);
+
+//   // Fetch Grades
+//   useEffect(() => {
+//     fetch("/api/admin/grade_section/grade")
+//       .then((res) => res.json())
+//       .then(setGrades)
+//       .catch((err) => console.error("Error fetching grades:", err));
+//   }, []);
+
+//   // Fetch Subjects
+//   useEffect(() => {
+//     fetch("/api/admin/subject")
+//       .then((res) => res.json())
+//       .then(setSubjects)
+//       .catch((err) => console.error("Error fetching subjects:", err));
+//   }, []);
+
+//   // Fetch Sections based on selected Grade
+//   useEffect(() => {
+//     if (gradeId) {
+//       fetch(`/api/admin/grade_section/section?gradeId=${gradeId}`)
+//         .then((res) => res.json())
+//         .then((data) => setSections(data))
+//         .catch((err) => console.error("Error fetching sections:", err));
+//     } else {
+//       setSections([]);
+//     }
+//   }, [gradeId]);
+
+//   const handleSectionChange = (id) => {
+//     setSelectedSections((prev) =>
+//       prev.includes(id) ? prev.filter((sid) => sid !== id) : [...prev, id]
+//     );
+//   };
+
+//   const handleSubmit = async (e) => {
+//     e.preventDefault();
+//     if (!gradeId || !subjectId || selectedSections.length === 0) {
+//       alert("Please select grade, subject, and at least one section.");
+//       return;
+//     }
+
+//     try {
+//       const response = await fetch("/api/admin/assign", {
+//         method: "POST",
+//         headers: { "Content-Type": "application/json" },
+//         body: JSON.stringify({
+//           staffID: staff.staffID,
+//           gradeId,
+//           subjectId,
+//           sectionIds: selectedSections,
+//         }),
+//       });
+
+//       if (!response.ok) {
+//         throw new Error("Failed to assign staff.");
+//       }
+
+//       alert("Assignment successful");
+//       onClose();
+//     } catch (error) {
+//       console.error("Error submitting assignment:", error);
+//     }
+//   };
+
+//   return (
+//     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4">
+//       <div className="bg-gray-100 p-6 rounded-lg max-w-lg w-full">
+//         <h3 className="text-xl mb-4 text-black">Assign</h3>
+//         <form onSubmit={handleSubmit}>
+//           {/* Grade Dropdown */}
+//           <label className="block mb-2 text-gray-700">Grade</label>
+//           <select
+//             className="w-full p-2 border rounded mb-4 text-gray-700"
+//             value={gradeId || ""}
+//             onChange={(e) => setGradeId(Number(e.target.value))}
+//           >
+//             <option value="">Select Grade</option>
+//             {grades.map((g) => (
+//               <option key={g.id} value={g.id}>
+//                 {g.grade}
+//               </option>
+//             ))}
+//           </select>
+
+//           {/* Section Checkboxes */}
+//           <label className="block mb-2 text-black">Sections</label>
+//           <div className="mb-4">
+//             {sections.map((section) => (
+//               <label key={section.id} className="block">
+//                 <input
+//                   type="checkbox"
+//                   value={section.id}
+//                   checked={selectedSections.includes(section.id)}
+//                   onChange={() => handleSectionChange(section.id)}
+//                 />
+//                 <span className="ml-2 text-black">{section.name}</span>
+//               </label>
+//             ))}
+//           </div>
+
+//           {/* Subject Dropdown */}
+//           <label className="block mb-2 text-black">Subject</label>
+//           <select
+//             className="w-full p-2 border rounded mb-4 text-black"
+//             value={subjectId || ""}
+//             onChange={(e) => setSubjectId(Number(e.target.value))}
+//           >
+//             <option value="">Select Subject</option>
+//             {subjects.map((s) => (
+//               <option key={s.id} value={s.id}>
+//                 {s.name}
+//               </option>
+//             ))}
+//           </select>
+
+//           {/* Submit and Cancel Buttons */}
+//           <div className="flex justify-end space-x-4 mt-6">
+//             <button type="submit" className="px-4 py-2 bg-green-600 text-white rounded">
+//               Submit
+//             </button>
+//             <button onClick={onClose} type="button" className="px-4 py-2 bg-red-600 text-white rounded">
+//               Cancel
+//             </button>
+//           </div>
+//         </form>
+//       </div>
+//     </div>
+//   );
+// }
