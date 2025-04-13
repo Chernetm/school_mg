@@ -1,24 +1,10 @@
 
 
-model ResultDetail {
-  id             Int         @id @default(autoincrement())
-  registrationID Int         // Foreign key to Registration
-  staffID        Int         // Staff who uploaded this result
-  subject        String      // e.g., "English", "Physics"
-  score          Int?
-
-  registration   Registration @relation(fields: [registrationID], references: [id])
-  staff          Staff        @relation(fields: [staffID], references: [id])
-
-  @@unique([registrationID, subject]) // Ensure one result per subject
-}
-
 Prisma#
 npx prisma migrate dev --name init
 npx prisma migrate reset
 npx prisma studio
 npx prisma generate
-
 
 // This is your Prisma schema file,
 // learn more about it in the docs: https://pris.ly/d/prisma-schema
@@ -43,6 +29,7 @@ model Grade {
   grade    Int             @unique
   sections GradeSection[]  // Relationship to GradeSection
   assignment Assignment[]
+  announcement Announcement[]
 
   // ✅ Add inverse relation to Assignment
   
@@ -83,11 +70,6 @@ model Semester{
   resultSummary ResultSummary[]
 }
 
-enum  SemesterEnum{
-  active
-  inactive
-}
-
 
 
 model Year {
@@ -102,10 +84,27 @@ model Subject {
   assignment Assignment[]
 }
 
-enum YearEnum {
-  active
-  inactive
+model Announcement {
+  id         String   @id @default(cuid())
+  title      String
+  message    String
+  createdAt  DateTime @default(now())
+  audience   Audience
+  gradeId     Int?      // optional for grade-specific
+  staffID     Int
+  grade      Grade?       @relation(fields: [gradeId], references: [grade])
+  staff      Staff @relation(fields: [staffID], references: [staffID])
 }
+
+enum Audience {
+  ALL         // everyone
+  STAFF       // only staff
+  STUDENTS    // only students
+  PARENTS     // only parents
+  GRADE       // for specific grade
+}
+
+
 
 model Staff {
   id              Int      @id @default(autoincrement())
@@ -117,33 +116,20 @@ model Staff {
   username        String   @unique
   email           String   
   password        String
-  userType        String   @default("staff")
   image           String  // Optional field to store image filename
-  role            RoleEnum
+  role            RoleEnum? @default(staff)
   status          statusEnum @default(inactive)
   createdAt       DateTime @default(now())
   assignment      Assignment []
-  attendances     Attendance[] @relation("FK_Attendance_Staff") // 👈 Fixes the validation error
+  attendances     Attendance[]  
   Staff_Attended  StaffAttendance[] @relation("FK_StaffAttendance_Staff")   
-  Staff_Recorded StaffAttendance[] @relation("FK_StaffAttendance_Recorder") // 👈 Opposite of recordedBy
+  Staff_Recorded StaffAttendance[] @relation("FK_StaffAttendance_Recorder") 
   resultDetail    ResultDetail[]
   exam            Exam []
-  
+  announcement   Announcement[]
+  bookBorrow      BookBorrow[]
 }
 
-
-enum RoleEnum{
-  head
-  admin
-  register
-  staff
-  teacher
-}
-enum statusEnum{
-  active
-  inactive
-  block
-}
 
 model Assignment {
   id         Int      @id @default(autoincrement())
@@ -199,6 +185,8 @@ model Student {
   attendance       Attendance[]
   response         Response[]
   studentSession   StudentSession[]
+  bookBorrow       BookBorrow[]
+  fee              Fee[]
 }
 
 
@@ -262,7 +250,7 @@ model Attendance {
   studentID       String      // Foreign key to Student
   staffID         Int      // Foreign key to Staff
   student         Student  @relation(fields: [studentID], references: [studentID])
-  staff     Staff @relation(fields: [staffID], references: [staffID], name: "FK_Attendance_Staff")
+  staff     Staff @relation(fields: [staffID], references: [staffID])
 
   
 
@@ -276,8 +264,8 @@ model StaffAttendance {
   userID    Int  // Foreign key to the user who recorded the attendance
 
   
-  recordedBy Staff @relation(fields: [userID], references: [staffID], name: "FK_StaffAttendance_Recorder")
-  staff     Staff @relation(fields: [staffID], references: [staffID], name: "FK_StaffAttendance_Staff")
+ recordedBy Staff @relation(fields: [userID], references: [staffID], name: "FK_StaffAttendance_Recorder")
+ staff     Staff @relation(fields: [staffID], references: [staffID], name: "FK_StaffAttendance_Staff")
 
 }
 
@@ -318,7 +306,7 @@ model Response {
   student     Student   @relation(fields: [studentID], references: [studentID])
   exam        Exam      @relation(fields: [examId], references: [id])
   question    Question  @relation(fields: [questionId], references: [id])
-   @@unique([studentID, questionId, examId])  // ✅ Ensure this unique constraint exists
+  @@unique([studentID, questionId, examId])  // ✅ Ensure this unique constraint exists
 }
 
 
@@ -327,6 +315,80 @@ model StudentSession {
   deviceFingerprint String
   student          Student @relation(fields: [studentID], references: [studentID])
 }
+
+model Book {
+  id        Int       @id @default(autoincrement())
+  title     String
+  author    String
+  grade     String    // e.g., "Grade 5", "General"
+  copies    Int       // Number of total copies
+  borrows   BookBorrow[]
+  createdAt DateTime  @default(now())
+}
+
+model BookBorrow {
+  id         Int      @id @default(autoincrement())
+  studentID  String
+  bookId     Int
+  borrowDate DateTime @default(now())
+  returnDate DateTime?
+  staffID    Int
+  staff      Staff @relation(fields: [staffID], references: [staffID])
+
+  book       Book     @relation(fields: [bookId], references: [id])
+  student     Student    @relation(fields: [studentID], references: [studentID])
+  fine        Fine[]
+}
+
+model Fine {
+  id          Int       @id @default(autoincrement())
+  borrowRecordId Int    @unique
+  amount      Float
+  issuedAt    DateTime  @default(now())
+  paid        Boolean   @default(false)
+
+  borrowRecord BookBorrow @relation(fields: [borrowRecordId], references: [id])
+}
+
+model Fee {
+  id           Int             @id @default(autoincrement())
+  studentID    String
+  grade        Int
+  email        String?
+  month        MonthEnum
+  status       FeeStatusEnum   @default(unpaid)
+  amountPaid   Float?
+  year         Int             @default(2025)
+  paymentDate  DateTime        @default(now())
+  student      Student         @relation(fields: [studentID], references: [studentID])
+
+  @@unique([studentID, month, year])
+}
+
+
+
+
+enum MonthEnum {
+  January
+  February
+  March
+  April
+  May
+  June
+  July
+  August
+  September
+  October
+  November
+  December
+}
+
+enum FeeStatusEnum {
+  paid
+  unpaid
+  pending
+}
+
 
 
 
@@ -362,4 +424,27 @@ enum passStatusEnum{
   failed
   incomplete
 
+}
+
+enum RoleEnum{
+  head
+  admin
+  register
+  staff
+  teacher
+}
+enum statusEnum{
+  active
+  inactive
+  block
+}
+
+enum  SemesterEnum{
+  active
+  inactive
+}
+
+enum YearEnum {
+  active
+  inactive
 }

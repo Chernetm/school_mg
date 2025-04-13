@@ -1,0 +1,30 @@
+const {prisma} = require('@/utils/prisma');
+import { getStaffIDFromToken } from '@/utils/auth';
+
+export async function POST(req) {
+  try {
+    const body = await req.json();
+    const { studentId, bookId, borrowDate, returnDate } = body;
+    const staffID = await getStaffIDFromToken();
+
+    if (!studentId || !bookId || !borrowDate || !returnDate) {
+      return Response.json({ error: 'All fields are required.' }, { status: 400 });
+    }
+
+    const borrow = await prisma.bookBorrow.create({
+      data: {
+        studentId: studentId,
+        bookId: parseInt(bookId),
+        borrowDate: new Date(borrowDate),
+        returnDate: new Date(returnDate),
+        staffID,
+
+      },
+    });
+
+    return Response.json({ message: 'Book borrowed successfully.', borrow }, { status: 201 });
+  } catch (error) {
+    console.error('Borrow Error:', error);
+    return Response.json({ error: 'Failed to borrow book.' }, { status: 500 });
+  }
+}

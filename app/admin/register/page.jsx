@@ -38,7 +38,7 @@ const StaffRegistrationForm = () => {
     });
 
     try {
-      const res = await fetch("/api/staff/register", {
+      const res = await fetch("/api/admin/register", {
         method: "POST",
         body: formDataToSend,
       });

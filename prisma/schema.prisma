@@ -119,6 +119,7 @@ model Staff {
   resultDetail    ResultDetail[]
   exam            Exam []
   announcement   Announcement[]
+  bookBorrow      BookBorrow[]
 }
 
 
@@ -176,6 +177,8 @@ model Student {
   attendance       Attendance[]
   response         Response[]
   studentSession   StudentSession[]
+  bookBorrow       BookBorrow[]
+  fee              Fee[]
 }
 
 
@@ -304,6 +307,80 @@ model StudentSession {
   deviceFingerprint String
   student          Student @relation(fields: [studentID], references: [studentID])
 }
+
+model Book {
+  id        Int       @id @default(autoincrement())
+  title     String
+  author    String
+  grade     String    // e.g., "Grade 5", "General"
+  copies    Int       // Number of total copies
+  borrows   BookBorrow[]
+  createdAt DateTime  @default(now())
+}
+
+model BookBorrow {
+  id         Int      @id @default(autoincrement())
+  studentID  String
+  bookId     Int
+  borrowDate DateTime @default(now())
+  returnDate DateTime?
+  staffID    Int
+  staff      Staff @relation(fields: [staffID], references: [staffID])
+
+  book       Book     @relation(fields: [bookId], references: [id])
+  student     Student    @relation(fields: [studentID], references: [studentID])
+  fine        Fine[]
+}
+
+model Fine {
+  id          Int       @id @default(autoincrement())
+  borrowRecordId Int    @unique
+  amount      Float
+  issuedAt    DateTime  @default(now())
+  paid        Boolean   @default(false)
+
+  borrowRecord BookBorrow @relation(fields: [borrowRecordId], references: [id])
+}
+
+model Fee {
+  id           Int             @id @default(autoincrement())
+  studentID    String
+  grade        Int
+  email        String?
+  month        MonthEnum
+  status       FeeStatusEnum   @default(unpaid)
+  amountPaid   Float?
+  year         Int             @default(2025)
+  paymentDate  DateTime        @default(now())
+  student      Student         @relation(fields: [studentID], references: [studentID])
+
+  @@unique([studentID, month, year])
+}
+
+
+
+
+enum MonthEnum {
+  January
+  February
+  March
+  April
+  May
+  June
+  July
+  August
+  September
+  October
+  November
+  December
+}
+
+enum FeeStatusEnum {
+  paid
+  unpaid
+  pending
+}
+
 
 
 

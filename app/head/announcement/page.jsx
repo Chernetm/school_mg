@@ -59,7 +59,7 @@ export default function CreateAnnouncement() {
             placeholder="Enter message"
             value={form.message}
             onChange={(e) => setForm({ ...form, message: e.target.value })}
-            className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-400"
+            className="w-full p-3 border text-white bg-gray-700 border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-400"
             rows="4"
             required
           ></textarea>
