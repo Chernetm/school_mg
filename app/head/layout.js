@@ -23,8 +23,8 @@ export default function AdminLayout({ children }) {
   }, []);
 
   useEffect(() => {
-    if (isAdmin === false) {
-      router.push("/login/admin");
+    if (isAdmin === true) {
+      // router.push("/login/admin");
     }
   }, [isAdmin]);
 

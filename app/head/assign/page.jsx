@@ -82,9 +82,11 @@ export default function StaffPage() {
                     className="border p-2 rounded bg-gray-200 text-gray-700"
                     value={updates[member.staffID]?.role || member.role}
                     onChange={(e) => handleChange(member.staffID, "role", e.target.value)}
-                  >
+                  > <option value="head">Head</option>
                     <option value="admin">Admin</option>
                     <option value="teacher">Teacher</option>
+                    <option value="registrar">Registrar</option>
+                    <option value="library">Library</option>
                     <option value="staff">Staff</option>
                   </select>
                 </td>

@@ -5,6 +5,7 @@ export async function GET() {
     const grades = await prisma.grade.findMany({
       select: { id: true, grade: true }, // Fetch only necessary fields
     });
+    console.log("Grades fetched successfully:", grades);
 
     return Response.json(grades, { status: 200 });
   } catch (error) {
