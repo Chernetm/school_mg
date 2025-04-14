@@ -1,7 +1,7 @@
 "use client";
 
 import { Dashboard } from "@/components/Dashboard";
-import { Navbar } from "@/components/Navbar";
+import { Navbar } from "@/components/Navbar/NavBar";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
@@ -14,7 +14,7 @@ export default function AdminLayout({ children }) {
       try {
         const res = await fetch("/api/auth", { credentials: "include" });
         const data = await res.json();
-        setIsAdmin(data.authenticated && data.role === "admin");
+        setIsAdmin(data.authenticated && data.user.role === "admin");
       } catch {
         setIsAdmin(false);
       }

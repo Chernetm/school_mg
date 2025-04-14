@@ -1,9 +1,11 @@
 
 const {prisma} = require('@/utils/prisma');
+import { getStaffIDFromToken } from '@/utils/auth';
 export async function POST(req) {
   try {
     const body = await req.json();
     const { title, message, audience, gradeId } = body;
+    const staffID = getStaffIDFromToken();
 
     if (!title || !message || !audience) {
       return Response.json({ error: 'Missing required fields.' }, { status: 400 });
@@ -15,6 +17,7 @@ export async function POST(req) {
         message,
         audience,
         gradeId: audience === 'GRADE' ? gradeId : null,
+        staffID: Number(staffID),
       },
     });
 

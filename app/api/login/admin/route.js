@@ -24,9 +24,13 @@ export async function POST(req) {
       select: {
         id: true,
         staffID: true,
+        firstName: true,
+        lastName: true,
         username: true,
         password: true,
         role: true,
+        image:true,
+        email:true,
         assignment: {
           select: {
             gradeId: true,
@@ -71,6 +75,11 @@ export async function POST(req) {
         staffID:staff.staffID,
         username: staff.username,
         role: staff.role,
+        image: staff.image,
+        email: staff.email,
+        
+        firstName: staff.firstName,
+        lastName: staff.lastName,
         assignments,
       },
       process.env.JWT_SECRET,

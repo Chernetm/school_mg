@@ -18,7 +18,7 @@ export default function CreateAnnouncement() {
     e.preventDefault();
     setStatus('Creating...');
 
-    const res = await fetch('/api/announcements/create', {
+    const res = await fetch('/api/announcement/create', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(form),
