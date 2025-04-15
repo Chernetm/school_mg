@@ -13,7 +13,7 @@ export default function SemesterManager() {
 
   const fetchSemesters = async () => {
     try {
-      const res = await fetch("/api/admin/semester");
+      const res = await fetch("/api/head/semester");
       const data = await res.json();
       setSemesters(Array.isArray(data) ? data : []);
     } catch (error) {
@@ -24,7 +24,7 @@ export default function SemesterManager() {
 
   const handleCreate = async (e) => {
     e.preventDefault();
-    const res = await fetch("/api/admin/semester", {
+    const res = await fetch("/api/head/semester", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ semester: parseInt(semester), status })
@@ -36,7 +36,7 @@ export default function SemesterManager() {
   };
 
   const handleDelete = async (id) => {
-    await fetch("/api/admin/semester", {
+    await fetch("/api/head/semester", {
       method: "DELETE",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ id })
@@ -45,7 +45,7 @@ export default function SemesterManager() {
   };
 
   const handleStatusUpdate = async (id, newStatus) => {
-    await fetch("/api/admin/semester", {
+    await fetch("/api/head/semester", {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ id, status: newStatus })

@@ -1,4 +1,4 @@
-"use client";
+'use client';
 
 import { Dashboard } from "@/components/Dashboard";
 import { Navbar } from "@/components/Navbar/NavBar";
@@ -6,7 +6,7 @@ import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
 export default function AdminLayout({ children }) {
-  const [isAdmin, setIsAdmin] = useState(null);
+  const [isHeadAdmin, setIsHeadAdmin] = useState(null);
   const router = useRouter();
 
   useEffect(() => {
@@ -14,39 +14,55 @@ export default function AdminLayout({ children }) {
       try {
         const res = await fetch("/api/auth", { credentials: "include" });
         const data = await res.json();
-        setIsAdmin(data.authenticated && data.role === "head");
+
+        if (data.authenticated && data.user?.role === "head") {
+          setIsHeadAdmin(true);
+        } else {
+          setIsHeadAdmin(false);
+        }
       } catch {
-        setIsAdmin(false);
+        setIsHeadAdmin(false);
       }
     };
+
     checkAuth();
   }, []);
 
   useEffect(() => {
-    if (isAdmin === false) {
+    if (isHeadAdmin === false) {
       router.push("/login/admin");
     }
-  }, [isAdmin]);
+  }, [isHeadAdmin, router]);
 
-  if (isAdmin === null) return <div className="p-10">Checking authentication...</div>;
-
-  return (
-    <div className="min-h-screen flex flex-col bg-gray-100">
-      {/* Navbar at the top */}
-      <Navbar />
-
-      {/* Sidebar + Main Content */}
-      <div className="flex flex-1">
-        {/* Sidebar on the left */}
-        <aside className="w-64 bg-gray-900 text-white fixed h-full z-40">
-          <Dashboard />
-        </aside>
-
-        {/* Main content with left margin to account for sidebar */}
-        <main className="flex-1 ml-64 p-6 mt-10">
-          {children}
-        </main>
+  if (isHeadAdmin === null) {
+    return (
+      <div className="min-h-screen flex items-center justify-center text-gray-600 text-lg">
+        Checking head admin access...
       </div>
-    </div>
-  );
+    );
+  }
+
+  if (isHeadAdmin === true) {
+    return (
+      <div className="min-h-screen flex flex-col bg-gray-100">
+        {/* Navbar at the top */}
+        <Navbar />
+
+        {/* Sidebar + Main Content */}
+        <div className="flex flex-1">
+          {/* Sidebar on the left */}
+          <aside className="w-64 bg-gray-900 text-white fixed h-full z-40">
+            <Dashboard />
+          </aside>
+
+          {/* Main content with left margin to account for sidebar */}
+          <main className="flex-1 ml-64 p-6 mt-10">
+            {children}
+          </main>
+        </div>
+      </div>
+    );
+  }
+
+  return null; // Nothing is shown after redirect
 }

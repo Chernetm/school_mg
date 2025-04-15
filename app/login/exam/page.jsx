@@ -29,7 +29,7 @@ export default function LoginPage() {
         throw new Error(data.message);
       }
 
-      router.push("/exam/online");
+      router.push("/student/exam");
     } catch (err) {
       setError(err.message);
     } finally {

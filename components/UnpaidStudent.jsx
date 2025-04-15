@@ -71,7 +71,7 @@ export default function UnpaidStudents({ grade, month, year }) {
                   <td className="px-4 py-2">{s.studentID}</td>
                   <td className="px-4 py-2">{s.firstName}</td>
                   <td className="px-4 py-2">{s.lastName}</td>
-                  <td className="px-4 py-2">{s.section.section}</td>
+                  <td className="px-4 py-2">{s.section}</td>
                   <td className="px-4 py-2">{s.grade}</td>
                 </tr>
               ))}

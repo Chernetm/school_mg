@@ -1,5 +1,13 @@
 import { Menu, MenuButton, MenuItem, MenuItems } from "@headlessui/react";
 import { BellIcon } from "@heroicons/react/24/outline";
+import Link from "next/link";
+
+// Define menu items
+const menuItems = [
+  { label: "Settings", href: "/setting" },
+  { label: "Sign out", isLogout: true },
+];
+
 
 const ProfileMenu = ({ loading, user }) => (
   <div className="absolute inset-y-0 right-0 flex items-center pr-2 sm:static sm:inset-auto sm:ml-6 sm:pr-0">
@@ -19,7 +27,7 @@ const ProfileMenu = ({ loading, user }) => (
           <span className="sr-only">Open user menu</span>
           <img
             className="h-8 w-8 rounded-full object-cover"
-            src={ user.image || "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e"}
+            src={user.image || "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e"}
             alt="User avatar"
           />
         </MenuButton>
@@ -28,18 +36,41 @@ const ProfileMenu = ({ loading, user }) => (
         <div className="px-4 py-2 text-sm text-gray-700 font-semibold border-b">
           Role: {loading ? "Loading..." : user.role}
         </div>
-        {["Your Profile", "Settings", "Sign out"].map((label) => (
+
+        {menuItems.map(({ label, href, isLogout }) => (
           <MenuItem key={label}>
-            {({ active }) => (
-              <a
-              href="#"
-              className={`block px-4 py-2 text-sm ${
-                active ? "bg-gray-100 text-gray-900" : "text-gray-700"
-              }`}
-            >
-              {label}
-            </a>
-            )}
+            {({ active }) =>
+              isLogout ? (
+                <button
+                  onClick={async () => {
+                    try {
+                      const res = await fetch("/api/logout", {
+                        method: "POST",
+                      });
+                      if (res.ok) {
+                        window.location.href = "/";
+                      } else {
+                        console.error("Logout failed");
+                      }
+                    } catch (err) {
+                      console.error("Logout error:", err);
+                    }
+                  }}
+                  className={`block w-full text-left px-4 py-2 text-sm ${active ? "bg-gray-100 text-gray-900" : "text-gray-700"
+                    }`}
+                >
+                  {label}
+                </button>
+              ) : (
+                <Link
+                  href={href}
+                  className={`block px-4 py-2 text-sm ${active ? "bg-gray-100 text-gray-900" : "text-gray-700"
+                    }`}
+                >
+                  {label}
+                </Link>
+              )
+            }
           </MenuItem>
         ))}
       </MenuItems>

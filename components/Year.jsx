@@ -13,7 +13,7 @@ export default function YearManager() {
   }, []);
 
   const fetchYears = async () => {
-    const res = await fetch("/api/admin/year");
+    const res = await fetch("/api/head/year");
     const data = await res.json();
     setYears(data);
   };
@@ -21,7 +21,7 @@ export default function YearManager() {
   const handleCreate = async () => {
     setLoading(true);
     try {
-      const res = await fetch("/api/admin/year", {
+      const res = await fetch("/api/head/year", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ year: parseInt(year), status }),
@@ -41,7 +41,7 @@ export default function YearManager() {
     if (!confirm("Are you sure you want to delete this year?")) return;
 
     try {
-      await fetch(`/api/admin/year/${id}`, { method: "DELETE" });
+      await fetch(`/api/head/year/${id}`, { method: "DELETE" });
       fetchYears();
     } catch (error) {
       console.error("Failed to delete year", error);
