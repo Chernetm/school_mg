@@ -41,7 +41,7 @@ export default function LoginPage() {
     <LoginForm
       title="Exam Login"
       fields={[
-        { name: "email", type: "email", placeholder: "Email" },
+        { name: "studentID", type: "text", placeholder: "Student ID" },
         { name: "password", type: "password", placeholder: "Password" },
       ]}
       onSubmit={handleExamLogin}

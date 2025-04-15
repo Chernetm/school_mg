@@ -11,10 +11,10 @@ const SECRET_KEY = process.env.JWT_SECRET || "supersecretkey";
 export async function POST(req) {
   try {
     const body = await req.json();
-    const { email, password, deviceFingerprint } = body;
-    console.log(email,password,deviceFingerprint)
+    const { studentID, password, deviceFingerprint } = body;
+    console.log(studentID,password,deviceFingerprint)
 
-    if (!email || !password || !deviceFingerprint) {
+    if (!studentID || !password || !deviceFingerprint) {
       return new NextResponse(
         JSON.stringify({ message: "Missing credentials" }),
         { status: 400, headers: { "student-exam": "error" } }
@@ -22,7 +22,7 @@ export async function POST(req) {
     }
 
     const student = await prisma.student.findUnique({
-      where: { email },
+      where: { studentID },
       select: {
         studentID: true,
         firstName: true,
@@ -39,7 +39,7 @@ export async function POST(req) {
      console.log(student,"student")
     if (!student) {
       return new NextResponse(
-        JSON.stringify({ message: "Invalid email or password" }),
+        JSON.stringify({ message: "Invalid studentID or password" }),
         { status: 401, headers: { "student-exam": "error" } }
       );
     }
@@ -48,7 +48,7 @@ export async function POST(req) {
     if (!passwordMatch) {
         console.log("password match",passwordMatch)
       return new NextResponse(
-        JSON.stringify({ message: "Invalid email or password" }),
+        JSON.stringify({ message: "Invalid studentID or password" }),
         { status: 401, headers: { "student-exam": "error" } }
       );
     }
