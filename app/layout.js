@@ -18,19 +18,35 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
+// export default function RootLayout({ children }) {
+//   return (
+//     <html lang="en">
+//       <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
+//         <Navbar /> {/* Client component handles conditional logic */}
+//         {children}
+//       </body>
+//     </html>
+//   );
+// }
+
+
+
 export default function RootLayout({ children }) {
   return (
     <html lang="en">
-      <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
-        <Navbar /> {/* Client component handles conditional logic */}
-        {children}
+      <body
+        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+      >
+        <div className="flex flex-col min-h-screen">
+          <Navbar/>
+          <div className="flex-1 pt-15"> {/* Adjust this value if needed */}
+            {children}
+          </div>
+        </div>
       </body>
     </html>
   );
 }
-
-
-
 
 
 

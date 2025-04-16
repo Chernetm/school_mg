@@ -1,7 +1,8 @@
-import { PrismaClient } from '@prisma/client';
-const prisma = new PrismaClient();
+const{prisma}=require("@/utils/prisma")
+import { NextResponse } from 'next/server';
 
-export default async function handler(req, res) {
+
+export default async function GET(req, res) {
   const { role, gradeId } = req.query;
 
   try {
@@ -18,8 +19,8 @@ export default async function handler(req, res) {
       orderBy: { createdAt: 'desc' },
     });
 
-    res.status(200).json(announcements);
+    NextResponse(200).json(announcements);
   } catch (error) {
-    res.status(500).json({ error: 'Failed to fetch announcements' });
+    NextResponse(500).json({ error: 'Failed to fetch announcements' });
   }
 }

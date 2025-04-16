@@ -149,100 +149,195 @@ export default function StudentExam() {
   if (!isAuthorized) {
     return <div className="text-center mt-10 text-red-500">You are not authorized to access this exam.</div>;
   }
-
   return (
-    <div className="w-screen h-screen p-6 bg-gray-100 flex flex-col items-center justify-center overflow-auto">
-
-      {!exam ? (
-        <div className="w-full bg-white shadow-md p-6 rounded-lg">
-          <h2 className="text-2xl font-bold mb-4 text-gray-700">Enter Exam Title</h2>
-          <input
-            type="text"
-            className="w-full p-3 border rounded-lg text-gray-700"
-            value={examTitle}
-            onChange={(e) => setExamTitle(e.target.value)}
-          />
-          <button
-            className="mt-4 w-full bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition"
-            onClick={fetchExam}
-          >
-            Fetch Exam
-          </button>
-        </div>
-      ) : (
-        <>
-          <h2 className="text-3xl font-bold mb-4 text-center text-gray-700">{exam.title}</h2>
-
-          <div className="text-xl font-semibold mb-3 text-red-500 bg-white px-4 py-2 rounded-lg shadow-md">
-            Time Left: {timeLeft !== null ? formatTime(timeLeft) : "00:00"}
+    <div className="min-h-screen w-full p-4 md:p-6 bg-gray-100 flex items-center justify-center">
+      <div className="w-full max-w-screen-md">
+        {!exam ? (
+          <div className="bg-white shadow-md p-6 rounded-xl">
+            <h2 className="text-2xl font-bold mb-4 text-gray-700 text-center">Enter Exam Title</h2>
+            <input
+              type="text"
+              className="w-full p-3 border rounded-lg text-gray-700"
+              value={examTitle}
+              onChange={(e) => setExamTitle(e.target.value)}
+            />
+            <button
+              className="mt-4 w-full bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition"
+              onClick={fetchExam}
+            >
+              Fetch Exam
+            </button>
           </div>
-
-          {exam.questions[currentIndex] && (
-            <div className="w-full bg-white shadow-lg p-6 rounded-lg mt-4">
-              <h3 className="text-xl font-semibold text-gray-700 mb-4">
-                Question {currentIndex + 1}/{exam.questions.length}
-              </h3>
-              <p className="text-lg font-medium text-gray-700">{exam.questions[currentIndex].content}</p>
-
-              <div className="mt-4 space-y-3 text-gray-700">
-                {["A", "B", "C", "D"].map((option) => (
-                  <label
-                    key={option}
-                    className="flex items-center space-x-3 bg-gray-100 p-3 text-gray-700 rounded-lg hover:bg-gray-200 transition cursor-pointer"
-                  >
-                    <input
-                      type="radio"
-                      className="h-5 w-5 text-blue-600"
-                      checked={answers[exam.questions[currentIndex].id] === option}
-                      onChange={() => handleAnswer(exam.questions[currentIndex].id, option)}
-                    />
-                    <span className="text-lg">
-                      {exam.questions[currentIndex][`option${option}`]}
-                    </span>
-                  </label>
-                ))}
-              </div>
+        ) : (
+          <div className="space-y-6">
+            <h2 className="text-3xl font-bold text-center text-gray-700">{exam.title}</h2>
+  
+            <div className="text-xl font-semibold text-red-500 bg-white px-4 py-2 rounded-lg shadow text-center">
+              Time Left: {timeLeft !== null ? formatTime(timeLeft) : "00:00"}
             </div>
-          )}
-
-          <div className="mt-6 flex justify-between w-full">
-            <button
-              disabled={currentIndex === 0}
-              onClick={() => setCurrentIndex((i) => Math.max(0, i - 1))}
-              className={`px-6 py-2 rounded-lg font-semibold transition ${
-                currentIndex === 0
-                  ? "bg-gray-300 text-gray-500 cursor-not-allowed"
-                  : "bg-blue-500 text-white hover:bg-blue-600"
-              }`}
-            >
-              Previous
-            </button>
-
-            <button
-              disabled={currentIndex >= exam.questions.length - 1}
-              onClick={() => setCurrentIndex((i) => Math.min(exam.questions.length - 1, i + 1))}
-              className={`px-6 py-2 rounded-lg font-semibold transition ${
-                currentIndex >= exam.questions.length - 1
-                  ? "bg-gray-300 text-gray-500 cursor-not-allowed"
-                  : "bg-blue-500 text-white hover:bg-blue-600"
-              }`}
-            >
-              Next
-            </button>
+  
+            {exam.questions[currentIndex] && (
+              <div className="bg-white shadow-lg p-6 rounded-xl">
+                <h3 className="text-xl font-semibold text-gray-700 mb-4">
+                  Question {currentIndex + 1}/{exam.questions.length}
+                </h3>
+                <p className="text-lg font-medium text-gray-700 mb-4">
+                  {exam.questions[currentIndex].content}
+                </p>
+  
+                <div className="space-y-3 text-gray-700">
+                  {["A", "B", "C", "D"].map((option) => (
+                    <label
+                      key={option}
+                      className="flex items-center space-x-3 bg-gray-100 p-3 rounded-lg hover:bg-gray-200 transition cursor-pointer"
+                    >
+                      <input
+                        type="radio"
+                        className="h-5 w-5 text-blue-600"
+                        checked={answers[exam.questions[currentIndex].id] === option}
+                        onChange={() => handleAnswer(exam.questions[currentIndex].id, option)}
+                      />
+                      <span className="text-lg">{exam.questions[currentIndex][`option${option}`]}</span>
+                    </label>
+                  ))}
+                </div>
+              </div>
+            )}
+  
+            <div className="flex justify-between gap-4">
+              <button
+                disabled={currentIndex === 0}
+                onClick={() => setCurrentIndex((i) => Math.max(0, i - 1))}
+                className={`flex-1 py-2 rounded-lg font-semibold transition ${
+                  currentIndex === 0
+                    ? "bg-gray-300 text-gray-500 cursor-not-allowed"
+                    : "bg-blue-500 text-white hover:bg-blue-600"
+                }`}
+              >
+                Previous
+              </button>
+  
+              <button
+                disabled={currentIndex >= exam.questions.length - 1}
+                onClick={() => setCurrentIndex((i) => Math.min(exam.questions.length - 1, i + 1))}
+                className={`flex-1 py-2 rounded-lg font-semibold transition ${
+                  currentIndex >= exam.questions.length - 1
+                    ? "bg-gray-300 text-gray-500 cursor-not-allowed"
+                    : "bg-blue-500 text-white hover:bg-blue-600"
+                }`}
+              >
+                Next
+              </button>
+            </div>
+  
+            {currentIndex === exam.questions.length - 1 && (
+              <button
+                onClick={handleSubmit}
+                className="w-full bg-green-600 text-white px-6 py-3 rounded-lg font-semibold shadow-md hover:bg-green-700 transition"
+              >
+                Submit Exam
+              </button>
+            )}
           </div>
-
-          {currentIndex === exam.questions.length - 1 && (
-            <button
-              onClick={handleSubmit}
-              className="mt-6 w-full bg-green-600 text-white px-6 py-3 rounded-lg font-semibold shadow-md hover:bg-green-700 transition"
-            >
-              Submit Exam
-            </button>
-          )}
-        </>
-      )}
+        )}
+      </div>
     </div>
   );
+  
+
+  // return (
+  //   <div className="w-screen h-screen p-6 bg-gray-100 flex flex-col items-center justify-center overflow-auto">
+
+  //     {!exam ? (
+  //       <div className="w-full bg-white shadow-md p-6 rounded-lg">
+  //         <h2 className="text-2xl font-bold mb-4 text-gray-700">Enter Exam Title</h2>
+  //         <input
+  //           type="text"
+  //           className="w-full p-3 border rounded-lg text-gray-700"
+  //           value={examTitle}
+  //           onChange={(e) => setExamTitle(e.target.value)}
+  //         />
+  //         <button
+  //           className="mt-4 w-full bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition"
+  //           onClick={fetchExam}
+  //         >
+  //           Fetch Exam
+  //         </button>
+  //       </div>
+  //     ) : (
+  //       <>
+  //         <h2 className="text-3xl font-bold mb-4 text-center text-gray-700">{exam.title}</h2>
+
+  //         <div className="text-xl font-semibold mb-3 text-red-500 bg-white px-4 py-2 rounded-lg shadow-md">
+  //           Time Left: {timeLeft !== null ? formatTime(timeLeft) : "00:00"}
+  //         </div>
+
+  //         {exam.questions[currentIndex] && (
+  //           <div className="w-full bg-white shadow-lg p-6 rounded-lg mt-4">
+  //             <h3 className="text-xl font-semibold text-gray-700 mb-4">
+  //               Question {currentIndex + 1}/{exam.questions.length}
+  //             </h3>
+  //             <p className="text-lg font-medium text-gray-700">{exam.questions[currentIndex].content}</p>
+
+  //             <div className="mt-4 space-y-3 text-gray-700">
+  //               {["A", "B", "C", "D"].map((option) => (
+  //                 <label
+  //                   key={option}
+  //                   className="flex items-center space-x-3 bg-gray-100 p-3 text-gray-700 rounded-lg hover:bg-gray-200 transition cursor-pointer"
+  //                 >
+  //                   <input
+  //                     type="radio"
+  //                     className="h-5 w-5 text-blue-600"
+  //                     checked={answers[exam.questions[currentIndex].id] === option}
+  //                     onChange={() => handleAnswer(exam.questions[currentIndex].id, option)}
+  //                   />
+  //                   <span className="text-lg">
+  //                     {exam.questions[currentIndex][`option${option}`]}
+  //                   </span>
+  //                 </label>
+  //               ))}
+  //             </div>
+  //           </div>
+  //         )}
+
+  //         <div className="mt-6 flex justify-between w-full">
+  //           <button
+  //             disabled={currentIndex === 0}
+  //             onClick={() => setCurrentIndex((i) => Math.max(0, i - 1))}
+  //             className={`px-6 py-2 rounded-lg font-semibold transition ${
+  //               currentIndex === 0
+  //                 ? "bg-gray-300 text-gray-500 cursor-not-allowed"
+  //                 : "bg-blue-500 text-white hover:bg-blue-600"
+  //             }`}
+  //           >
+  //             Previous
+  //           </button>
+
+  //           <button
+  //             disabled={currentIndex >= exam.questions.length - 1}
+  //             onClick={() => setCurrentIndex((i) => Math.min(exam.questions.length - 1, i + 1))}
+  //             className={`px-6 py-2 rounded-lg font-semibold transition ${
+  //               currentIndex >= exam.questions.length - 1
+  //                 ? "bg-gray-300 text-gray-500 cursor-not-allowed"
+  //                 : "bg-blue-500 text-white hover:bg-blue-600"
+  //             }`}
+  //           >
+  //             Next
+  //           </button>
+  //         </div>
+
+  //         {currentIndex === exam.questions.length - 1 && (
+  //           <button
+  //             onClick={handleSubmit}
+  //             className="mt-6 w-full bg-green-600 text-white px-6 py-3 rounded-lg font-semibold shadow-md hover:bg-green-700 transition"
+  //           >
+  //             Submit Exam
+  //           </button>
+  //         )}
+  //       </>
+  //     )}
+  //   </div>
+  // );
 }
 
 

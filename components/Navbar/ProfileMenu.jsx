@@ -4,7 +4,7 @@ import Link from "next/link";
 
 // Define menu items
 const menuItems = [
-  { label: "Settings", href: "/setting" },
+  { label: "Settings", href: "setting" },
   { label: "Sign out", isLogout: true },
 ];
 

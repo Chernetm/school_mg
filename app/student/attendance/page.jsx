@@ -40,7 +40,7 @@ export default function AttendanceCard () {
       : "Warning! Your attendance should be more than 85%.";
 
   return (
-    <div className="bg-gray-50 shadow-lg rounded-2xl p-6 w-80 mx-auto mt-25">
+    <div className="bg-gray-50 shadow-lg rounded-2xl p-6 w-80 mx-auto mt-1">
       <h2 className="text-xl font-bold text-gray-700 text-center">Attendance Summary</h2>
       <div className="flex justify-center mt-4">
         <PieChart width={220} height={220}>
