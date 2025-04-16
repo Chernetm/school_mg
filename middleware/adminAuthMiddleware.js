@@ -1,40 +1,37 @@
+
 import { jwtVerify } from "jose";
 import { NextResponse } from "next/server";
 
-// Edge-compatible secret
-const SECRET = new TextEncoder().encode(process.env.JWT_SECRET || "super-secret");
+const SECRET_KEY = new TextEncoder().encode(process.env.JWT_SECRET || "your_secret_key");
 
 export async function adminAuthMiddleware(req) {
-  console.log("🔐 Admin Authentication Middleware");
-
   const token = req.cookies.get("staffToken")?.value;
+  console.log("🔐 Head Role Authentication", token);
 
   if (!token) {
-    console.warn("❌ No staff token found");
-    return NextResponse.redirect(new URL("/admin/login", req.url));
+    console.warn("❌ No token found");
+    return NextResponse.redirect(new URL("/login/admin", req.url));
   }
 
   try {
-    const { payload } = await jwtVerify(token, SECRET);
+    const { payload } = await jwtVerify(token, SECRET_KEY);
 
-    // ✅ Check if role is 'admin'
     if (payload.role !== "admin") {
-      console.warn("❌ Access denied. Not an admin:", payload.role);
-      return NextResponse.redirect(new URL("/unauthorized", req.url)); // Optional: Your access denied page
+      console.warn("❌ Not a head user");
+      return NextResponse.redirect(new URL("/unauthorized", req.url));
     }
 
-    console.log("✅ Admin Authenticated:", payload.username || payload.staffID);
+    console.log("✅ Head Authenticated:", payload.username);
 
-    // Forward user info in headers (optional for SSR/api use)
     const requestHeaders = new Headers(req.headers);
-    if (payload.staffID) requestHeaders.set("x-admin-id", payload.staffID);
-    requestHeaders.set("x-admin-role", "admin");
+    requestHeaders.set("x-user-id", payload.staffID || "");
+    requestHeaders.set("x-user-role", "admin");
 
     return NextResponse.next({
       request: { headers: requestHeaders },
     });
-  } catch (error) {
-    console.error("❌ Admin token verification failed:", error.message);
-    return NextResponse.redirect(new URL("/admin/login", req.url));
+  } catch (err) {
+    console.error("❌ Token verification failed:", err);
+    return NextResponse.redirect(new URL("/login/admin", req.url));
   }
 }

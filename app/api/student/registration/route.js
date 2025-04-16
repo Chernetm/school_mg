@@ -4,7 +4,13 @@ import { NextResponse } from "next/server";
 
 export async function POST(req) {
   try {
-    const { studentID, newGrade, newSection, newYear } = await req.json();
+    const { newGrade, newSection, newYear } = await req.json();
+    const studentID = req.headers.get("x-student-id");
+    const grade = req.headers.get("x-student-grade");
+    
+    if (!studentID) {
+          return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
+      }
 
     // ✅ 1️⃣ Get latest registration record for the student
     const latestRegistration = await prisma.registration.findFirst({

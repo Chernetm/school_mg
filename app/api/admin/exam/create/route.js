@@ -1,38 +1,11 @@
 const { prisma } = require("@/utils/prisma");
 import { NextResponse } from "next/server";
-
-const { parse } = require("cookie");
-const jwt = require("jsonwebtoken"); // Now works in Node.js runtime
-
+ 
  export async function POST(req) {
   try {
-    const cookies = parse(req.headers.get("cookie") || "");
-    const token = cookies.staffToken;
+    
 
-    if (!token) {
-      return NextResponse.json({ message: "Unauthorized: No token provided" }, { status: 401 });
-    }
-
-    if (!process.env.JWT_SECRET) {
-      return NextResponse.json({ message: "Server Error: JWT secret missing" }, { status: 500 });
-    }
-
-    const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    if (!decoded?.id) {
-      return NextResponse.json({ message: "Unauthorized: Invalid token" }, { status: 401 });
-    }
-
-    // Extract staff info from JWT
-    const staff = await prisma.staff.findUnique({
-      where: { id: decoded.id },
-      select: { id: true, staffID: true },
-    });
-
-    if (!staff) {
-      return NextResponse.json({ message: "Unauthorized: Staff not found" }, { status: 404 });
-    }
-
-    console.log("Staff ID:", staff.staffID);
+    const staffID = req.headers.get("x-user-id");
 
     // Parse request body
     const body = await req.json();
@@ -54,7 +27,7 @@ const jwt = require("jsonwebtoken"); // Now works in Node.js runtime
         description: examDescription,
         startTime: new Date(startTime),
         endTime: new Date(endTime),
-        createdBy: staff.staffID,
+        createdBy: staffID,
       },
     });
 

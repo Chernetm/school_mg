@@ -1,6 +1,5 @@
 const { prisma } = require("@/utils/prisma");
 import bcrypt from "bcryptjs";
-import { serialize } from "cookie";
 import jwt from "jsonwebtoken";
 import { NextResponse } from "next/server";
 
@@ -99,17 +98,24 @@ export async function POST(req) {
       },
     });
 
-    response.headers.set(
-      "Set-Cookie",
-      serialize("staffToken", token, {
-        httpOnly: true,
-        secure: process.env.NODE_ENV === "production",
-        sameSite: "strict",
-        path: "/",
-        maxAge: 7 * 24 * 60 * 60, // 7 days
-      })
-    );
-
+    // response.headers.set(
+    //   "Set-Cookie",
+    //   serialize("staffToken", token, {
+    //     httpOnly: true,
+    //     secure: process.env.NODE_ENV === "production",
+    //     sameSite: "strict",
+    //     path: "/",
+    //     maxAge: 7 * 24 * 60 * 60, // 7 days
+    //   })
+    // );
+    response.cookies.set("staffToken", token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "strict",
+      path: "/",
+      maxAge: 7 * 24 * 60 * 60,
+    });
+    console.log("🔹 Authentication cookie set");    
     console.log("✅ Login successful!");
     return response;
   } catch (error) {

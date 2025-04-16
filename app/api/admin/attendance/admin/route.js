@@ -1,7 +1,6 @@
 
 const { prisma } = require("@/utils/prisma");
 
-import jwt from "jsonwebtoken";
 import { NextResponse } from "next/server";
 
 export async function GET(req) {
@@ -31,20 +30,13 @@ export async function GET(req) {
 
 export async function POST(req) {
   try {
-    const token = req.cookies.get("staffToken")?.value;
-    if (!token) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
+    const userID = req.headers.get("x-user-id");
 
-    // 🔹 Decode staffToken to get staffID
-    let decoded;
-    try {
-      decoded = jwt.verify(token, process.env.JWT_SECRET);
-    } catch (error) {
-      return NextResponse.json({ error: "Invalid token" }, { status: 403 });
-    }
+  
 
-    const userID = decoded.staffID;
+    if (!userID) {
+      return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
+    }
     const body = await req.json();
     const { attendance } = body;
 

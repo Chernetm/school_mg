@@ -1,4 +1,4 @@
-const {prisma} = require('@/utils/prisma');
+const { prisma } = require('@/utils/prisma');
 import { getStaffIDFromToken } from '@/utils/auth';
 
 export async function POST(req) {
@@ -13,12 +13,17 @@ export async function POST(req) {
 
     const borrow = await prisma.bookBorrow.create({
       data: {
-        studentId: studentId,
-        bookId: parseInt(bookId),
         borrowDate: new Date(borrowDate),
         returnDate: new Date(returnDate),
-        staffID,
-
+        staff: {
+          connect: { staffID: staffID }, // Connect the existing staff using staffID
+        },
+        book: {
+          connect: { id: parseInt(bookId) }, // Connect the existing book using bookId
+        },
+        student: {
+          connect: { id: parseInt(studentId) }, // Connect the existing student using studentId
+        },
       },
     });
 

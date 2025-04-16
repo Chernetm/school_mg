@@ -1,4 +1,3 @@
-import { getStaffIDFromToken } from '@/utils/auth';
 import { prisma } from '@/utils/prisma';
 import bcrypt from 'bcryptjs';
 import { NextResponse } from 'next/server';
@@ -7,15 +6,14 @@ export async function POST(req) {
   try {
     const body = await req.json();
     const { email, phoneNumber, password, currentPassword } = body;
-
-    const staffId = await getStaffIDFromToken(); // make sure this returns a Promise if async
+     const staffID = req.headers.get("x-user-id");
 
     if (!currentPassword) {
       return NextResponse.json({ message: 'Current password is required.' }, { status: 400 });
     }
 
     const existingStaff = await prisma.staff.findUnique({
-      where: { id: staffId },
+      where: { staffID: Number(staffID) },
     });
 
     if (!existingStaff) {

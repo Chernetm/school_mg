@@ -1,17 +1,15 @@
 'use client';
 
 import Link from "next/link";
-import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import {
-    FaChartBar, FaChevronDown, FaClipboardCheck,
-    FaExclamationTriangle, FaFileAlt, FaMoneyBillWave, FaPenAlt
+  FaChartBar, FaChevronDown, FaClipboardCheck,
+  FaExclamationTriangle, FaFileAlt, FaMoneyBillWave, FaPenAlt
 } from "react-icons/fa";
 
 export default function StudentLayout({ children }) {
-  const [isStudent, setIsStudent] = useState(null);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-  const router = useRouter();
+
 
   const services = [
     { name: "Results", href: "/student/result", icon: <FaChartBar className="mr-2" /> },
@@ -23,40 +21,7 @@ export default function StudentLayout({ children }) {
     { name: "Exam Result", href: "/exam/result", icon: <FaClipboardCheck className="mr-2" /> },
   ];
 
-  useEffect(() => {
-    const checkAuth = async () => {
-      try {
-        const res = await fetch("/api/auth/student", { credentials: "include" });
-        const data = await res.json();
 
-        if (data.authenticated) {
-          setIsStudent(true);
-        } else {
-          setIsStudent(false);
-        }
-      } catch {
-        setIsStudent(false);
-      }
-    };
-
-    checkAuth();
-  }, []);
-
-  useEffect(() => {
-    if (isStudent === false) {
-      router.push("/");
-    }
-  }, [isStudent, router]);
-
-  if (isStudent === null) {
-    return (
-      <div className="min-h-screen flex items-center justify-center text-gray-600 text-lg">
-        Checking student access...
-      </div>
-    );
-  }
-
-  if (isStudent) {
     return (
       <div className="min-h-screen bg-blue-50">
         {/* Top Navigation Bar */}
@@ -97,6 +62,3 @@ export default function StudentLayout({ children }) {
       </div>
     );
   }
-
-  return null;
-}

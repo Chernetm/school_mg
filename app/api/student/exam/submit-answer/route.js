@@ -1,15 +1,15 @@
 const { prisma } = require("@/utils/prisma");
-import { getStudentIDFromExamToken } from "@/utils/auth";
 import { NextResponse } from "next/server";
 
 const SECRET_KEY = process.env.JWT_SECRET || "supersecretkey";
 
 export async function POST(req) {
   try {
-    
-     const studentID=  await getStudentIDFromExamToken()
-     console.log("Extracted studentID:", studentID);
+    const studentID = req.headers.get("x-student-id");
 
+    if (!studentID) {
+      return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
+    }
     if (!studentID) {
       return NextResponse.json({ message: "Unauthorized: Student ID missing" }, { status: 401 });
     }

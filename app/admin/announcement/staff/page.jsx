@@ -1,4 +1,5 @@
-import AnnouncementsPage from "@/components/AnnouncementPage";
+import AnnouncementsPage from "@/components/AnnouncementStaffPage";
+
 
 export default function YearPage() {
   return (

@@ -1,36 +1,91 @@
+// import { adminAuthMiddleware } from "./middleware/adminAuthMiddleware";
+// import { headAuthMiddleware } from "./middleware/headAuthMiddleware";
+// import { registrarAuthMiddleware } from "./middleware/registrarAuthMiddleware";
+// import { studentAuthMiddleware } from "./middleware/studentAuthMiddleware";
+// import { teacherAuthMiddleware } from "./middleware/teacherAuthMiddleware";
+
+
+// export async function middleware(req) {
+//   console.log("✅ Middleware triggered for:", req.nextUrl.pathname);
+
+//   // ✅ Student Authentication Middleware (Only for `/api/exam/`)
+//   if (req.nextUrl.pathname.startsWith("/api/student/")) {
+//     return studentAuthMiddleware(req);
+//   }
+
+//   // ✅ IP Restriction Middleware (Only for `/admin/`)
+//   if (req.nextUrl.pathname.startsWith("/api/admin/")) {
+//     return adminAuthMiddleware(req);
+//   }
+//   if (req.nextUrl.pathname.startsWith("/api/head") || req.nextUrl.pathname.startsWith("/head")) {
+//     return headAuthMiddleware(req);
+//   }
+  
+//   // if (req.nextUrl.pathname.startsWith("/api/head/")) {
+//   //   return headAuthMiddleware(req);
+//   // }
+//   if (req.nextUrl.pathname.startsWith("/api/registrar/")) {
+//     return registrarAuthMiddleware(req);
+//   }
+//   if (req.nextUrl.pathname.startsWith("/api/teacher/")) {
+//     return teacherAuthMiddleware(req);
+//   }
+//   // ✅ Default logging middleware
+//   // return loggingMiddleware(req);    
+// }
+
+// // ✅ Match only specific routes
+// export const config = {
+//   matcher: ["/api/student/:path*", "/api/admin/:path*", "/api/head/:path*", "/api/registrar/:path*", "/api/teacher/:path*","/login/:path*",],
+// };
 import { adminAuthMiddleware } from "./middleware/adminAuthMiddleware";
 import { headAuthMiddleware } from "./middleware/headAuthMiddleware";
 import { registrarAuthMiddleware } from "./middleware/registrarAuthMiddleware";
 import { studentAuthMiddleware } from "./middleware/studentAuthMiddleware";
 import { teacherAuthMiddleware } from "./middleware/teacherAuthMiddleware";
 
-
 export async function middleware(req) {
   console.log("✅ Middleware triggered for:", req.nextUrl.pathname);
 
   // ✅ Student Authentication Middleware (Only for `/api/exam/`)
-  if (req.nextUrl.pathname.startsWith("/api/student/")) {
+  if (req.nextUrl.pathname.startsWith("/api/student/") || req.nextUrl.pathname.startsWith("/student")) {
     return studentAuthMiddleware(req);
   }
 
-  // ✅ IP Restriction Middleware (Only for `/admin/`)
-  if (req.nextUrl.pathname.startsWith("/api/admin/")) {
+  // ✅ Admin Authentication Middleware (Only for `/api/admin/`)
+  if (req.nextUrl.pathname.startsWith("/api/admin") || req.nextUrl.pathname.startsWith("/admin")) {
     return adminAuthMiddleware(req);
   }
-  if (req.nextUrl.pathname.startsWith("/api/head/")) {
+  // ✅ Head Authentication Middleware (for both page and API routes)
+  if (req.nextUrl.pathname.startsWith("/api/head") || req.nextUrl.pathname.startsWith("/head")) {
     return headAuthMiddleware(req);
   }
-  if (req.nextUrl.pathname.startsWith("/api/registrar/")) {
+
+  // ✅ Registrar Authentication Middleware (for `/api/registrar/`)
+  if (req.nextUrl.pathname.startsWith("/api/registrar/") || req.nextUrl.pathname.startsWith("/registrar")) {
     return registrarAuthMiddleware(req);
   }
+
+  // ✅ Teacher Authentication Middleware (for `/api/teacher/`)
   if (req.nextUrl.pathname.startsWith("/api/teacher/")) {
     return teacherAuthMiddleware(req);
   }
+
   // ✅ Default logging middleware
   // return loggingMiddleware(req);    
 }
 
-// ✅ Match only specific routes
 export const config = {
-  matcher: ["/api/student/:path*", "/api/admin/:path*", "/api/head/:path*", "/api/registrar/:path*", "/api/teacher/:path*"],
+  matcher: [
+    "/api/student/:path*",
+    "/api/admin/:path*",
+    "/api/head/:path*",
+    "/api/registrar/:path*",
+    "/api/teacher/:path*",
+    "/head/:path*", // ✅ Add this to match /head page routes
+    "/admin/:path*", // ✅ Add this to match /admin page routes
+    "/registrar/:path*", // ✅ Add this to match /registrar page routes
+    "/teacher/:path*",  // ✅ Add this to match /teacher page routes
+    "/student/:path*", 
+  ],
 };

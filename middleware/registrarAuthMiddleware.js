@@ -1,39 +1,37 @@
+
 import { jwtVerify } from "jose";
 import { NextResponse } from "next/server";
 
-// Edge-compatible secret
-const SECRET = new TextEncoder().encode(process.env.JWT_SECRET || "super-secret");
+const SECRET_KEY = new TextEncoder().encode(process.env.JWT_SECRET || "your_secret_key");
 
 export async function registrarAuthMiddleware(req) {
-  console.log("🔐 Registrar Authentication Middleware");
-
   const token = req.cookies.get("staffToken")?.value;
+  console.log("🔐 Head Role Authentication", token);
 
   if (!token) {
-    console.warn("❌ No staff token found");
-    return NextResponse.redirect(new URL("/admin/login", req.url));
+    console.warn("❌ No token found");
+    return NextResponse.redirect(new URL("/login/admin", req.url));
   }
 
   try {
-    const { payload } = await jwtVerify(token, SECRET);
+    const { payload } = await jwtVerify(token, SECRET_KEY);
 
-    // ✅ Check if role is 'registrar'
-    if (payload.role !== "registrar") {
-      console.warn("❌ Access denied. Not a registrar:", payload.role);
+    if (payload.role !== "head") {
+      console.warn("❌ Not a head user");
       return NextResponse.redirect(new URL("/unauthorized", req.url));
     }
 
-    console.log("✅ Registrar Authenticated:", payload.username || payload.staffID);
+    console.log("✅ Head Authenticated:", payload.username);
 
     const requestHeaders = new Headers(req.headers);
-    if (payload.staffID) requestHeaders.set("x-registrar-id", payload.staffID);
-    requestHeaders.set("x-registrar-role", "registrar");
+    requestHeaders.set("x-user-id", payload.staffID || "");
+    requestHeaders.set("x-user-role", "registrar");
 
     return NextResponse.next({
       request: { headers: requestHeaders },
     });
-  } catch (error) {
-    console.error("❌ Registrar token verification failed:", error.message);
-    return NextResponse.redirect(new URL("/admin/login", req.url));
+  } catch (err) {
+    console.error("❌ Token verification failed:", err);
+    return NextResponse.redirect(new URL("/login/admin", req.url));
   }
 }

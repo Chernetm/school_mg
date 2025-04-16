@@ -1,21 +1,17 @@
 const{prisma}=require("@/utils/prisma")
-import { parse } from "cookie";
-import jwt from "jsonwebtoken";
 
 import { NextResponse } from "next/server";
 
 export async function GET(req) {
   try {
-    const cookies = parse(req.headers.get("cookie") || "");
-    const token = cookies.studentToken;
-
-    if (!token) {
-        return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
+    const studentID = req.headers.get("x-student-id");
+    
+    if (!studentID) {
+          return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
     }
 
-    const decoded = jwt.verify(token, process.env.JWT_SECRET);
     const student = await prisma.student.findUnique({
-      where: { studentID: decoded.studentID },
+      where: { studentID },
       select: {
         studentID: true,
         firstName: true,

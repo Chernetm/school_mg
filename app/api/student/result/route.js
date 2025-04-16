@@ -1,9 +1,11 @@
 const { prisma } = require("@/utils/prisma");
-import { getStudentIDFromToken } from "@/utils/auth";
 import { NextResponse } from "next/server";
 
 export async function GET(req) {
-  const studentID = await getStudentIDFromToken();
+  const studentID = req.headers.get("x-student-id");
+  if (!studentID) {
+        return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
+      }
   try {
     const registrations = await prisma.registration.findMany({
       where: { studentID },

@@ -1,63 +1,27 @@
-'use client';
-
+// This is the layout for the teacher dashboard
+// This is the layout for the teacher dashboard
 import { Navbar } from "@/components/Navbar/NavBar";
-import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { UserProvider } from "@/context/UserContext";
+import { headers } from "next/headers";
 
-export default function TeacherLayout({ children }) {
-  const [isAdmin, setIsAdmin] = useState(null);
-  const router = useRouter();
+export default async function TeacherLayout({ children }) {
+  const headersList = await headers(); // ✅ await here
 
-  useEffect(() => {
-    const checkAuth = async () => {
-      try {
-        const res = await fetch("/api/auth", { credentials: "include" });
-        const data = await res.json();
+  const user = {
+    role: headersList.get("x-user-role"),
+    // You can grab other header values similarly
+  };
 
-        if (data.authenticated && data.user?.role === "teacher") {
-          setIsAdmin(true);
-        } else {
-          setIsAdmin(false);
-        }
-      } catch {
-        setIsAdmin(false);
-      }
-    };
-
-    checkAuth();
-  }, []);
-
-  useEffect(() => {
-    if (isAdmin === false) {
-      router.push("/");
-    }
-  }, [isAdmin, router]);
-
-  if (isAdmin === null) {
-    return (
-      <div className="min-h-screen flex items-center justify-center text-gray-600 text-lg">
-        Checking admin access...
-      </div>
-    );
-  }
-
-  if (isAdmin === true) {
-    return (
+  return (
+    <UserProvider initialUser={user}>
       <div className="min-h-screen flex flex-col bg-gray-100">
-        {/* Navbar on top */}
         <Navbar />
-
-        {/* Main content area (full width, responsive) */}
-        <div className="flex-1 flex flex-col md:flex-row mt-16">
-          {/* Optional Sidebar - hidden on small screens */}
-          {/* <aside className="hidden md:block w-64 bg-white border-r shadow-sm"></aside> */}
-
-          {/* Main Content (takes full width) */}
-          <main className="flex-1 p-4">{children}</main>
+        <div className="flex flex-1">
+          <main className="flex-1 ml-64 p-6 mt-10">
+            {children}
+          </main>
         </div>
       </div>
-    );
-  }
-
-  return null;
+    </UserProvider>
+  );
 }

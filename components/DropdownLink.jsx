@@ -76,7 +76,7 @@ const dropdowns = [
         icon: <MdCampaign/>,
         roles: ["head"],
         items: [
-          { href: "/head/announcement", label: "Announcement Post" },
+          { href: "/head/announcement/post", label: "Announcement Post" },
         ],
       },
     {

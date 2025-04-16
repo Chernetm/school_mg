@@ -4,33 +4,25 @@ import { NextResponse } from "next/server";
 const SECRET_KEY = new TextEncoder().encode(process.env.JWT_SECRET || "your_secret_key");
 
 export async function teacherAuthMiddleware(req) {
-  const token = req.cookies.get("staffToken")?.value;
+  const token = req.cookies.get("examToken")?.value;
   console.log("🔐 Head Role Authentication", token);
 
   if (!token) {
     console.warn("❌ No token found");
-    return NextResponse.redirect(new URL("/login/admin", req.url));
+    return NextResponse.redirect(new URL("/login/exam", req.url));
   }
 
   try {
     const { payload } = await jwtVerify(token, SECRET_KEY);
 
-    if (payload.role !== "teacher") {
-      console.warn("❌ Not a teacher user");
-      return NextResponse.redirect(new URL("/unauthorized", req.url));
-    }
-
-    console.log("✅ Head Authenticated:", payload.username);
-
     const requestHeaders = new Headers(req.headers);
-    requestHeaders.set("x-user-id", payload.staffID || "");
-    requestHeaders.set("x-user-role", "teacher");
-
+    requestHeaders.set("x-student-id", payload.staffID);
+   
     return NextResponse.next({
       request: { headers: requestHeaders },
     });
   } catch (err) {
     console.error("❌ Token verification failed:", err);
-    return NextResponse.redirect(new URL("/login", req.url));
+    return NextResponse.redirect(new URL("/login/exam", req.url));
   }
 }

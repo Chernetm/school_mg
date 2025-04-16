@@ -1,11 +1,12 @@
 
 const {prisma}=require("@/utils/prisma")
-import { getStudentIDFromToken } from "@/utils/auth";
 import { NextResponse } from "next/server";
 
-export async function GET() {
+export async function GET(req) {
   try {
-    const studentID = await getStudentIDFromToken();
+    const studentID = req.headers.get("x-student-id");
+
+  
 
     if (!studentID) {
       return NextResponse.json({ message: "Unauthorized" }, { status: 401 });

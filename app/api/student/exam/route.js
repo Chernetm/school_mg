@@ -1,5 +1,4 @@
 const {prisma}=require("@/utils/prisma")
-import { getStudentIDFromExamToken } from "@/utils/auth";
 import { NextResponse } from "next/server";
 
 export async function GET(req) {
@@ -8,10 +7,7 @@ export async function GET(req) {
     const { searchParams } = new URL(req.url);
     const title = searchParams.get("title");
 
-    const studentID = await getStudentIDFromExamToken();
-    console.log(studentID, "studentID")
-   
-    
+    const studentID = req.headers.get("x-student-id");
     if (!studentID) {
       return NextResponse.json({ message: "Exam login is required" }, { status: 400 });
     }

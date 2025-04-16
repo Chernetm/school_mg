@@ -1,26 +1,46 @@
-import { parse } from "cookie";
+import { jwtVerify } from "jose";
 import { NextResponse } from "next/server";
 
-// Middleware for student authentication
+const SECRET_KEY = new TextEncoder().encode(process.env.JWT_SECRET || "your_secret_key");
+
 export async function studentAuthMiddleware(req) {
-  console.log("🔐 Simple Student Auth Check");
+  const token = req.cookies.get("studentToken")?.value;
+  console.log("🔐 Student Auth Middleware - Token:", token);
 
-  // Parse cookies from the request headers
-  const cookies = parse(req.headers.get("cookie") || "");
-  const token = cookies.studentToken;
-
-  console.log("Token:", token);
-
-  // ✅ Check if the student token exists
   if (!token) {
-    console.warn("❌ No student token found");
-    // Redirect to login page if token is missing
+    console.warn("❌ No token found - redirecting to login");
     return NextResponse.redirect(new URL("/login", req.url));
   }
 
-  // ✅ Token exists, allow access
-  console.log("✅ Token exists, allow access");
+  try {
+    const { payload } = await jwtVerify(token, SECRET_KEY);
+    const { studentID, role = "student" } = payload;
 
-  // Proceed to the next handler
-  return NextResponse.next();
+    // ✅ Only allow access to student-specific routes
+    const pathname = new URL(req.url).pathname;
+    if (!studentID || role !== "student") {
+      console.warn("❌ Invalid student token or role");
+      return NextResponse.redirect(new URL("/unauthorized", req.url));
+    }
+
+    const requestHeaders = new Headers(req.headers);
+    requestHeaders.set("x-student-id", studentID);
+    requestHeaders.set("x-student-role", role);
+    requestHeaders.set("x-student-firstName", payload.firstName || "");
+    requestHeaders.set("x-student-middleName", payload.middleName || "");
+    requestHeaders.set("x-student-email", payload.email || "");
+    requestHeaders.set("x-student-grade", payload.grade || "");
+    requestHeaders.set("x-student-year", payload.year || "");
+    requestHeaders.set("x-student-section", payload.section || "");
+
+    console.log("✅ Student Authenticated:", studentID);
+
+    return NextResponse.next({
+      request: { headers: requestHeaders },
+    });
+
+  } catch (err) {
+    console.error("❌ Token verification failed:", err);
+    return NextResponse.redirect(new URL("/login", req.url));
+  }
 }

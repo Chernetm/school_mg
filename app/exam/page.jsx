@@ -1,42 +1,16 @@
 "use client";
 
-import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { io } from "socket.io-client";
 
 export default function StudentExam() {
-  const router = useRouter();
+
   const [examTitle, setExamTitle] = useState("");
   const [exam, setExam] = useState(null);
   const [answers, setAnswers] = useState({});
   const [currentIndex, setCurrentIndex] = useState(0);
   const [timeLeft, setTimeLeft] = useState(null);
   const [studentId, setStudentId] = useState(null);
-
-  const [isAuthorized, setIsAuthorized] = useState(false);
-  const [authChecked, setAuthChecked] = useState(false);
-  useEffect(() => {
-    const checkAuthorization = async () => {
-      try {
-        const res = await fetch("/api/auth/exam", { credentials: "include" });
-        const data = await res.json();
-
-        if (data.authenticated || data.authorized === true) {
-          setIsAuthorized(true);
-        } else {
-          setIsAuthorized(false);
-          router.push("/login/exam"); // 🔁 Redirect if not authorized
-        }
-      } catch (err) {
-        console.error("Authorization check failed", err);
-        router.push("/login/exam"); // 🔁 Fallback redirect
-      } finally {
-        setAuthChecked(true);
-      }
-    };
-
-    checkAuthorization();
-  }, [router]);
   const fetchExam = async () => {
     try {
       const res = await fetch(`/api/student/exam?title=${examTitle}`);
@@ -142,13 +116,6 @@ export default function StudentExam() {
     return `${minutes}:${secs < 10 ? "0" : ""}${secs}`;
   };
 
-  if (!authChecked) {
-    return <div className="text-center mt-10 text-gray-600">Checking authorization...</div>;
-  }
-
-  if (!isAuthorized) {
-    return <div className="text-center mt-10 text-red-500">You are not authorized to access this exam.</div>;
-  }
   return (
     <div className="min-h-screen w-full p-4 md:p-6 bg-gray-100 flex items-center justify-center">
       <div className="w-full max-w-screen-md">

@@ -1,50 +1,10 @@
 "use client";
 
 import { StudentServicesDropdown } from "@/components/StudentServicesDropdown";
-import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
 
 export default function StudentLayout({ children }) {
-  const [isStudent, setIsStudent] = useState(null);
-  const router = useRouter();
+  
 
-  useEffect(() => {
-    const checkAuth = async () => {
-      try {
-        const res = await fetch("/api/auth/student", { credentials: "include" });
-        const data = await res.json();
-
-        if (data.authenticated) {
-          setIsStudent(true);
-        } else {
-          setIsStudent(false);
-        }
-      } catch {
-        setIsStudent(false);
-      }
-    };
-
-    checkAuth();
-  }, []);
-
-  useEffect(() => {
-    if (isStudent === false) {
-      router.push("/");
-    }
-  }, [isStudent, router]);
-
-  if (isStudent === null) {
-    return (
-      <div className="min-h-screen flex items-center justify-center text-gray-600 text-lg">
-        Checking student access...
-      </div>
-    );
-  }
-
-  if (isStudent === true) {
-   
-    
-  }
   return (
     <div className="relative">
   
@@ -63,6 +23,4 @@ export default function StudentLayout({ children }) {
       </div>
     </div>
   );
-  
-  return null;
 }
