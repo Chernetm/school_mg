@@ -38,8 +38,9 @@
 // export const config = {
 //   matcher: ["/api/student/:path*", "/api/admin/:path*", "/api/head/:path*", "/api/registrar/:path*", "/api/teacher/:path*","/login/:path*",],
 // };
-// import { adminAuthMiddleware } from "./middleware/adminAuthMiddleware";
-// import { headAuthMiddleware } from "./middleware/headAuthMiddleware";
+
+import { adminAuthMiddleware } from "./middleware/adminAuthMiddleware";
+import { headAuthMiddleware } from "./middleware/headAuthMiddleware";
 import { registrarAuthMiddleware } from "./middleware/registrarAuthMiddleware";
 import { studentAuthMiddleware } from "./middleware/studentAuthMiddleware";
 import { teacherAuthMiddleware } from "./middleware/teacherAuthMiddleware";
@@ -53,13 +54,13 @@ export async function middleware(req) {
   }
 
   // ✅ Admin Authentication Middleware (Only for `/api/admin/`)
-  // if (req.nextUrl.pathname.startsWith("/api/admin") || req.nextUrl.pathname.startsWith("/admin")) {
-  //   return adminAuthMiddleware(req);
-  // }
+  if (req.nextUrl.pathname.startsWith("/api/admin") || req.nextUrl.pathname.startsWith("/admin")) {
+    return adminAuthMiddleware(req);
+   }
   // // ✅ Head Authentication Middleware (for both page and API routes)
-  // if (req.nextUrl.pathname.startsWith("/api/head") || req.nextUrl.pathname.startsWith("/head")) {
-  //   return headAuthMiddleware(req);
-  // }
+   if (req.nextUrl.pathname.startsWith("/api/head") || req.nextUrl.pathname.startsWith("/head")) {
+   return headAuthMiddleware(req);
+   }
 
   // ✅ Registrar Authentication Middleware (for `/api/registrar/`)
   if (req.nextUrl.pathname.startsWith("/api/registrar/") || req.nextUrl.pathname.startsWith("/registrar")) {
