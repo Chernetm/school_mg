@@ -132,6 +132,7 @@ export default async function headLayout({ children }) {
   const user = {
     role: headersList.get("x-user-role"),
     image: headersList.get("x-user-image"),
+    staffID:headersList.get("x-user-id"),
     // You can grab other header values similarly
   };
 

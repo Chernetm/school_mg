@@ -6,7 +6,6 @@ export default function AnnouncementsList({ announcements, currentStaffID }) {
         <AnnouncementCard
           key={announcement.id}
           announcement={announcement}
-          currentStaffID={currentStaffID}
         />
       ))}
     </div>

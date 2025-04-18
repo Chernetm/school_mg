@@ -1,23 +1,12 @@
 
 const { prisma } = require("@/utils/prisma");
-import jwt from "jsonwebtoken";
 import { NextResponse } from "next/server";
 
 export async function POST(req) {
   try {
-    const token = req.cookies.get("staffToken")?.value;
-    if (!token) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
+   
 
-    let decoded;
-    try {
-      decoded = jwt.verify(token, process.env.JWT_SECRET);
-    } catch (error) {
-      return NextResponse.json({ error: "Invalid token" }, { status: 403 });
-    }
-
-    const staffID = decoded.staffID;
+    const staffID = req.headers.get("x-user-id");
     console.log(staffID);
 
     const body = await req.json();
@@ -28,7 +17,7 @@ export async function POST(req) {
     }
 
     const currentSemester = await prisma.semester.findUnique({
-      where: { semester: Number(semester), status: "active" },
+      where: { name: Number(semester), status: "active" },
       select: { id: true, semester: true },
     });
 
@@ -50,18 +39,18 @@ export async function POST(req) {
         registrationID_subject_semesterID: {
           registrationID: registration.registrationID,
           subject,
-          semesterID: currentSemester.id, // ✅ use ID, not semester number
+          semester: currentSemester.name, // ✅ use ID, not semester number
         },
       },
       update: {
         score: Number(result),
         staffID,
-        semesterID: currentSemester.id, // ✅ correct foreign key
+        semester: currentSemester.name, // ✅ correct foreign key
       },
       create: {
         registrationID: registration.registrationID,
         staffID,
-        semesterID: currentSemester.id, // ✅ correct foreign key
+        semester: currentSemester.name, // ✅ correct foreign key
         subject,
         score: Number(result),
       },

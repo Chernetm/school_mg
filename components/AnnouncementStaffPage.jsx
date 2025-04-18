@@ -5,9 +5,8 @@ import { useEffect, useState } from 'react';
 
 export default function AnnouncementsPage() {
   const [announcements, setAnnouncements] = useState([]);
-  const [currentStaffID, setCurrentStaffID] = useState(null);
   const [loading, setLoading] = useState(true);
-  console.log('Current Staff ID:', currentStaffID); 
+  
 
   // Fetch announcements and auth info
   useEffect(() => {
@@ -19,18 +18,6 @@ export default function AnnouncementsPage() {
         setAnnouncements(announcementsData);
 
         // Fetch current staff info
-        const authRes = await fetch('/api/auth', {
-          method: 'GET',
-          headers: {
-            'Content-Type': 'application/json',
-           
-          },
-        });
-        const authData = await authRes.json();
-
-        if (authData?.authenticated && authData.user?.staffID) {
-          setCurrentStaffID(authData.user.staffID);
-        }
       } catch (err) {
         console.error('Error loading data:', err);
       } finally {
@@ -49,7 +36,7 @@ export default function AnnouncementsPage() {
 
   return (
     <div className="space-y-4 py-6 px-4">
-      <AnnouncementList announcements={announcements} currentStaffID={currentStaffID} />
+      <AnnouncementList announcements={announcements}/>
     </div>
   );
 }

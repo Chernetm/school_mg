@@ -1,9 +1,9 @@
 const { prisma } = require('@/utils/prisma'); 
 
-export async function GET() {
+export async function GET(req) {
   try {
-    const { searchParams } = new URL(req.url);
-    const gradeId = searchParams.get('gradeId');
+    
+    const gradeId=req.headers.get("x-student-grade");
     const announcements = await prisma.announcement.findMany({
       where: {
         audience: 'GRADE', gradeId: Number(gradeId) ,

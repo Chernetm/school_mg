@@ -30,13 +30,6 @@ export async function POST(req) {
         role: true,
         image:true,
         email:true,
-        assignment: {
-          select: {
-            gradeId: true,
-            sectionId: true,
-            subjectId: true,
-          },
-        },
       },
     });
 
@@ -57,15 +50,6 @@ export async function POST(req) {
       console.log("❌ Password mismatch");
       return NextResponse.json({ message: "Invalid credentials" }, { status: 401 });
     }
-
-    // 🔹 Extract assigned subjects, grades, and sections
-    const assignments = staff.assignment.map((a) => ({
-      gradeId: a.gradeId,
-      sectionId: a.sectionId,
-      subjectId: a.subjectId,
-    }));
-    console.log("🔹 Assignments retrieved:", assignments);
-
     // 🔹 Generate JWT token
     console.log("🔹 Generating JWT token...");
     const token = jwt.sign(
@@ -94,7 +78,7 @@ export async function POST(req) {
         staffID:staff.staffID,
         username: staff.username,
         role: staff.role,
-        assignments,
+        
       },
     });
 

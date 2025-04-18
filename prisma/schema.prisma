@@ -53,14 +53,15 @@ enum GradeSectionEnum {
   active
   inactive
 }
+model Semester {
+  id            Int             @id @default(autoincrement())
+  name          Int             @unique
+  status        SemesterEnum
 
-model Semester{
-  id       Int @id @default(autoincrement())
-  semester  Int @unique
-  status     SemesterEnum
-  resultDetail ResultDetail[]
-  resultSummary ResultSummary[]
+  resultDetails   ResultDetail[]   @relation("DetailSemester")
+  resultSummaries ResultSummary[] @relation("SummarySemester")
 }
+
 
 
 
@@ -200,36 +201,37 @@ model Registration {
 
 
 model ResultDetail {
-  id             Int         @id @default(autoincrement())
-  registrationID Int         // Foreign key to Registration
-  staffID        Int         // Staff who uploaded this result
-  semesterID     Int
-  subject        String      // e.g., "English", "Physics"
+  id             Int          @id @default(autoincrement())
+  registrationID Int
+  staffID        Int
+  semester       Int          // references Semester.name
+  subject        String
   score          Int?
+
   registration   Registration @relation(fields: [registrationID], references: [registrationID])
   staff          Staff        @relation(fields: [staffID], references: [staffID])
-  semester       Semester     @relation(fields: [semesterID], references: [semester])
+  semesterRef    Semester     @relation("DetailSemester", fields: [semester], references: [name])
 
-  @@unique([registrationID, subject, semesterID], name: "registrationID_subject_semesterID") // ✅ Add name
+  @@unique([registrationID, subject, semester], name: "registrationID_subject_semester")
 }
-
 
 model ResultSummary {
   id             Int          @id @default(autoincrement())
-  
   registrationID Int
-  semesterID     Int
+  semester       Int          // references Semester.name
   average        Float
-  passStatus     passEnum     // e.g. "Passed" or "Failed"
+  passStatus     passEnum
   rank           Int
-
   createdAt      DateTime     @default(now())
   updatedAt      DateTime     @updatedAt
-  registration   Registration @relation(fields: [registrationID], references: [registrationID])
-  semester       Semester     @relation(fields: [semesterID], references: [id])
 
-  @@unique([registrationID, semesterID]) // ensure one result summary per student per semester
+  registration   Registration @relation(fields: [registrationID], references: [registrationID])
+  semesterRef    Semester     @relation("SummarySemester", fields: [semester], references: [name])
+
+  @@unique([registrationID, semester])
 }
+
+
 enum passEnum {
   passed
   failed

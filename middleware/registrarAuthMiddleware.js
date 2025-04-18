@@ -16,7 +16,7 @@ export async function registrarAuthMiddleware(req) {
   try {
     const { payload } = await jwtVerify(token, SECRET_KEY);
 
-    if (payload.role !== "head") {
+    if (payload.role !== "registrar") {
       console.warn("❌ Not a head user");
       return NextResponse.redirect(new URL("/unauthorized", req.url));
     }

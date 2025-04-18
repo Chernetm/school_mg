@@ -3,22 +3,39 @@ import { NextResponse } from "next/server";
 
 
 // Register a new semester
+
 export async function POST(req) {
   try {
     const { semester, status } = await req.json();
-    console.log(semester,status)
-    
+    console.log("Incoming semester:", semester, "Status:", status);
+
     if (!semester || !status) {
       return NextResponse.json({ error: "Semester and status are required" }, { status: 400 });
     }
 
+    // 🛡 Convert semester to number if it's a string
+    const name = Number(semester);
+    if (isNaN(name)) {
+      return NextResponse.json({ error: "Semester must be a number" }, { status: 400 });
+    }
+
+    // 🔍 Check for duplicate
+    const existing = await prisma.semester.findUnique({ where: { name } });
+    if (existing) {
+      return NextResponse.json({ error: "Semester already exists" }, { status: 409 });
+    }
+
     const newSemester = await prisma.semester.create({
-      data: { semester, status }
+      data: {
+        name,
+        status,
+      },
     });
 
     return NextResponse.json(newSemester, { status: 201 });
   } catch (error) {
-    return NextResponse.json({ error: "Error creating semester" }, { status: 500 });
+    console.error("Semester creation error:", error); // ✅ Full error log
+    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
 }
 

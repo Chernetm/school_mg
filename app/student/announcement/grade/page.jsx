@@ -6,16 +6,18 @@ import { useEffect, useState } from 'react';
 export default function AnnouncementsPage() {
   const [announcements, setAnnouncements] = useState([]);
   const [loading, setLoading] = useState(true);
-   
+  
 
   // Fetch announcements and auth info
   useEffect(() => {
     const fetchData = async () => {
       try {
         // Fetch announcements
-        const annRes = await fetch('/api/announcement/get/all');
+        const annRes = await fetch('/api/announcement/get/grade');
         const announcementsData = await annRes.json();
         setAnnouncements(announcementsData);
+
+        // Fetch current staff info
       } catch (err) {
         console.error('Error loading data:', err);
       } finally {

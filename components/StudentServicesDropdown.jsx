@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useState } from "react";
 import {
+  FaBell,
   FaChartBar, FaChevronDown, FaClipboardCheck,
   FaExclamationTriangle, FaFileAlt,
   FaFileInvoiceDollar, FaMoneyCheckAlt,
@@ -12,6 +13,7 @@ import {
 
 const services = [
   { name: "Profile", href: "/student/profile", icon: <FaUser className="mr-3" /> },
+  { name: "Announcement", href: "/student/announcement", icon: <FaBell className="mr-3" /> },
   { name: "Results", href: "/student/result", icon: <FaChartBar className="mr-3" /> },
   { name: "Registration", href: "/student/registration", icon: <FaFileAlt className="mr-3" /> },
   { name: "Attendance", href: "/student/attendance", icon: <FaClipboardCheck className="mr-3" /> },

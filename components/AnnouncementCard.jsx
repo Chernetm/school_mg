@@ -1,10 +1,13 @@
+import { useUser } from '@/context/UserContext';
 import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
 import { FiCalendar, FiTrash2 } from 'react-icons/fi';
 
 dayjs.extend(relativeTime);
 
-export default function AnnouncementCard({ announcement, currentStaffID }) {
+export default function AnnouncementCard({ announcement}) {
+ const{user}=useUser();
+  const { currentStaffID } = user?.staffID || null;
   const { id, title, message, createdAt, staff, staffID } = announcement;
 
   const handleDelete = async () => {
@@ -46,7 +49,7 @@ export default function AnnouncementCard({ announcement, currentStaffID }) {
         </div>
 
         {/* Delete button (if owner) */}
-        {currentStaffID === staffID && (
+        {Number(currentStaffID) === staffID && (
           <button
             onClick={handleDelete}
             className="ml-auto text-red-500 hover:text-red-700"
