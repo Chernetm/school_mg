@@ -27,7 +27,7 @@ import { NextResponse } from "next/server";
         description: examDescription,
         startTime: new Date(startTime),
         endTime: new Date(endTime),
-        createdBy: staffID,
+        createdBy: parseInt(staffID),
       },
     });
 
