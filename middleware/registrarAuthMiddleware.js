@@ -26,6 +26,7 @@ export async function registrarAuthMiddleware(req) {
     const requestHeaders = new Headers(req.headers);
     requestHeaders.set("x-user-id", payload.staffID || "");
     requestHeaders.set("x-user-role", "registrar");
+    requestHeaders.set("x-user-image", payload.image || "");
 
     return NextResponse.next({
       request: { headers: requestHeaders },

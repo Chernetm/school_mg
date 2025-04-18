@@ -25,7 +25,7 @@ export async function teacherAuthMiddleware(req) {
     const requestHeaders = new Headers(req.headers);
     requestHeaders.set("x-user-id", payload.staffID || "");
     requestHeaders.set("x-user-role", "teacher");
-    requestHeaders.set("x-user-assignment",payload.assignments || "")
+    requestHeaders.set("x-user-image", payload.image || "");
 
     return NextResponse.next({
       request: { headers: requestHeaders },
