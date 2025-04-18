@@ -1,4 +1,4 @@
-import { prisma } from "@/utils/prisma";
+const { prisma } = require("@/utils/prisma");
 
 export async function GET() {
   try {
