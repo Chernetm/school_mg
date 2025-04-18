@@ -140,6 +140,8 @@ export default function StudentResults() {
                     <td className="border p-2 text-left">Average</td>
                     <td className="border p-2">{semesters["1"]?.average ?? "-"}</td>
                     <td className="border p-2">{semesters["2"]?.average ?? "-"}</td>
+                    
+
                     <td className="border p-2">
                       {semesters["1"]?.average && semesters["2"]?.average
                         ? (
@@ -154,7 +156,8 @@ export default function StudentResults() {
                     <td className="border p-2 text-left">Rank</td>
                     <td className="border p-2">{semesters["1"]?.rank ?? "-"}</td>
                     <td className="border p-2">{semesters["2"]?.rank ?? "-"}</td>
-                    <td className="border p-2">-</td>
+                    <td className="border p-2">{semesters["3"]?.rank ?? "-"}</td>
+                    
                   </tr>
                   <tr>
                     <td className="border p-2 text-left">Status</td>
@@ -176,7 +179,16 @@ export default function StudentResults() {
                     >
                       {semesters["2"]?.passStatus ?? "-"}
                     </td>
-                    <td className="border p-2">-</td>
+                    <td
+                      className={`border p-2 ${
+                        semesters["3"]?.passStatus === "Passed"
+                          ? "text-green-600"
+                          : "text-red-500"
+                      }`}
+                    >
+                      {semesters["3"]?.passStatus ?? "-"}
+                    </td>
+          
                   </tr>
                 </tfoot>
               </table>

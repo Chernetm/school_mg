@@ -70,6 +70,7 @@ export async function headAuthMiddleware(req) {
     const requestHeaders = new Headers(req.headers);
     requestHeaders.set("x-user-id", payload.staffID || "");
     requestHeaders.set("x-user-role", "head");
+    requestHeaders.set("x-user-image", payload.image || "");
 
     return NextResponse.next({
       request: { headers: requestHeaders },

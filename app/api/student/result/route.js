@@ -58,7 +58,7 @@ export async function GET(req) {
         resultsByGrade[gradeKey][semName].passStatus = summary.passStatus;
       }
     }
-
+    console.log(resultsByGrade);
     return NextResponse.json({ results: resultsByGrade }, { status: 200 });
   } catch (err) {
     console.error("Error fetching student result:", err);

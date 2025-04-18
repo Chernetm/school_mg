@@ -1,25 +1,9 @@
 import Link from "next/link";
-import { useEffect, useState } from "react";
 
 const classNames = (...classes) => classes.filter(Boolean).join(" ");
 
-const NavLinks = () => {
-  const [role, setRole] = useState(null);
-
-  useEffect(() => {
-    const fetchRole = async () => {
-      try {
-        const res = await fetch("/api/auth");
-        const data = await res.json();
-        setRole(data?.user.role || null);
-      } catch (error) {
-        console.error("Error fetching role:", error);
-        setRole(null);
-      }
-    };
-
-    fetchRole();
-  }, []);
+const NavLinks = ({role}) => {
+  
 
   const baseLinks = [
     { name: "Home", href: "/", current: true },

@@ -1,48 +1,76 @@
-const {prisma}=require("@/utils/prisma")
-import { NextResponse } from "next/server";
-// Adjust the import based on your project
-
+const {prisma} = require('@/utils/prisma');
+import { NextResponse } from 'next/server';
 export async function POST(req) {
   try {
-    const { newGrade, newSection, newYear } = await req.json();
-    const studentID = req.headers.get("x-student-id");
-    const grade = req.headers.get("x-student-grade");
+    const body = await req.json();
+    const { year, grade, stream } = body;
     
-    if (!studentID) {
-          return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
-      }
+    const studentID = req.headers.get("x-student-id");
 
-    // ✅ 1️⃣ Get latest registration record for the student
-    const latestRegistration = await prisma.registration.findFirst({
-      where: { studentID },
-      orderBy: { year: "desc" }, // Get the most recent year
+    if (!studentID) {
+      return NextResponse.json({ message: 'studentID is required' }, { status: 400 });
+    }
+
+    
+    const latestYear = await prisma.year.findFirst({
+      where: { status: "active" },
+      orderBy: { year: "desc" },
+      select: { year: true },
     });
 
-    // ❌ If no record found, student is not registered
+    if (!latestYear || latestYear.year !== year) {
+      return NextResponse.json({ message: 'Invalid academic year' }, { status: 400 });
+    }
+
+    // Step 1: Get latest registration
+    const latestRegistration = await prisma.registration.findFirst({
+      where: { studentID },
+      orderBy: { year: 'desc' },
+    });
+
     if (!latestRegistration) {
-      return NextResponse.json({ message: "Student not found" }, { status: 404 });
+      return NextResponse.json({ message: 'No registration found for student' }, { status: 404 });
     }
 
-    // ✅ 2️⃣ Check if the student passed or failed
-    if (latestRegistration.passStatus !== "passed") {
-      return NextResponse.json({ message: "Student failed, cannot register for the next grade" }, { status: 403 });
-    }
+    const currentGrade = latestRegistration.grade;
 
-    // ✅ 3️⃣ Register student for the next grade
-    const newRegistration = await prisma.registration.create({
-      data: {
-        studentID,
-        grade: newGrade,
-        section: newSection,
-        year: newYear,
-        isActive: true,
-        status: "undetermined", // Set default status
+    // Step 2: Get semester 3 result summary
+    const semester3Summary = await prisma.resultSummary.findFirst({
+      where: {
+        registrationID: latestRegistration.registrationID,
+        semesterID: 6,
       },
     });
 
-    return NextResponse.json({ message: "Student registered for next grade", registration: newRegistration }, { status: 201 });
+    if (!semester3Summary || semester3Summary.average <= 50) {
+      return NextResponse.json({ message: 'Student is not eligible for promotion' }, { status: 400 });
+    }
+
+    // Step 3: Register for next grade
+    const nextGrade = currentGrade + 1;
+    if(!nextGrade===grade){
+      return NextResponse.json({ message: 'Invalid grade for registration' }, { status: 400 });
+    }
+   
+    const newStream= stream || latestRegistration.stream;
+
+    const newRegistration = await prisma.registration.create({
+      data: {
+        studentID,
+        grade: nextGrade,
+        year,
+        stream: newStream,
+        isActive: true,
+      },
+    });
+
+    return NextResponse.json({
+      message: 'Student registered for next grade',
+      registration: newRegistration,
+    }, { status: 201 });
+
   } catch (error) {
-    console.error("Error processing registration:", error);
-    return NextResponse.json({ message: "Internal Server Error" }, { status: 500 });
+    console.error(error);
+    return NextResponse.json({ message: 'Server error', error: error.message }, { status: 500 });
   }
 }

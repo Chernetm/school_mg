@@ -120,6 +120,7 @@ model Staff {
   exam            Exam []
   announcement   Announcement[]
   bookBorrow      BookBorrow[]
+  disciplineRecord DisciplineRecord[]
 }
 
 
@@ -179,6 +180,7 @@ model Student {
   studentSession   StudentSession[]
   bookBorrow       BookBorrow[]
   fee              Fee[]
+  disciplineRecord  DisciplineRecord[]
 }
 
 
@@ -358,6 +360,16 @@ model Fee {
 }
 
 
+model DisciplineRecord {
+  id         Int      @id @default(autoincrement())
+  studentID  String
+  staffID    Int
+  message    String
+  createdAt  DateTime @default(now())
+
+  student    Student  @relation(fields: [studentID], references: [studentID])
+  staff      Staff    @relation(fields: [staffID], references: [staffID])
+}
 
 
 enum MonthEnum {

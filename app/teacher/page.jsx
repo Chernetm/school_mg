@@ -93,7 +93,7 @@ export default function StaffAssignments() {
   return (
     <div className="p-6 bg-gray-100 min-h-screen">
       <h1 className="text-2xl font-bold mb-6 text-gray-800">Staff Assignments</h1>
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div className="flex flex-wrap gap-4 text-gray-600">
         {assignments.length > 0 ? (
           assignments.map((assignment) => (
             <div
@@ -101,6 +101,7 @@ export default function StaffAssignments() {
               className="bg-white p-4 rounded-lg shadow-md hover:shadow-lg cursor-pointer"
               onClick={() => handleCardClick(assignment)}
             >
+              
               <h2 className="text-xl font-semibold text-gray-800">{assignment.subject}</h2>
               <p className="text-gray-600">Grade: {assignment.grade}</p>
               <p className="text-gray-600">Section: {assignment.section}</p>

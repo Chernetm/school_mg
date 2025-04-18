@@ -5,7 +5,7 @@ const SECRET_KEY = new TextEncoder().encode(process.env.JWT_SECRET || "your_secr
 
 export async function teacherAuthMiddleware(req) {
   const token = req.cookies.get("staffToken")?.value;
-  console.log("🔐 Head Role Authentication", token);
+  console.log("🔐 Teacher Role Authentication", token);
 
   if (!token) {
     console.warn("❌ No token found");
@@ -20,11 +20,12 @@ export async function teacherAuthMiddleware(req) {
       return NextResponse.redirect(new URL("/unauthorized", req.url));
     }
 
-    console.log("✅ Head Authenticated:", payload.username);
+    console.log("✅ Teacher Authenticated:", payload.username);
 
     const requestHeaders = new Headers(req.headers);
     requestHeaders.set("x-user-id", payload.staffID || "");
     requestHeaders.set("x-user-role", "teacher");
+    requestHeaders.set("x-user-assignment",payload.assignments || "")
 
     return NextResponse.next({
       request: { headers: requestHeaders },

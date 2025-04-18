@@ -4,16 +4,21 @@ import Link from "next/link";
 import { useState } from "react";
 import {
   FaChartBar, FaChevronDown, FaClipboardCheck,
-  FaExclamationTriangle, FaFileAlt, FaMoneyBillWave, FaPenAlt
+  FaExclamationTriangle, FaFileAlt,
+  FaFileInvoiceDollar, FaMoneyCheckAlt,
+  FaPenAlt,
+  FaUser
 } from "react-icons/fa";
 
 const services = [
+  { name: "Profile", href: "/student/profile", icon: <FaUser className="mr-3" /> },
   { name: "Results", href: "/student/result", icon: <FaChartBar className="mr-3" /> },
   { name: "Registration", href: "/student/registration", icon: <FaFileAlt className="mr-3" /> },
   { name: "Attendance", href: "/student/attendance", icon: <FaClipboardCheck className="mr-3" /> },
-  { name: "Fees", href: "/fee", icon: <FaMoneyBillWave className="mr-3" /> },
+  { name: "Fee Record", href: "/student/fee", icon: <FaFileInvoiceDollar className="mr-3" /> },
+  { name: "Pay Fee", href: "/fee", icon: <FaMoneyCheckAlt className="mr-3" /> },
   { name: "Discipline", href: "/student/discipline", icon: <FaExclamationTriangle className="mr-3" /> },
-  { name: "Exam", href: "/student/exam", icon: <FaPenAlt className="mr-3" /> },
+  { name: "Exam", href: "/login/exam", icon: <FaPenAlt className="mr-3" /> },
   { name: "Exam Result", href: "/student/exam/result", icon: <FaClipboardCheck className="mr-3" /> },
 ];
 

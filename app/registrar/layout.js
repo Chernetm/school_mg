@@ -9,6 +9,7 @@ export default async function AdminLayout({ children }) {
 
   const user = {
     role: headersList.get("x-user-role"),
+    image: headersList.get("x-user-image"),
     // You can grab other header values similarly
   };
 

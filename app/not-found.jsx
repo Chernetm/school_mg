@@ -30,3 +30,39 @@ export default function NotFound() {
     );
   }
   
+
+
+
+  
+  // import Navbar from "@/components/Navbar/NavBar";
+  // import { StudentServicesDropdown } from "@/components/StudentServicesDropdown";
+  
+  // // layout.jsx or AdminLayout.jsx
+  // import { UserProvider } from "@/context/UserContext";
+  // import { headers } from "next/headers";
+  
+  // export default async function studentLayout({ children }) {
+  //   const headersList = await headers(); // ✅ await here
+  
+  //   const user = {
+  //     role: headersList.get("x-student-role"),
+  //     // You can grab other header values similarly
+  //   };
+  //   console.log("User role from headers:", user.role);
+  
+  //   return (
+  //     <UserProvider initialUser={user}>
+  //       <div className="min-h-screen flex flex-col bg-gray-100">
+  //   <Navbar />
+  //   <div className="flex flex-1">
+  //     <StudentServicesDropdown className="w-64 bg-white shadow-md" />
+  
+  //     <main className="flex-1 p-6 mt-10">
+  //       {children}
+  //     </main>
+  //   </div>
+  // </div>
+  
+  //     </UserProvider>
+  //   );
+  // }
