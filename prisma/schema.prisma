@@ -435,7 +435,7 @@ enum passStatusEnum{
 enum RoleEnum{
   head
   admin
-  register
+  registrar
   staff
   teacher
 }

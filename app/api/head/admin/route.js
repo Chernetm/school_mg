@@ -1,5 +1,6 @@
 
 const { prisma } = require("@/utils/prisma");
+const { NextResponse } = require("next/server");
 // pages/api/staff/index.js
 
 export async function GET() {
@@ -12,32 +13,28 @@ export async function GET() {
     }
 }
 
+
 export async function PUT(req) {
   try {
-    const body = await req.json(); // Extract JSON data
+    const body = await req.json();
     const { staffID, status, role } = body;
-    console.log(body, "Req body");
+    console.log("Request Body:", body);
 
-    if (!staffID || !status || !role) {
-      return new Response(JSON.stringify({ message: "All fields are required" }), {
-        status: 400,
-        headers: { "Content-Type": "application/json" },
-      });
+    if (staffID == null || !status || !role) {
+      return NextResponse.json({ message: "All fields are required" }, { status: 400 });
     }
 
     const updatedStaff = await prisma.staff.update({
-      where: { staffID:Number(staffID) },
+      where: { staffID: Number(staffID) }, // Change to `staffID` if that's your primary key
       data: { status, role },
     });
 
-    return new Response(JSON.stringify(updatedStaff), {
-      status: 200,
-      headers: { "Content-Type": "application/json" },
-    });
+    return NextResponse.json(updatedStaff, { status: 200 });
   } catch (error) {
-    return new Response(JSON.stringify({ message: "Error updating staff", error }), {
-      status: 500,
-      headers: { "Content-Type": "application/json" },
-    });
+    console.error("Error updating staff:", error);
+    return NextResponse.json({
+      message: "Error updating staff",
+      error: error.message || error
+    }, { status: 500 });
   }
 }
