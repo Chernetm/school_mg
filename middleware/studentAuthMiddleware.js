@@ -28,7 +28,7 @@ export async function studentAuthMiddleware(req) {
     requestHeaders.set("x-student-firstName", payload.firstName || "");
     requestHeaders.set("x-student-middleName", payload.middleName || "");
     requestHeaders.set("x-student-email", payload.email || "");
-    requestHeaders.set("x-student-grade", payload.grade || "");
+    requestHeaders.set("x-student-grade", payload.grade )
     requestHeaders.set("x-student-year", payload.year || "");
     requestHeaders.set("x-student-section", payload.section || "");
 

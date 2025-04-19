@@ -37,8 +37,9 @@ export default async function studentLayout({ children }) {
 
   const user = {
     role: headersList.get("x-student-role"),
+    grade: headersList.get("x-student-grade"),
   };
-
+  console.log("studentGrade",user.grade)
   return (
     <UserProvider initialUser={user}>
       <div className="min-h-screen flex flex-col bg-gray-100">

@@ -71,7 +71,7 @@ export default function SemesterManager() {
         {semesters.length > 0 ? (
           semesters.map((sem) => (
             <li key={sem.id} className="p-2 border rounded flex justify-between items-center bg-white text-gray-800">
-              <span>Semester {sem.semester} - {sem.status}</span>
+              <span>Semester {sem.name} - {sem.status}</span>
               <div>
                 <button onClick={() => handleStatusUpdate(sem.id, sem.status === "active" ? "inactive" : "active")} className="bg-yellow-500 text-white px-3 py-1 rounded mr-2">Toggle Status</button>
                 <button onClick={() => handleDelete(sem.id)} className="bg-red-500 text-white px-3 py-1 rounded">Delete</button>

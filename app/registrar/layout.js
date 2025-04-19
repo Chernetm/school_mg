@@ -4,12 +4,14 @@ import { Navbar } from "@/components/Navbar/NavBar";
 import { UserProvider } from "@/context/UserContext";
 import { headers } from "next/headers";
 
-export default async function AdminLayout({ children }) {
+export default async function registrarLayout({ children }) {
   const headersList = await headers(); // ✅ await here
 
   const user = {
     role: headersList.get("x-user-role"),
     image: headersList.get("x-user-image"),
+    staffID:headersList.get("x-user-id"),
+    
     // You can grab other header values similarly
   };
 

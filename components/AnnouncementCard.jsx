@@ -7,7 +7,7 @@ dayjs.extend(relativeTime);
 
 export default function AnnouncementCard({ announcement}) {
  const{user}=useUser();
-  const { currentStaffID } = user?.staffID || null;
+  const currentStaffID  = user?.staffID || null;
   const { id, title, message, createdAt, staff, staffID } = announcement;
 
   const handleDelete = async () => {

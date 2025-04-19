@@ -4,60 +4,79 @@ import { NextResponse } from "next/server";
 
 export async function POST(req) {
   try {
-   
-
-    const staffID = req.headers.get("x-user-id");
-    console.log(staffID);
-
-    const body = await req.json();
-    const { studentID, semester, subject, result, grade, section } = body;
-
-    if (!studentID || !semester || !subject || !grade || !section || result === undefined) {
-      return NextResponse.json({ error: "Missing required fields" }, { status: 400 });
+    const staffID = Number(req.headers.get("x-user-id"));
+    if (!staffID) {
+      return NextResponse.json({ error: "Missing staff ID" }, { status: 401 });
     }
 
-    const currentSemester = await prisma.semester.findUnique({
-      where: { name: Number(semester), status: "active" },
-      select: { id: true, semester: true },
-    });
+    const body = await req.json();
+    const { results } = body;
 
+    if (!Array.isArray(results) || results.length === 0) {
+      return NextResponse.json({ error: "Results array is required" }, { status: 400 });
+    }
+
+    const semesterName = results[0].semester;
+    console.log(semesterName);
+
+    const currentSemester = await prisma.semester.findUnique({
+      where: { name: semesterName , status: "active" },
+      select: { id: true, name: true },
+    });
+    console.log(currentSemester, "The current semester");
     if (!currentSemester) {
       return NextResponse.json({ error: "Semester not found" }, { status: 407 });
     }
 
-    const registration = await prisma.registration.findFirst({
-      where: { studentID, grade: Number(grade), section },
-      select: { registrationID: true },
-    });
+    const uploadedResults = [];
 
-    if (!registration) {
-      return NextResponse.json({ error: "Student registration not found" }, { status: 404 });
+    for (const resultItem of results) {
+      const { studentID, subject, result, grade, section } = resultItem;
+
+      if (!studentID || !subject || result === undefined || !grade || !section) {
+        continue; // Skip invalid entries instead of failing the entire batch
+      }
+
+      const registration = await prisma.registration.findFirst({
+        where: {
+          studentID,
+          grade,
+          section,
+        },
+        select: { registrationID: true },
+      });
+
+      if (!registration) {
+        console.warn(`No registration found for student ${studentID}`);
+        continue;
+      }
+
+      const stored = await prisma.resultDetail.upsert({
+        where: {
+          registrationID_subject_semester: {
+            registrationID: registration.registrationID,
+            subject,
+            semester: currentSemester.name, // ✅ Use correct foreign key field
+          },
+        },
+        update: {
+          score: Number(result),
+          staffID,
+        },
+        create: {
+          registrationID: registration.registrationID,
+          staffID,
+          semester: currentSemester.name, // ✅ Use semester ID here
+          subject,
+          score: Number(result),
+        },
+      });
+
+      uploadedResults.push(stored);
     }
 
-    const storedResult = await prisma.resultDetail.upsert({
-      where: {
-        registrationID_subject_semesterID: {
-          registrationID: registration.registrationID,
-          subject,
-          semester: currentSemester.name, // ✅ use ID, not semester number
-        },
-      },
-      update: {
-        score: Number(result),
-        staffID,
-        semester: currentSemester.name, // ✅ correct foreign key
-      },
-      create: {
-        registrationID: registration.registrationID,
-        staffID,
-        semester: currentSemester.name, // ✅ correct foreign key
-        subject,
-        score: Number(result),
-      },
-    });
-
     return NextResponse.json(
-      { message: "Result uploaded successfully!", result: storedResult },
+      { message: "Results uploaded successfully", uploadedCount: uploadedResults.length },
       { status: 201 }
     );
   } catch (error) {

@@ -1,3 +1,4 @@
+
 "use client";
 import { useEffect, useState } from "react";
 
@@ -10,14 +11,13 @@ export default function StaffAssignments() {
   const [semester, setSemester] = useState("1");
   const [attendance, setAttendance] = useState({});
   const [results, setResults] = useState({});
-  
+  const [feedback, setFeedback] = useState(null);
+
   useEffect(() => {
     fetch("/api/teacher/assigned-section")
       .then((res) => res.json())
       .then((data) => setAssignments(data.assignments || []));
   }, []);
-
-  
 
   const fetchStudents = async (grade, section) => {
     try {
@@ -43,6 +43,7 @@ export default function StaffAssignments() {
     setSelectedAssignment(null);
     setAttendance({});
     setResults({});
+    setFeedback(null);
   };
 
   const setStudentAttendance = (id, status) => {
@@ -53,13 +54,23 @@ export default function StaffAssignments() {
   };
 
   const submitAttendance = async () => {
-    
-    await fetch("/api/teacher/attendance", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ attendance}),
-    });
-    alert("Attendance submitted successfully!");
+    try {
+      const res = await fetch("/api/teacher/attendance", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ attendance }),
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        throw new Error(data.error || "Failed to submit attendance");
+      }
+
+      setFeedback({ type: "success", message: "Attendance submitted successfully!" });
+    } catch (error) {
+      setFeedback({ type: "error", message: "Failed to submit attendance: " + error.message });
+    }
   };
 
   const handleResultChange = (studentID, value) => {
@@ -68,27 +79,37 @@ export default function StaffAssignments() {
       [studentID]: value,
     }));
   };
-  
-  const handleUpload = async (studentID) => {
-    const result = results[studentID];
-    if (!result || !selectedAssignment) return;
-  
-    await fetch("/api/teacher/resultUpload", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        studentID,
-        semester,
-        subject: selectedAssignment.subject,
-        grade: selectedAssignment.grade,
-        section: selectedAssignment.section,
-        result,
-      }),
-    });
-  
-    alert(`Result uploaded for Student ID: ${studentID}`);
+
+  const handleUploadAll = async () => {
+    if (!selectedAssignment) return;
+
+    const payload = Object.entries(results).map(([studentID, result]) => ({
+      studentID: studentID,
+      result: Number(result),
+      semester:Number(semester),
+      subject: selectedAssignment.subject,
+      grade: Number(selectedAssignment.grade),
+      section: selectedAssignment.section,
+    }));
+
+    try {
+      const res = await fetch("/api/teacher/resultUpload", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ results: payload }),
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        throw new Error(data.error || "Failed to upload results");
+      }
+
+      setFeedback({ type: "success", message: "Results uploaded successfully!" });
+    } catch (error) {
+      setFeedback({ type: "error", message: "Failed to upload results: " + error.message });
+    }
   };
-  
 
   return (
     <div className="p-6 bg-gray-100 min-h-screen">
@@ -101,7 +122,6 @@ export default function StaffAssignments() {
               className="bg-white p-4 rounded-lg shadow-md hover:shadow-lg cursor-pointer"
               onClick={() => handleCardClick(assignment)}
             >
-              
               <h2 className="text-xl font-semibold text-gray-800">{assignment.subject}</h2>
               <p className="text-gray-600">Grade: {assignment.grade}</p>
               <p className="text-gray-600">Section: {assignment.section}</p>
@@ -113,7 +133,7 @@ export default function StaffAssignments() {
       </div>
 
       {showModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center">
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
           <div className="bg-white p-8 rounded-lg shadow-lg w-full max-w-2xl">
             <h2 className="text-2xl font-semibold mb-4 text-gray-900">
               {selectedAssignment.subject} - {mode === "attendance" ? "Attendance" : "Result Upload"}
@@ -154,6 +174,16 @@ export default function StaffAssignments() {
               </div>
             )}
 
+            {feedback && (
+              <div
+                className={`mb-4 p-3 rounded text-sm ${
+                  feedback.type === "success" ? "bg-green-100 text-green-800" : "bg-red-100 text-red-800"
+                }`}
+              >
+                {feedback.message}
+              </div>
+            )}
+
             <div className="overflow-x-auto">
               <table className="w-full border-collapse border border-gray-300">
                 <thead>
@@ -169,7 +199,6 @@ export default function StaffAssignments() {
                     ) : (
                       <>
                         <th className="border border-gray-300 px-4 py-2 text-center">Result</th>
-                        <th className="border border-gray-300 px-4 py-2 text-center">Upload</th>
                       </>
                     )}
                   </tr>
@@ -177,7 +206,7 @@ export default function StaffAssignments() {
                 <tbody>
                   {students.length === 0 ? (
                     <tr>
-                      <td colSpan={mode === "attendance" ? 5 : 4} className="text-center border border-gray-300 px-4 py-2 text-gray-600">
+                      <td colSpan={mode === "attendance" ? 5 : 3} className="text-center border border-gray-300 px-4 py-2 text-gray-600">
                         No students found.
                       </td>
                     </tr>
@@ -211,15 +240,11 @@ export default function StaffAssignments() {
                         ) : (
                           <>
                             <td className="border border-gray-300 px-4 py-2">
-                              <input type="number" className="w-full p-1 border rounded" onChange={(e) => handleResultChange(student.studentID, e.target.value)} />
-                            </td>
-                            <td className="border border-gray-300 px-4 py-2 text-center">
-                              <button
-                                onClick={() => handleUpload(student.studentID)}
-                                className="bg-green-500 text-white px-4 py-2 rounded"
-                              >
-                                Upload
-                              </button>
+                              <input
+                                type="number"
+                                className="w-full p-1 border rounded"
+                                onChange={(e) => handleResultChange(student.studentID, e.target.value)}
+                              />
                             </td>
                           </>
                         )}
@@ -233,6 +258,11 @@ export default function StaffAssignments() {
             {mode === "attendance" && (
               <button onClick={submitAttendance} className="mt-4 w-full bg-blue-500 text-white font-bold py-2 rounded-md hover:bg-blue-600">Submit Attendance</button>
             )}
+
+            {mode === "result" && (
+              <button onClick={handleUploadAll} className="mt-4 w-full bg-green-500 text-white font-bold py-2 rounded-md hover:bg-green-600">Upload All Results</button>
+            )}
+
             <button onClick={closeModal} className="mt-4 w-full bg-gray-500 text-white font-bold py-2 rounded-md hover:bg-gray-700">Close</button>
           </div>
         </div>
@@ -240,3 +270,4 @@ export default function StaffAssignments() {
     </div>
   );
 }
+

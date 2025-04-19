@@ -95,11 +95,10 @@ export default function StudentResults() {
   return (
     <div className="space-y-10 px-4 sm:px-6 md:px-10 py-6 mt-10">
       {Object.entries(results).map(([grade, semesters]) => {
-        // Collect all subjects from both semesters
-        const allSubjects = new Set([
-          ...Object.keys(semesters["1"]?.scores || {}),
-          ...Object.keys(semesters["2"]?.scores || {}),
-        ]);
+        const semesterKeys = Object.keys(semesters);
+        const allSubjects = new Set(
+          Object.values(semesters).flatMap((s) => Object.keys(s?.scores || {}))
+        );
 
         return (
           <div key={grade} className="border p-4 rounded-xl shadow-md bg-white">
@@ -110,26 +109,38 @@ export default function StudentResults() {
                 <thead className="bg-blue-50 text-gray-700">
                   <tr>
                     <th className="border p-2">Subject</th>
-                    <th className="border p-2">Semester 1</th>
-                    <th className="border p-2">Semester 2</th>
+                    {semesterKeys.map((semKey) => (
+                      <th key={semKey} className="border p-2">{semKey}</th>
+                    ))}
                     <th className="border p-2">Average</th>
                   </tr>
                 </thead>
                 <tbody className="text-center text-gray-700">
                   {[...allSubjects].map((subject, idx) => {
-                    const s1 = semesters["1"]?.scores?.[subject] ?? "-";
-                    const s2 = semesters["2"]?.scores?.[subject] ?? "-";
+                    const subjectScores = semesterKeys.map(
+                      (semKey) => semesters[semKey]?.scores?.[subject]
+                    );
 
-                    let avg = "-";
-                    if (!isNaN(s1) && !isNaN(s2)) {
-                      avg = ((Number(s1) + Number(s2)) / 2).toFixed(1);
-                    }
+                    const validScores = subjectScores.filter(
+                      (s) => typeof s === "number"
+                    );
+
+                    const avg =
+                      validScores.length > 0
+                        ? (
+                            validScores.reduce((sum, val) => sum + val, 0) /
+                            validScores.length
+                          ).toFixed(1)
+                        : "-";
 
                     return (
                       <tr key={idx}>
                         <td className="border p-2 text-left">{subject}</td>
-                        <td className="border p-2">{s1}</td>
-                        <td className="border p-2">{s2}</td>
+                        {subjectScores.map((score, i) => (
+                          <td key={i} className="border p-2">
+                            {score ?? "-"}
+                          </td>
+                        ))}
                         <td className="border p-2">{avg}</td>
                       </tr>
                     );
@@ -138,57 +149,51 @@ export default function StudentResults() {
                 <tfoot className="bg-gray-100 font-medium text-gray-800">
                   <tr>
                     <td className="border p-2 text-left">Average</td>
-                    <td className="border p-2">{semesters["1"]?.average ?? "-"}</td>
-                    <td className="border p-2">{semesters["2"]?.average ?? "-"}</td>
-                    
-
+                    {semesterKeys.map((semKey) => (
+                      <td key={semKey} className="border p-2">
+                        {semesters[semKey]?.average ?? "-"}
+                      </td>
+                    ))}
                     <td className="border p-2">
-                      {semesters["1"]?.average && semesters["2"]?.average
-                        ? (
-                            (Number(semesters["1"].average) +
-                              Number(semesters["2"].average)) /
-                            2
-                          ).toFixed(1)
-                        : "-"}
+                      {
+                        (() => {
+                          const averages = semesterKeys
+                            .map((k) => semesters[k]?.average)
+                            .filter((a) => typeof a === "number");
+                          return averages.length
+                            ? (
+                                averages.reduce((sum, a) => sum + a, 0) /
+                                averages.length
+                              ).toFixed(1)
+                            : "-";
+                        })()
+                      }
                     </td>
                   </tr>
                   <tr>
                     <td className="border p-2 text-left">Rank</td>
-                    <td className="border p-2">{semesters["1"]?.rank ?? "-"}</td>
-                    <td className="border p-2">{semesters["2"]?.rank ?? "-"}</td>
-                    <td className="border p-2">{semesters["3"]?.rank ?? "-"}</td>
-                    
+                    {semesterKeys.map((semKey) => (
+                      <td key={semKey} className="border p-2">
+                        {semesters[semKey]?.rank ?? "-"}
+                      </td>
+                    ))}
+                    <td className="border p-2">-</td>
                   </tr>
                   <tr>
                     <td className="border p-2 text-left">Status</td>
-                    <td
-                      className={`border p-2 ${
-                        semesters["1"]?.passStatus === "Passed"
-                          ? "text-green-600"
-                          : "text-red-500"
-                      }`}
-                    >
-                      {semesters["1"]?.passStatus ?? "-"}
-                    </td>
-                    <td
-                      className={`border p-2 ${
-                        semesters["2"]?.passStatus === "Passed"
-                          ? "text-green-600"
-                          : "text-red-500"
-                      }`}
-                    >
-                      {semesters["2"]?.passStatus ?? "-"}
-                    </td>
-                    <td
-                      className={`border p-2 ${
-                        semesters["3"]?.passStatus === "Passed"
-                          ? "text-green-600"
-                          : "text-red-500"
-                      }`}
-                    >
-                      {semesters["3"]?.passStatus ?? "-"}
-                    </td>
-          
+                    {semesterKeys.map((semKey) => (
+                      <td
+                        key={semKey}
+                        className={`border p-2 ${
+                          semesters[semKey]?.passStatus === "Passed"
+                            ? "text-green-600 font-semibold"
+                            : "text-red-500 font-semibold"
+                        }`}
+                      >
+                        {semesters[semKey]?.passStatus ?? "-"}
+                      </td>
+                    ))}
+                    <td className="border p-2">-</td>
                   </tr>
                 </tfoot>
               </table>
@@ -199,3 +204,4 @@ export default function StudentResults() {
     </div>
   );
 }
+

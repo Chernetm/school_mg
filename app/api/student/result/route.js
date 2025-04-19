@@ -76,26 +76,45 @@ export async function GET(req) {
   }
 
   try {
+    // const registrations = await prisma.registration.findMany({
+    //   where: { studentID },
+    //   include: {
+    //     resultDetail: {
+    //       include: {
+    //         semester: {
+    //           select: { name: true },
+    //         },
+    //       },
+    //     },
+    //     resultSummary: {
+    //       include: {
+    //         semester: {
+    //           select: { name: true },
+    //         },
+    //       },
+    //     },
+    //   },
+    // });
     const registrations = await prisma.registration.findMany({
       where: { studentID },
       include: {
         resultDetail: {
           include: {
-            semester: {
+            semesterRef: {
               select: { name: true },
             },
           },
         },
         resultSummary: {
           include: {
-            semester: {
+            semesterRef: {
               select: { name: true },
             },
           },
         },
       },
     });
-
+     console.log(registrations, "Fetched registrations with results");    
     const resultsByGrade = {};
 
     for (const reg of registrations) {

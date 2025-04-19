@@ -1,15 +1,27 @@
-const { prisma } = require('@/utils/prisma'); 
+import { prisma } from "@/utils/prisma";
+import jwt from "jsonwebtoken";
+import { cookies } from "next/headers";
+
+const SECRET_KEY = process.env.JWT_SECRET || "your_secret_key";
 
 export async function GET(req) {
   try {
-    
-    const gradeId=req.headers.get("x-student-grade");
+    const token = cookies().get("studentToken")?.value;
+
+    if (!token) {
+      return Response.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
+    const decoded = jwt.verify(token, SECRET_KEY);
+    const gradeId = decoded.grade;
+
     const announcements = await prisma.announcement.findMany({
       where: {
-        audience: 'GRADE', gradeId: Number(gradeId) ,
+        audience: "GRADE",
+        gradeId: Number(gradeId),
       },
       orderBy: {
-        createdAt: 'desc',
+        createdAt: "desc",
       },
       include: {
         staff: {
@@ -24,7 +36,7 @@ export async function GET(req) {
 
     return Response.json(announcements, { status: 200 });
   } catch (error) {
-    console.error('Fetch ALL Announcements Error:', error);
-    return Response.json({ error: 'Failed to fetch announcements' }, { status: 500 });
+    console.error("Fetch Announcements Error:", error);
+    return Response.json({ error: "Failed to fetch announcements" }, { status: 500 });
   }
 }

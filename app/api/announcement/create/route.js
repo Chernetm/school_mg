@@ -1,6 +1,5 @@
 
 const {prisma} = require('@/utils/prisma');
-import { getStaffIDFromToken } from '@/utils/auth';
 
 export async function POST(req) {
   try {
@@ -9,8 +8,11 @@ export async function POST(req) {
     
     console.log(title, message, audience, gradeId)
     console.log(gradeId)
-    const staffID = await getStaffIDFromToken();
+    const staffID = req.headers.get('x-user-id');
     console.log(staffID,"THe staff token")
+    if (!staffID) {
+      return Response.json({ error: 'Unauthorized' }, { status: 401 });
+    }
 
     if (!title || !message || !audience) {
       return Response.json({ error: 'Missing required fields.' }, { status: 400 });
