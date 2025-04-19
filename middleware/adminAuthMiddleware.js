@@ -6,7 +6,7 @@ const SECRET_KEY = new TextEncoder().encode(process.env.JWT_SECRET || "your_secr
 
 export async function adminAuthMiddleware(req) {
   const token = req.cookies.get("staffToken")?.value;
-  console.log("🔐 Head Role Authentication", token);
+  
 
   if (!token) {
     console.warn("❌ No token found");

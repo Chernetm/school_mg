@@ -62,8 +62,8 @@ export async function POST(req) {
         email: staff.email,
         
         firstName: staff.firstName,
+        middleName: staff.middleName,
         lastName: staff.lastName,
-        assignments,
       },
       process.env.JWT_SECRET,
       { expiresIn: "7d" }

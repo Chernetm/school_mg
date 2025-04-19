@@ -5,8 +5,7 @@ const SECRET_KEY = new TextEncoder().encode(process.env.JWT_SECRET || "your_secr
 
 export async function studentAuthMiddleware(req) {
   const token = req.cookies.get("studentToken")?.value;
-  console.log("🔐 Student Auth Middleware - Token:", token);
-
+  
   if (!token) {
     console.warn("❌ No token found - redirecting to login");
     return NextResponse.redirect(new URL("/login", req.url));

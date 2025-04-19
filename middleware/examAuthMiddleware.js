@@ -3,10 +3,9 @@ import { NextResponse } from "next/server";
 
 const SECRET_KEY = new TextEncoder().encode(process.env.JWT_SECRET || "your_secret_key");
 
-export async function teacherAuthMiddleware(req) {
+export async function examAuthMiddleware(req) {
   const token = req.cookies.get("examToken")?.value;
-  console.log("🔐 Head Role Authentication", token);
-
+  
   if (!token) {
     console.warn("❌ No token found");
     return NextResponse.redirect(new URL("/login/exam", req.url));

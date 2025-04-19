@@ -5,8 +5,7 @@ const SECRET_KEY = new TextEncoder().encode(process.env.JWT_SECRET || "your_secr
 
 export async function teacherAuthMiddleware(req) {
   const token = req.cookies.get("staffToken")?.value;
-  console.log("🔐 Teacher Role Authentication", token);
-
+ 
   if (!token) {
     console.warn("❌ No token found");
     return NextResponse.redirect(new URL("/login/admin", req.url));
