@@ -26,7 +26,7 @@ export async function PUT(req) {
     }
 
     const updatedStaff = await prisma.staff.update({
-      where: { staffID },
+      where: { staffID:Number(staffID) },
       data: { status, role },
     });
 

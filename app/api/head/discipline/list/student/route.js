@@ -2,7 +2,7 @@ const {prisma}=require("@/utils/prisma");
 const { NextResponse } = require("next/server");
 
 export async function GET() {
-    const studentID = req.headers.get("x-student-id");
+    const studentID = Number(req.headers.get("x-student-id"));
     if (!studentID) {
         return NextResponse.json({ error: "Student ID is required" }, { status: 400 });
     }

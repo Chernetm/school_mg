@@ -17,7 +17,7 @@ export async function POST(req) {
 
     // Check if student exists
     const student = await prisma.student.findUnique({
-      where: { studentID },
+      where: { studentID:Number(studentID) },
     });
 
     if (!student) {

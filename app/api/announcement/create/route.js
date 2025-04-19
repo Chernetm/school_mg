@@ -6,6 +6,8 @@ export async function POST(req) {
   try {
     const body = await req.json();
     const { title, message, audience, gradeId } = body;
+    
+    console.log(title, message, audience, gradeId)
     console.log(gradeId)
     const staffID = await getStaffIDFromToken();
     console.log(staffID,"THe staff token")
