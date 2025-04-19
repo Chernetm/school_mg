@@ -1,17 +1,24 @@
-'use client';
+"use client";
 
 import { motion } from 'framer-motion';
-import { FaAward, FaChalkboardTeacher, FaFacebookF, FaTelegramPlane, FaUserGraduate, FaYoutube } from 'react-icons/fa';
+import {
+  FaAward,
+  FaChalkboardTeacher,
+  FaFacebookF,
+  FaTelegramPlane,
+  FaUserGraduate,
+  FaYoutube,
+} from 'react-icons/fa';
 
 const currentYear = new Date().getFullYear();
 
 export default function HomePage() {
   return (
-    <div className="relative bg-gradient-to-br from-blue-900 to-blue-600 min-h-screen overflow-hidden">
+    <div className="relative bg-gradient-to-br from-blue-900 to-blue-600 min-h-screen flex flex-col">
       <div className="absolute inset-0 bg-black opacity-40"></div>
 
-      {/* Header Text Section */}
-      <div className="relative z-10 flex flex-col items-center text-center text-white pt-24 px-4">
+      {/* Header Section */}
+      <header className="relative z-10 flex flex-col items-center text-center text-white pt-24 px-4 mb-12">
         <motion.h1
           initial={{ opacity: 0, y: -50 }}
           animate={{ opacity: 1, y: 0 }}
@@ -29,10 +36,10 @@ export default function HomePage() {
         >
           We are committed to providing a nurturing environment where students thrive academically and personally.
         </motion.p>
-      </div>
+      </header>
 
       {/* Info Cards Section */}
-      <div className="relative z-10 mt-16 flex flex-wrap justify-center gap-6 px-4">
+      <section className="relative z-10 flex flex-wrap justify-center gap-6 px-4 mb-20">
         {[
           {
             title: 'Students',
@@ -65,10 +72,13 @@ export default function HomePage() {
             <p className="text-sm text-gray-700">{card.text}</p>
           </motion.div>
         ))}
-      </div>
+      </section>
+
+      {/* Spacer to push footer down if content is short */}
+      <div className="flex-grow"></div>
 
       {/* Footer */}
-      <footer className="absolute bottom-4 left-0 right-0 text-center text-white text-sm z-10 px-4">
+      <footer className="relative z-10 text-center text-white text-sm py-6 px-4 bg-black bg-opacity-30">
         <p className="mb-2">&copy; {currentYear} All rights reserved.</p>
         <div className="flex justify-center gap-4 text-xl">
           <a

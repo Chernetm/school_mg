@@ -167,6 +167,7 @@ model Student {
   middleName       String
   lastName         String
   age              Int
+  gender           genderEnum
   phoneNumber      String
   email            String
   password         String
@@ -453,4 +454,9 @@ enum  SemesterEnum{
 enum YearEnum {
   active
   inactive
+}
+
+enum genderEnum{
+  MALE
+  FEMALE
 }

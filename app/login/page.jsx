@@ -1,9 +1,16 @@
+
 "use client";
 import LoginForm from "@/components/LoginForm";
 import { useRouter } from "next/navigation";
+import {
+  MdBadge,
+  MdLock,
+  MdLogin
+} from "react-icons/md";
 
-export default function LoginPage() {
+export default function StaffLogin() {
   const router = useRouter();
+ 
 
   const handleStudentLogin = async (credentials, setError, setLoading) => {
     setLoading(true);
@@ -28,13 +35,27 @@ export default function LoginPage() {
       setLoading(false);
     }
   };
+ 
 
+  
   return (
     <LoginForm
       title="Student Login"
+      icon={<MdLogin className="text-5xl text-blue-500 mx-auto mb-4" />}
       fields={[
-        { name: "studentID", type: "number", placeholder: "Student ID" },
-        { name: "password", type: "password", placeholder: "Password" },
+        {
+          name: "studentID",
+          type: "text",
+          placeholder: "Student ID",
+          icon: <MdBadge className="text-gray-400" />,
+        },
+        ,
+        {
+          name: "password",
+          type: "password",
+          placeholder: "Password",
+          icon: <MdLock className="text-gray-400" />,
+        },
       ]}
       onSubmit={handleStudentLogin}
     />

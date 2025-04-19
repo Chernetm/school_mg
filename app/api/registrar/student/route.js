@@ -47,9 +47,11 @@ export async function POST(req) {
         middleName: studentData.middleName,
         lastName: studentData.lastName,
         age: parseInt(studentData.age),
+        gender: studentData.gender,
         phoneNumber: studentData.phoneNumber,
         email: studentData.email,
         password: hashedPassword,
+
         image: imageUrl,
       },
     });
