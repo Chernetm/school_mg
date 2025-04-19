@@ -14,7 +14,7 @@ export async function middleware(req) {
     return studentAuthMiddleware(req);
   }
 
-  // ✅ Admin Authentication Middleware (Only for `/api/admin/`)
+  //✅ Admin Authentication Middleware (Only for `/api/admin/`)
   if (req.nextUrl.pathname.startsWith("/api/admin") || req.nextUrl.pathname.startsWith("/admin")) {
     return adminAuthMiddleware(req);
   }

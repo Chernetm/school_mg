@@ -34,3 +34,4 @@ export default function RootLayout({ children }) {
     </html>
   );
 }
+//https://res.cloudinary.com/dsa1gjnyd/image/upload/w_1000,c_fill,ar_1:1,g_auto,r_max,bo_5px_solid_red,b_rgb:262c35/v1730406624/icon2_v2qpfe.jpg

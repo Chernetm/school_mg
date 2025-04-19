@@ -1,68 +1,25 @@
-// app/not-found.jsx
-'use client';
+import Link from "next/link";
+import { BiError } from "react-icons/bi";
 
-export default function NotFound() {
-    return (
-      <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-br from-red-100 via-red-200 to-red-300 px-6 text-center">
-        <h1 className="text-6xl md:text-8xl font-extrabold text-red-600 drop-shadow-lg">
-          Page Not Found 404
-        </h1>
-        <p className="mt-6 text-xl md:text-2xl font-semibold text-red-800">
-          Sorry, we couldn’t find the page you were looking for.
-        </p>
-        <p className="mt-2 text-base text-red-700 max-w-md">
-          It may have been removed, renamed, or does not exist.
-        </p>
-        <a
-          href="/"
-          className="mt-8 inline-block px-6 py-3 bg-white text-red-600 font-semibold text-lg rounded-full shadow-md hover:bg-red-100 transition duration-300"
-        >
-          Return to Homepage
-        </a>
-        <div>
-        <footer className="absolute bottom-5 text-sm text-red-700/80">
-          &copy; {new Date().getFullYear()} School Website. All rights reserved.
-        </footer>
-
+export default function NotFoundPage() {
+  return (
+    <div className="min-h-screen flex items-center justify-center bg-gray-100 px-4">
+      <div className="bg-white p-10 rounded-2xl shadow-xl text-center max-w-md">
+        <div className="flex justify-center text-yellow-500 mb-6">
+          <BiError className="text-6xl" />
         </div>
-        
+        <h1 className="text-4xl font-bold text-gray-800 mb-4">404</h1>
+        <h2 className="text-2xl text-gray-700 mb-2">Page Not Found</h2>
+        <p className="text-gray-600 mb-6">
+          Oops! The page you’re looking for doesn’t exist or has been moved.
+        </p>
+        <Link
+          href="/"
+          className="inline-block px-6 py-3 bg-yellow-500 text-white rounded-xl hover:bg-yellow-600 transition"
+        >
+          Go Back Home
+        </Link>
       </div>
-    );
-  }
-  
-
-
-
-  
-  // import Navbar from "@/components/Navbar/NavBar";
-  // import { StudentServicesDropdown } from "@/components/StudentServicesDropdown";
-  
-  // // layout.jsx or AdminLayout.jsx
-  // import { UserProvider } from "@/context/UserContext";
-  // import { headers } from "next/headers";
-  
-  // export default async function studentLayout({ children }) {
-  //   const headersList = await headers(); // ✅ await here
-  
-  //   const user = {
-  //     role: headersList.get("x-student-role"),
-  //     // You can grab other header values similarly
-  //   };
-  //   console.log("User role from headers:", user.role);
-  
-  //   return (
-  //     <UserProvider initialUser={user}>
-  //       <div className="min-h-screen flex flex-col bg-gray-100">
-  //   <Navbar />
-  //   <div className="flex flex-1">
-  //     <StudentServicesDropdown className="w-64 bg-white shadow-md" />
-  
-  //     <main className="flex-1 p-6 mt-10">
-  //       {children}
-  //     </main>
-  //   </div>
-  // </div>
-  
-  //     </UserProvider>
-  //   );
-  // }
+    </div>
+  );
+}

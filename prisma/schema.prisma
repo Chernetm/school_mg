@@ -189,7 +189,7 @@ model Student {
 model Registration {
   registrationID    Int      @id @default(autoincrement())
   studentID         String
-  stream            enumStream @default(science)
+  stream            enumStream @default(SCIENCE)
   year              Int
   grade             Int
   section           String?
@@ -422,9 +422,9 @@ enum enumSStatus{
   block
 }
 enum enumStream{
-  science
-  natural
-  social
+  SCIENCE
+  NATURAL
+  SOCIAL
 }
 enum passStatusEnum{
   passed
