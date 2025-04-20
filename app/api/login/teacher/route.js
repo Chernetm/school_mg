@@ -32,18 +32,19 @@ export async function POST(req) {
         email:true,
       },
     });
-
-    if (!staff || staff.role == 'teacher') {
-      return NextResponse.json(
-        { message: 'Access denied. Teachers only.' },
-        { status: 403 }
-      );
-    }
+    console.log("staff ROLE", staff.role)
+    if (!staff || staff.role !== 'teacher') {
+        return NextResponse.json(
+          { message: 'Access denied. Teachers only.' },
+          { status: 403 }
+        );
+      }
 
     if (staff.staffID !== Number(staffID)) {
       console.log("❌ Staff ID does not match");
       return NextResponse.json({ message: "Invalid credentials" }, { status: 401 });
     }
+    
 
     // 🔹 Verify password
     console.log("🔹 Comparing passwords...");
@@ -83,17 +84,6 @@ export async function POST(req) {
         
       },
     });
-
-    // response.headers.set(
-    //   "Set-Cookie",
-    //   serialize("staffToken", token, {
-    //     httpOnly: true,
-    //     secure: process.env.NODE_ENV === "production",
-    //     sameSite: "strict",
-    //     path: "/",
-    //     maxAge: 7 * 24 * 60 * 60, // 7 days
-    //   })
-    // );
     response.cookies.set("staffToken", token, {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
