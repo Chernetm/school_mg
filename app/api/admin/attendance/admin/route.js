@@ -1,6 +1,7 @@
 
 const { prisma } = require("@/utils/prisma");
 
+import { getStaffIDFromToken } from "@/utils/auth";
 import { NextResponse } from "next/server";
 
 export async function GET(req) {
@@ -30,12 +31,12 @@ export async function GET(req) {
 
 export async function POST(req) {
   try {
-    const userID = req.headers.get("x-user-id");
-
+    const userID = await getStaffIDFromToken();
+    // Check if userID is available
   
 
     if (!userID) {
-      return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
+      return NextResponse.json({ message: "Staff ID is required" }, { status: 401 });
     }
     const body = await req.json();
     const { attendance } = body;

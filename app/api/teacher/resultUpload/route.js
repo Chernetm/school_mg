@@ -1,10 +1,12 @@
 
 const { prisma } = require("@/utils/prisma");
+import { getStaffIDFromToken } from "@/utils/auth";
 import { NextResponse } from "next/server";
 
 export async function POST(req) {
   try {
-    const staffID = Number(req.headers.get("x-user-id"));
+    const staffID = Number(await getStaffIDFromToken());
+    console.log(staffID);
     if (!staffID) {
       return NextResponse.json({ error: "Missing staff ID" }, { status: 401 });
     }
@@ -25,7 +27,7 @@ export async function POST(req) {
     });
     console.log(currentSemester, "The current semester");
     if (!currentSemester) {
-      return NextResponse.json({ error: "Semester not found" }, { status: 407 });
+      return NextResponse.json({ error: "Semester is not Active" }, { status: 407 });
     }
 
     const uploadedResults = [];

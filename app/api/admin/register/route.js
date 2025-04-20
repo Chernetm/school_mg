@@ -38,11 +38,29 @@ export async function POST(req) {
       // ✅ Hash the password before saving
       const hashedPassword = await hash(randomPassword, 10);
   
-  
+      if(image && image.size > 5 * 1024 * 1024) {
+        return new Response(JSON.stringify({ error: "Image size exceeds 5MB" }), {
+          status: 400,
+          headers: { "Content-Type": "application/json" },
+        });
+      }
+      if (image && !["image/jpeg", "image/png", "image/webp"].includes(image.type)) {
+        return new Response(JSON.stringify({ error: "Unsupported image format" }), {
+          status: 400,
+          headers: { "Content-Type": "application/json" },
+        });
+      }
       // Upload image if provided
       let imageUrl = null;
       if (image && image instanceof File) {
         imageUrl = await uploadToCloudinary(image);
+        if (!imageUrl) {
+          return new Response(JSON.stringify({ error: "Image upload failed" }), {
+            status: 500,
+            headers: { "Content-Type": "application/json" },
+          });
+        }
+        console.log("🖼️ Image uploaded successfully!")  ;
       }
   
       // Create staff in the database

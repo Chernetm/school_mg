@@ -1,3 +1,4 @@
+import { getStaffIDFromToken } from '@/utils/auth';
 import { prisma } from '@/utils/prisma';
 import bcrypt from 'bcryptjs';
 import { NextResponse } from 'next/server';
@@ -6,7 +7,11 @@ export async function POST(req) {
   try {
     const body = await req.json();
     const { email, phoneNumber, password, currentPassword } = body;
-     const staffID = req.headers.get("x-user-id");
+    const staffID = await getStaffIDFromToken();
+    console.log(staffID)
+    if (!staffID) {
+      return NextResponse.json({ message: 'Staff ID is required.' }, { status: 400 });
+    }
 
     if (!currentPassword) {
       return NextResponse.json({ message: 'Current password is required.' }, { status: 400 });
@@ -35,7 +40,7 @@ export async function POST(req) {
     };
 
     await prisma.staff.update({
-      where: { id: staffId },
+      where: { staffID: Number(staffID) },
       data: updatedData,
     });
 

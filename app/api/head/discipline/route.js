@@ -1,11 +1,16 @@
 
 const { prisma } = require("@/utils/prisma")
+import { getStaffIDFromToken } from "@/utils/getStaffIDFromToken";
 import { NextResponse } from 'next/server';
 
 export async function POST(req) {
   try {
     const { studentID, message } = await req.json();
-    const staffID = req.headers.get("x-user-id");
+    const staffID = await getStaffIDFromToken();
+    if (!staffID) {
+      return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
+    }
+    console.log("Staff ID:", staffID);
 
     // Basic field presence check
     if (!studentID || !staffID || !message || message.trim() === "") {

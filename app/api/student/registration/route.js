@@ -1,11 +1,13 @@
 const {prisma} = require('@/utils/prisma');
+import { getStudentIDFromToken } from '@/utils/auth';
 import { NextResponse } from 'next/server';
 export async function POST(req) {
   try {
     const body = await req.json();
     const { year, grade, stream } = body;
     
-    const studentID = req.headers.get("x-student-id");
+    const studentID = await getStudentIDFromToken();
+    console.log("Student ID from token:", studentID); // Debugging
 
     if (!studentID) {
       return NextResponse.json({ message: 'studentID is required' }, { status: 400 });

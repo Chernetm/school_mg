@@ -31,12 +31,12 @@ export async function GET(req, { params }) {
   }
 }
 
-export async function PUT(req, {params}) {
+export async function PUT(req, { params }) {
   const { studentID } = await params;
 
-
+  // Check if the student ID is provided
   if (!studentID) {
-    return NextResponse.json({ error: "Invalid student ID" }, { status: 400 });
+    return NextResponse.json({ error: "Student ID is required!" }, { status: 400 });
   }
 
   try {
@@ -52,45 +52,63 @@ export async function PUT(req, {params}) {
     const parentID = formData.get("parentID");
 
     let password = formData.get("password");
-    console.log(password)
 
-    // 🔹 Handle image (extract new file if exists)
+    // Handle image (extract new file if exists)
     let imageUrl = formData.get("image"); // Existing image or new file
     const imageFiles = formData.getAll("image");
     const newImageFile = imageFiles.find((file) => file instanceof File);
+    
 
     if (newImageFile) {
       imageUrl = await uploadToCloudinary(newImageFile);
     }
+  
+   
 
-    // 🔹 Hash password if a new one is provided
+
+    // Hash password if a new one is provided
     let hashedPassword = undefined;
     if (password) {
       hashedPassword = await hash(password, 10);
     }
 
-    // 🔹 Prepare update object (only include provided fields)
+    // Prepare the update data object
     const updateData = {};
-    if (firstName) updateData.firstName = firstName;
-    if (middleName) updateData.middleName = middleName;
-    if (lastName) updateData.lastName = lastName;
+    if (firstName) updateData.firstName = firstName.trim();
+    if (middleName) updateData.middleName = middleName.trim();
+    if (lastName) updateData.lastName = lastName.trim();
     if (age) updateData.age = parseInt(age, 10);
-    if (phoneNumber) updateData.phoneNumber = phoneNumber;
-    if (email) updateData.email = email;
+    if (phoneNumber) updateData.phoneNumber = phoneNumber.trim();
+    if (email) updateData.email = email.trim();
     if (parentID) updateData.parentID = parseInt(parentID, 10);
-
     if (imageUrl) updateData.image = imageUrl;
-    if (hashedPassword) updateData.password = hashedPassword; // Ensure this field updates only if provided
+    if (hashedPassword) updateData.password = hashedPassword;
 
-    // 🔹 Update the student in the database
-    const updatedStudent = await prisma.student.update({
-      where: { studentID:studentID },
-      data: updateData, // Update only changed fields
+    // Validate that at least one field is provided for update
+    if (Object.keys(updateData).length === 0) {
+      return NextResponse.json({ error: "No valid fields provided for update" }, { status: 400 });
+    }
+
+    // Check if the student exists before updating
+    const existingStudent = await prisma.student.findUnique({
+      where: { studentID: studentID },
     });
 
+    if (!existingStudent) {
+      return NextResponse.json({ error: "Student not found" }, { status: 404 });
+    }
+
+    // Update the student in the database
+    const updatedStudent = await prisma.student.update({
+      where: { studentID: studentID },
+      data: updateData,
+    });
+
+    // Respond with the updated student data
     return NextResponse.json(updatedStudent);
+
   } catch (error) {
-    console.error("❌ Error updating student:", error);
+  
     return NextResponse.json({ error: "Error updating student" }, { status: 500 });
   }
 }

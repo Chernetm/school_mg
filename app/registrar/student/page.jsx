@@ -1,3 +1,4 @@
+
 "use client";
 import React, { useState } from "react";
 
@@ -18,8 +19,7 @@ const StudentRegistrationForm = () => {
       grade: "",
       studentID: "",
       stream: "",
-      section: "",
-      gender: "", // Gender added
+      gender: "",
       image: null,
     }
   };
@@ -27,6 +27,7 @@ const StudentRegistrationForm = () => {
   const [formData, setFormData] = useState(initialFormData);
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState(null);
+  const [isError, setIsError] = useState(false);
   const [previewImage, setPreviewImage] = useState(null);
 
   const handleChange = (e, overrideValue = null) => {
@@ -34,12 +35,7 @@ const StudentRegistrationForm = () => {
     let value = overrideValue ?? e.target.value;
     const [category, key] = name.split(".");
 
-    // Capitalize all fields except email and username
-    if (
-      key !== "email" &&
-      key !== "username" &&
-      typeof value === "string"
-    ) {
+    if (key !== "email" && key !== "username" && typeof value === "string") {
       value = value.toUpperCase();
     }
 
@@ -49,6 +45,15 @@ const StudentRegistrationForm = () => {
     }));
   };
 
+  const trimObjectStrings = (obj) => {
+    const trimmed = {};
+    for (const key in obj) {
+      const value = obj[key];
+      trimmed[key] = typeof value === "string" ? value.trim() : value;
+    }
+    return trimmed;
+  };
+  
 
   const handleFileChange = (e) => {
     const file = e.target.files?.[0] || null;
@@ -68,39 +73,50 @@ const StudentRegistrationForm = () => {
     e.preventDefault();
     setLoading(true);
     setMessage(null);
-
+    setIsError(false);
+  
     try {
       validateFormData();
-
+  
+      const trimmedStudent = trimObjectStrings(formData.student);
+  
       const formDataToSend = new FormData();
-      formDataToSend.append("student", JSON.stringify(formData.student));
-
+      formDataToSend.append("student", JSON.stringify(trimmedStudent));
+  
       if (formData.student.image) {
         formDataToSend.append("student.image", formData.student.image);
       } else {
         throw new Error("Image is required for student registration.");
       }
-
+  
       const response = await fetch("/api/registrar/student", {
         method: "POST",
         body: formDataToSend,
       });
-
+  
       const responseData = await response.json();
-      if (!response.ok) throw new Error(responseData.error || "Failed to register student.");
-
-      setMessage("Student information saved successfully!");
+  
+      if (!response.ok) {
+        const errorMsg = responseData?.error || "Something went wrong.";
+        throw new Error(errorMsg);
+      }
+  
+      setMessage("✅ Student information saved successfully!");
       resetForm();
     } catch (error) {
-      setMessage(`Error: ${error.message}`);
+      console.error("🚨 Submission error:", error);
+      setIsError(true);
+      setMessage(`❌ ${error.message}`);
     } finally {
       setLoading(false);
     }
   };
-
+  
   const validateFormData = () => {
     const { student } = formData;
-    if (!student.firstName || !student.email || !student.age || !student.grade || !student.gender) {
+    if (!student.firstName || !student.email || !student.age || !student.grade ||
+       !student.gender|| !student.image || !student.studentID|| !student.year|| 
+       !student.stream|| !student.phoneNumber|| !student.middleName|| !student.lastName) {
       throw new Error("Missing required fields.");
     }
   };
@@ -140,10 +156,9 @@ const StudentRegistrationForm = () => {
                     name="student.gender"
                     value={genderOption}
                     checked={formData.student.gender === genderOption}
-                    onChange={(e) => handleChange(e, genderOption)} // pass selected value directly
+                    onChange={(e) => handleChange(e, genderOption)}
                     className="hidden"
                   />
-
                   {genderOption}
                 </label>
               ))}
@@ -153,7 +168,16 @@ const StudentRegistrationForm = () => {
 
         {/* Submit */}
         <SubmitButton loading={loading} />
-        {message && <p className="text-center mt-4 text-sm text-red-600">{message}</p>}
+
+        {message && (
+          <p
+            className={`text-center mt-4 text-sm font-medium ${
+              isError ? "text-red-600" : "text-green-600"
+            }`}
+          >
+            {message}
+          </p>
+        )}
       </form>
     </div>
   );

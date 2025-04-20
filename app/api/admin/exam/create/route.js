@@ -1,11 +1,17 @@
 const { prisma } = require("@/utils/prisma");
+import { getStaffIDFromToken } from "@/utils/auth";
 import { NextResponse } from "next/server";
  
  export async function POST(req) {
   try {
     
 
-    const staffID = req.headers.get("x-user-id");
+    const staffID = await getStaffIDFromToken();
+    if (!staffID) {
+      console.log("❌ Staff ID is required.");
+      return NextResponse.json({ message: "Staff ID is required" }, { status: 401 });
+    }
+    console.log("👤 Staff ID:", staffID);
 
     // Parse request body
     const body = await req.json();

@@ -25,13 +25,50 @@ export async function POST(req) {
       return NextResponse.json({ error: "Stream is required for grade 11 or 12." }, { status: 400 });
     }
 
-    console.log("🔐 Generating password...");
-    const randomPassword = crypto.randomBytes(5).toString("hex");
-    const hashedPassword = await hash(randomPassword, 10);
+    const existingYear = await prisma.year.findFirst({
+      where: {
+        year: parseInt(studentData.year), status:"active"
+      },
+    });
+    if (!existingYear) {
+      console.error("❌ Year not found.");
+      return NextResponse.json({ error: "Year not found" }, { status: 400 });
+    }
+
+    const existingGrade = await prisma.grade.findFirst({
+      where: {
+        grade: parseInt(studentData.grade),
+      },
+    });
+    if (!existingGrade) {
+      console.error("❌ Grade not found.");
+      return NextResponse.json({ error: "Grade not found" }, { status: 400 });
+    }
+    const existingStudent = await prisma.student.findUnique({
+      where: {
+        studentID: studentData.studentID,
+      },
+    });
+    if (existingStudent) {
+      console.error("❌ Student ID already exists.");
+      return NextResponse.json({ error: "Student ID already exists" }, { status: 400 });
+    }
+    let imageUrl = "";
+
+    const imageFile = formData.get("student.image");
+    if (imageFile && imageFile.size > 5 * 1024 * 1024) {
+      console.error("❌ Image size exceeds 5MB.");
+      return NextResponse.json({ error: "Image size exceeds 5MB" }, { status: 400 });
+    }
+    if (imageFile && !["image/jpeg", "image/png", "image/webp"].includes(imageFile.type)) {
+      console.error("❌ Unsupported image format.");
+      return NextResponse.json({ error: "Unsupported image format" }, { status: 400 });
+    }
+    
 
     console.log("🖼️ Handling image upload...");
-    let imageUrl = "";
-    const imageFile = formData.get("student.image");
+  
+  
 
     if (!imageFile) {
       console.error("❌ No image file provided!");
@@ -39,6 +76,14 @@ export async function POST(req) {
     }
     
     imageUrl = await uploadToCloudinary(imageFile);
+    if (!imageUrl) {
+      console.error("❌ Image upload failed!");
+      return NextResponse.json({ error: "Image upload failed" }, { status: 500 });
+    }
+    console.log("🖼️ Image uploaded successfully!");
+    console.log("🔐 Generating password...");
+    const randomPassword = crypto.randomBytes(5).toString("hex");
+    const hashedPassword = await hash(randomPassword, 10);
     
     const newStudent = await prisma.student.create({
       data: {
@@ -80,7 +125,7 @@ export async function POST(req) {
     return NextResponse.json({ message: "Student registered successfully!", student: newStudent });
 
   } catch (error) {
-    console.error("❌ Registration Error:", error);
-    return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
+    return NextResponse.json({ error: error.message || "Internal Server Error" }, { status: 500 });
   }
+  
 }

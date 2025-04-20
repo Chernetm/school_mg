@@ -153,11 +153,13 @@
 //   );
 // }
 
-
 "use client";
 
 import Image from "next/image";
 import { useState } from "react";
+
+// Helper: Trim all string fields in an object
+
 
 export default function EditStudent() {
   const [studentID, setStudentID] = useState("");
@@ -166,14 +168,27 @@ export default function EditStudent() {
   const [updating, setUpdating] = useState(false);
   const [image, setImage] = useState(null);
   const [password, setPassword] = useState("");
+  const [errorMessage, setErrorMessage] = useState(null);
+  const [successMessage, setSuccessMessage] = useState(null);
+  
+  const trimObjectStrings = (obj) => {
+    const trimmed = {};
+    for (const key in obj) {
+      const value = obj[key];
+      trimmed[key] = typeof value === "string" ? value.trim() : value;
+    }
+    return trimmed;
+  };
 
   const handleFetchStudent = async () => {
-    if (!studentID) return alert("Please enter a student ID");
+    if (!studentID.trim()) return alert("Please enter a student ID");
 
     setLoading(true);
+    setErrorMessage(null);
+    setSuccessMessage(null);
 
     try {
-      const response = await fetch(`/api/registrar/student/edit/${studentID}`);
+      const response = await fetch(`/api/registrar/student/edit/${studentID.trim()}`);
 
       if (!response.ok) {
         throw new Error("Failed to fetch student");
@@ -184,7 +199,7 @@ export default function EditStudent() {
       setStudent(data);
     } catch (err) {
       console.error("Error fetching student:", err);
-      alert("Error fetching student");
+      setErrorMessage("❌ Failed to fetch student. Please try again.");
     }
 
     setLoading(false);
@@ -192,12 +207,13 @@ export default function EditStudent() {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-  
-    // Don't capitalize email fields
-    const newValue = !name.toLowerCase().includes("email") ? value.toUpperCase() : value;
-  
-    setStudent((prev) => (prev ? { ...prev, [name]: newValue } : null));
+
+    const trimmedValue = value.trimStart(); // prevent leading whitespace while typing
+    const capitalized = !name.toLowerCase().includes("email") ? trimmedValue.toUpperCase() : trimmedValue;
+
+    setStudent((prev) => (prev ? { ...prev, [name]: capitalized } : null));
   };
+
   const handleImageChange = (e) => {
     if (e.target.files && e.target.files[0]) {
       setImage(e.target.files[0]);
@@ -209,10 +225,15 @@ export default function EditStudent() {
     if (!student || !studentID) return alert("No student data available.");
 
     setUpdating(true);
+    setErrorMessage(null);
+    setSuccessMessage(null);
+
     try {
+      const trimmedStudent = trimObjectStrings(student);
       const formData = new FormData();
-      Object.keys(student).forEach((key) => {
-        const value = student[key];
+
+      Object.keys(trimmedStudent).forEach((key) => {
+        const value = trimmedStudent[key];
         if (value !== undefined && value !== "") {
           formData.append(key, String(value));
         }
@@ -222,23 +243,26 @@ export default function EditStudent() {
         formData.append("image", image);
       }
 
-      if (password) {
-        console.log("🔹 Sending plain password:", password);
-        formData.append("password", password);
+      if (password.trim()) {
+        formData.append("password", password.trim());
       }
 
-      const response = await fetch(`/api/registrar/student/edit/${studentID}`, {
+      const response = await fetch(`/api/registrar/student/edit/${studentID.trim()}`, {
         method: "PUT",
         body: formData,
       });
 
-      if (!response.ok) throw new Error("Failed to update student");
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error?.error || "Failed to update student");
+      }
 
-      alert("Student updated successfully!");
+      setSuccessMessage("✅ Student updated successfully!");
     } catch (err) {
       console.error("❌ Error updating student:", err);
-      alert("Failed to update student");
+      setErrorMessage(`❌ ${err.message}`);
     }
+
     setUpdating(false);
   };
 
@@ -249,7 +273,7 @@ export default function EditStudent() {
         <input
           type="number"
           value={studentID}
-          onChange={(e) => setStudentID(e.target.value ? e.target.value : "")}
+          onChange={(e) => setStudentID(e.target.value)}
           className="border p-2 w-full rounded bg-white text-black"
         />
         <button
@@ -261,17 +285,20 @@ export default function EditStudent() {
         </button>
       </div>
 
+      {errorMessage && <p className="text-red-600 mb-4">{errorMessage}</p>}
+      {successMessage && <p className="text-green-600 mb-4">{successMessage}</p>}
+
       {student && (
         <form onSubmit={handleSubmit} className="bg-white p-6 rounded shadow">
           <h2 className="text-xl font-bold mb-4 text-gray-800">Edit Student Information</h2>
           <div className="grid grid-cols-2 gap-4">
-            <input name="firstName" value={student.firstName} onChange={handleChange} className="border p-2 rounded bg-white text-black" placeholder="First Name" />
+            <input name="firstName" value={student.firstName || ""} onChange={handleChange} className="border p-2 rounded bg-white text-black" placeholder="First Name" />
             <input name="middleName" value={student.middleName || ""} onChange={handleChange} className="border p-2 rounded bg-white text-black" placeholder="Middle Name" />
-            <input name="lastName" value={student.lastName} onChange={handleChange} className="border p-2 rounded bg-white text-black" placeholder="Last Name" />
-            <input name="age" type="number" value={student.age} onChange={handleChange} className="border p-2 rounded bg-white text-black" placeholder="Age" />
-            <input name="phoneNumber" value={student.phoneNumber} onChange={handleChange} className="border p-2 rounded bg-white text-black" placeholder="Phone Number" />
-            <input name="email" type="email" value={student.email} onChange={handleChange} className="border p-2 rounded bg-white text-black" placeholder="Email" />
-            <input name="grade" type="number" value={student.grade} onChange={handleChange} className="border p-2 rounded bg-white text-black" placeholder="Grade" />
+            <input name="lastName" value={student.lastName || ""} onChange={handleChange} className="border p-2 rounded bg-white text-black" placeholder="Last Name" />
+            <input name="age" type="number" value={student.age || ""} onChange={handleChange} className="border p-2 rounded bg-white text-black" placeholder="Age" />
+            <input name="phoneNumber" value={student.phoneNumber || ""} onChange={handleChange} className="border p-2 rounded bg-white text-black" placeholder="Phone Number" />
+            <input name="email" type="email" value={student.email || ""} onChange={handleChange} className="border p-2 rounded bg-white text-black" placeholder="Email" />
+            <input name="grade" type="number" value={student.grade || ""} onChange={handleChange} className="border p-2 rounded bg-white text-black" placeholder="Grade" />
             <select
               name="gender"
               value={student.gender || ""}
