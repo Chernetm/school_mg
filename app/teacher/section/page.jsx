@@ -1,22 +1,26 @@
-"use client";
+
+"use client"
 import { useEffect, useState } from "react";
 
 export default function StaffAssignments() {
   const [assignments, setAssignments] = useState([]);
   const [students, setStudents] = useState([]);
-  const [showModal, setShowModal] = useState(false);
-  const [selectedAssignment, setSelectedAssignment] = useState(null);
   const [mode, setMode] = useState("attendance");
   const [semester, setSemester] = useState("1");
   const [attendance, setAttendance] = useState({});
   const [results, setResults] = useState({});
   const [feedback, setFeedback] = useState(null);
+  const [expandedSectionKey, setExpandedSectionKey] = useState(null);
+  const [activeAssignment, setActiveAssignment] = useState(null);
 
   useEffect(() => {
     fetch("/api/teacher/assigned-section")
       .then((res) => res.json())
       .then((data) => setAssignments(data.assignments || []));
   }, []);
+
+  const getAssignmentKey = (assignment) =>
+    `${assignment.grade}-${assignment.section}-${assignment.subject}`;
 
   const fetchStudents = async (grade, section) => {
     try {
@@ -31,15 +35,19 @@ export default function StaffAssignments() {
   };
 
   const handleCardClick = (assignment) => {
-    setSelectedAssignment(assignment);
-    fetchStudents(assignment.grade, assignment.section);
-    setShowModal(true);
-  };
+    const key = getAssignmentKey(assignment);
 
-  const closeModal = () => {
-    setShowModal(false);
-    setStudents([]);
-    setSelectedAssignment(null);
+    if (expandedSectionKey === key) {
+      setExpandedSectionKey(null);
+      setStudents([]);
+      setActiveAssignment(null);
+      setFeedback(null);
+      return;
+    }
+
+    setActiveAssignment(assignment);
+    setExpandedSectionKey(key);
+    fetchStudents(assignment.grade, assignment.section);
     setAttendance({});
     setResults({});
     setFeedback(null);
@@ -77,15 +85,15 @@ export default function StaffAssignments() {
   };
 
   const handleUploadAll = async () => {
-    if (!selectedAssignment) return;
+    if (!activeAssignment) return;
 
     const payload = Object.entries(results).map(([studentID, result]) => ({
       studentID,
       result: Number(result),
       semester: Number(semester),
-      subject: selectedAssignment.subject,
-      grade: Number(selectedAssignment.grade),
-      section: selectedAssignment.section,
+      subject: activeAssignment.subject,
+      grade: Number(activeAssignment.grade),
+      section: activeAssignment.section,
     }));
 
     try {
@@ -106,36 +114,34 @@ export default function StaffAssignments() {
 
   return (
     <div className="p-4 sm:p-6 bg-gray-100 min-h-screen text-sm sm:text-base">
-      {/* 🔷 Top Cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
-        {/* ... (unchanged announcement and section cards) */}
-      </div>
-  
-      {/* 🔶 Assignments List */}
-      <h1 id="assignment-section" className="text-2xl font-bold mb-6 text-gray-800">Section List</h1>
+      <h1 className="text-2xl font-bold mb-6 text-gray-800">Section List</h1>
+
       <div className="flex flex-col gap-6">
         {assignments.length > 0 ? (
-          assignments.map((assignment) => (
-            <div
-              key={`${assignment.grade}-${assignment.section}-${assignment.subject}`}
-              className="bg-white p-4 rounded-lg shadow-md hover:shadow-lg"
-            >
-              <div
-                className="cursor-pointer"
-                onClick={() => {
-                  handleCardClick(assignment);
-                }}
-              >
-                <h2 className="text-lg font-semibold text-gray-800">{assignment.subject}</h2>
-                <p className="text-gray-600">Grade: {assignment.grade} | Section: {assignment.section}</p>
-              </div>
-  
-              {selectedAssignment &&
-                selectedAssignment.grade === assignment.grade &&
-                selectedAssignment.section === assignment.section &&
-                selectedAssignment.subject === assignment.subject && (
+          assignments.map((assignment) => {
+            const key = getAssignmentKey(assignment);
+            const isExpanded = expandedSectionKey === key;
+
+            return (
+              <div key={key} className="bg-white p-4 rounded-lg shadow-md hover:shadow-lg transition-all">
+                <div className="cursor-pointer" onClick={() => handleCardClick(assignment)}>
+                  <h2 className="text-lg font-semibold text-gray-800">{assignment.subject}</h2>
+                  <p className="text-gray-600">
+                    Grade: {assignment.grade} | Section: {assignment.section}
+                  </p>
+                </div>
+
+                {isExpanded && (
                   <div className="mt-4">
-                    {/* Mode toggle */}
+                    <div className="flex justify-end">
+                      <button
+                        onClick={() => handleCardClick(assignment)}
+                        className="text-sm text-red-500 hover:underline mb-2"
+                      >
+                        Close ✖
+                      </button>
+                    </div>
+
                     <div className="flex gap-2 mb-4">
                       <button
                         className={`flex-1 p-2 rounded ${mode === "attendance" ? "bg-blue-500 text-white" : "bg-gray-200"}`}
@@ -150,7 +156,7 @@ export default function StaffAssignments() {
                         Upload Result
                       </button>
                     </div>
-  
+
                     {mode === "result" && (
                       <div className="mb-4">
                         <label className="font-semibold text-gray-700">Semester:</label>
@@ -164,15 +170,13 @@ export default function StaffAssignments() {
                         </select>
                       </div>
                     )}
-  
+
                     {feedback && (
-                      <div className={`mb-4 p-3 rounded text-sm ${
-                        feedback.type === "success" ? "bg-green-100 text-green-800" : "bg-red-100 text-red-800"
-                      }`}>
+                      <div className={`mb-4 p-3 rounded text-sm ${feedback.type === "success" ? "bg-green-100 text-green-800" : "bg-red-100 text-red-800"}`}>
                         {feedback.message}
                       </div>
                     )}
-  
+
                     <div className="overflow-x-auto">
                       <table className="w-full border border-gray-300 text-xs sm:text-sm">
                         <thead>
@@ -205,20 +209,26 @@ export default function StaffAssignments() {
                                 {mode === "attendance" ? (
                                   <>
                                     <td className="border px-2 py-1 text-center">
-                                      <button onClick={() => setStudentAttendance(student.studentID, "present")}
-                                        className={`p-1 rounded ${attendance[student.studentID] === "present" ? "bg-green-500 text-white" : "bg-gray-300"}`}>
+                                      <button
+                                        onClick={() => setStudentAttendance(student.studentID, "present")}
+                                        className={`p-1 rounded ${attendance[student.studentID] === "present" ? "bg-green-500 text-white" : "bg-gray-300"}`}
+                                      >
                                         ✔
                                       </button>
                                     </td>
                                     <td className="border px-2 py-1 text-center">
-                                      <button onClick={() => setStudentAttendance(student.studentID, "absent")}
-                                        className={`p-1 rounded ${attendance[student.studentID] === "absent" ? "bg-red-500 text-white" : "bg-gray-300"}`}>
+                                      <button
+                                        onClick={() => setStudentAttendance(student.studentID, "absent")}
+                                        className={`p-1 rounded ${attendance[student.studentID] === "absent" ? "bg-red-500 text-white" : "bg-gray-300"}`}
+                                      >
                                         ❌
                                       </button>
                                     </td>
                                     <td className="border px-2 py-1 text-center">
-                                      <button onClick={() => setStudentAttendance(student.studentID, "late")}
-                                        className={`p-1 rounded ${attendance[student.studentID] === "late" ? "bg-yellow-500 text-white" : "bg-gray-300"}`}>
+                                      <button
+                                        onClick={() => setStudentAttendance(student.studentID, "late")}
+                                        className={`p-1 rounded ${attendance[student.studentID] === "late" ? "bg-yellow-500 text-white" : "bg-gray-300"}`}
+                                      >
                                         ⏳
                                       </button>
                                     </td>
@@ -238,21 +248,31 @@ export default function StaffAssignments() {
                         </tbody>
                       </table>
                     </div>
-  
+
                     {mode === "attendance" ? (
-                      <button onClick={submitAttendance} className="mt-4 w-full bg-blue-500 text-white py-2 rounded hover:bg-blue-600">Submit Attendance</button>
+                      <button
+                        onClick={submitAttendance}
+                        className="mt-4 w-full bg-blue-500 text-white py-2 rounded hover:bg-blue-600"
+                      >
+                        Submit Attendance
+                      </button>
                     ) : (
-                      <button onClick={handleUploadAll} className="mt-4 w-full bg-green-500 text-white py-2 rounded hover:bg-green-600">Upload All Results</button>
+                      <button
+                        onClick={handleUploadAll}
+                        className="mt-4 w-full bg-green-500 text-white py-2 rounded hover:bg-green-600"
+                      >
+                        Upload All Results
+                      </button>
                     )}
                   </div>
-              )}
-            </div>
-          ))
+                )}
+              </div>
+            );
+          })
         ) : (
           <p className="text-gray-600">No assignments available</p>
         )}
       </div>
     </div>
   );
-  
 }
