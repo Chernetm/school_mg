@@ -58,7 +58,8 @@ export async function POST(req) {
     //   },
     // });
     console.log("staff ROLE", staff.role)
-    if (!staff || staff.role !== 'teacher') {
+    if (!staff || (staff.role !== 'teacher' && staff.role !== 'staff')) {
+
         return NextResponse.json(
           { message: 'Access denied. Teacher only.' },
           { status: 403 }

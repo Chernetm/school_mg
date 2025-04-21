@@ -2,6 +2,7 @@
 
 import { adminAuthMiddleware } from "./middleware/adminAuthMiddleware";
 import { headAuthMiddleware } from "./middleware/headAuthMiddleware";
+//import { libraryAuthMiddleware } from "./middleware/libraryAuthMiddleware";
 import { registrarAuthMiddleware } from "./middleware/registrarAuthMiddleware";
 import { studentAuthMiddleware } from "./middleware/studentAuthMiddleware";
 import { teacherAuthMiddleware } from "./middleware/teacherAuthMiddleware";
@@ -13,6 +14,9 @@ export async function middleware(req) {
   if (req.nextUrl.pathname.startsWith("/api/student/") || req.nextUrl.pathname.startsWith("/student")) {
     return studentAuthMiddleware(req);
   }
+  // if (req.nextUrl.pathname.startsWith("/api/library/") || req.nextUrl.pathname.startsWith("/library")) {
+  //   return libraryAuthMiddleware(req);
+  // }
 
   //✅ Admin Authentication Middleware (Only for `/api/admin/`)
   if (req.nextUrl.pathname.startsWith("/api/admin") || req.nextUrl.pathname.startsWith("/admin")) {

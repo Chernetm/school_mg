@@ -447,6 +447,7 @@ enum RoleEnum{
   registrar
   staff
   teacher
+  library
 }
 enum statusEnum{
   active
