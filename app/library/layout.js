@@ -2,7 +2,7 @@ import { Navbar } from "@/components/Navbar/NavBar";
 import { UserProvider } from "@/context/UserContext";
 import { headers } from "next/headers";
 
-export default async function TeacherLayout({ children }) {
+export default async function libraryLayout({ children }) {
   const headersList = await headers();
 
   const user = {
