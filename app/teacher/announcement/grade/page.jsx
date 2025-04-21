@@ -1,8 +1,8 @@
 'use client';
 
 import AnnouncementList from '@/components/AnnouncementList';
+import Spinner from '@/components/Loading/Spinner/page';
 import { useEffect, useState } from 'react';
-
 export default function AnnouncementsPage() {
   const [announcements, setAnnouncements] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -28,8 +28,7 @@ export default function AnnouncementsPage() {
     fetchData();
   }, []);
 
-  if (loading) return <p className="text-center text-gray-500">Loading announcements...</p>;
-
+ if (loading) return <Spinner />;
   if (!announcements.length) {
     return <p className="text-center text-gray-500">No announcements available.</p>;
   }

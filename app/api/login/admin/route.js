@@ -35,7 +35,7 @@ export async function POST(req) {
 
     if (!staff || staff.role == 'teacher') {
       return NextResponse.json(
-        { message: 'Access denied. Teachers only.' },
+        { message: 'Access denied. Admin only.' },
         { status: 403 }
       );
     }

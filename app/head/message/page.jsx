@@ -1,5 +1,6 @@
 "use client";
 
+import Spinner from "@/components/Loading/Spinner/page";
 import { useEffect, useState } from "react";
 
 export default function AdminMessages() {
@@ -30,9 +31,11 @@ export default function AdminMessages() {
   }, []);
 
   if (loading) {
-    return <p>Loading messages...</p>;
+    return <Spinner />;
   }
-
+  if (messages.length === 0 && !error) {
+    return <p className="text-center text-gray-500">No messages available.</p>;
+  }
   if (error) {
     return <p>Error: {error}</p>;
   }

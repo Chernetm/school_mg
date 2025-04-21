@@ -8,7 +8,7 @@ export async function teacherAuthMiddleware(req) {
  
   if (!token) {
     console.warn("❌ No token found");
-    return NextResponse.redirect(new URL("/login/admin", req.url));
+    return NextResponse.redirect(new URL("/login/teacher", req.url));
   }
 
   try {
@@ -24,6 +24,7 @@ export async function teacherAuthMiddleware(req) {
     const requestHeaders = new Headers(req.headers);
     requestHeaders.set("x-user-id", payload.staffID || "");
     requestHeaders.set("x-user-role", "teacher");
+    requestHeaders.set("x-user-grade", payload.grade || "");
     requestHeaders.set("x-user-image", payload.image || "");
 
     return NextResponse.next({

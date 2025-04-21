@@ -9,6 +9,7 @@ export default async function TeacherLayout({ children }) {
     role: headersList.get("x-user-role"),
     image: headersList.get("x-user-image"),
     staffID: headersList.get("x-user-id"),
+    grade: headersList.get("x-user-grade"),
   };
 
   return (

@@ -1,22 +1,11 @@
 import { prisma } from "@/utils/prisma";
-import jwt from "jsonwebtoken";
-import { cookies } from "next/headers";
 
 const SECRET_KEY = process.env.JWT_SECRET || "your_secret_key";
 
 export async function GET(req) {
   try {
-    const cookieStore = await cookies();
-    const token = cookieStore.get("studentToken");
-
-    if (!token) {
-      return Response.json({ error: "Unauthorized" }, { status: 401 });
-    }
-
-    const decoded = jwt.verify(token, SECRET_KEY);
-    const gradeId = decoded.grade;
-    console.log("Decoded Token:", decoded);
-    console.log("Grade ID:", gradeId);
+    const gradeId= req.headers.get("x-user-grade");
+    console.log("Grade from headers:", gradeId);
 
     const announcements = await prisma.announcement.findMany({
       where: {
