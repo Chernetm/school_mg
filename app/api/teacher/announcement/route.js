@@ -1,19 +1,25 @@
 import { prisma } from "@/utils/prisma";
+import jwt from "jsonwebtoken";
+import { cookies } from "next/headers";
+// import { getStaffIDFromToken } from "@/utils/auth";
 
 const SECRET_KEY = process.env.JWT_SECRET || "your_secret_key";
 
 export async function GET(req) {
   try {
-    const cookieStore = await Cookies();
-    const token = cookieStore.get("studentToken");
-
-    if (!token) {
-      return Response.json({ error: "Unauthorized" }, { status: 401 });
+    const cookieStore = await cookies();
+        const token = cookieStore.get("staffToken");
+    
+        if (!token) {
+          return null;
+        }
+    
+    const decoded = jwt.verify(token.value, SECRET_KEY);
+    const gradeId= decoded.grade;
+    if(!gradeId){
+      return Response.json({ error: "Grade ID not found" }, { status: 400 });
     }
-
-    const decoded = jwt.verify(token, SECRET_KEY);
-    const gradeId = decoded.grade;
-    console.log("Decoded Token:", decoded);
+    
     console.log("Grade ID:", gradeId);
 
     const announcements = await prisma.announcement.findMany({
