@@ -57,14 +57,16 @@ export async function POST(req) {
     //     }
     //   },
     // });
-    console.log("staff ROLE", staff.role)
-    if (!staff || (staff.role !== 'teacher' && staff.role !== 'staff')) {
+    console.log("staff ROLE", staff.role);
 
-        return NextResponse.json(
-          { message: 'Access denied. Teacher only.' },
-          { status: 403 }
-        );
-      }
+if (!staff || (staff.role !== 'teacher' && staff.role !== 'staff')) {
+  
+  return NextResponse.json(
+    { message: 'Access denied. Teacher or Staff only.' },
+    { status: 403 }
+  );
+}
+
 
     if (staff.staffID !== Number(staffID)) {
       console.log("❌ Staff ID does not match");

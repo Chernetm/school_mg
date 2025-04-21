@@ -3,10 +3,10 @@
 import LoginForm from "@/components/LoginForm";
 import { useRouter } from "next/navigation";
 import {
-    MdBadge,
-    MdLock,
-    MdLogin,
-    MdPerson
+  MdBadge,
+  MdLock,
+  MdLogin,
+  MdPerson
 } from "react-icons/md";
 
 export default function StaffLogin() {
@@ -36,6 +36,9 @@ export default function StaffLogin() {
       switch (role) {
         case "teacher":
           router.push("/teacher");
+          break;
+        case "staff":
+          router.push("/library");
           break;
         default:
           router.push("/unauthorized");
