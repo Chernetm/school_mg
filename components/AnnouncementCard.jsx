@@ -1,31 +1,36 @@
 import { useUser } from '@/context/UserContext';
 import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
+import { useState } from 'react';
 import { FiCalendar, FiTrash2 } from 'react-icons/fi';
+import ConfirmModal from './ConfirmModal';
 
 dayjs.extend(relativeTime);
 
-export default function AnnouncementCard({ announcement}) {
- const{user}=useUser();
-  const currentStaffID  = user?.staffID || null;
+export default function AnnouncementCard({ announcement }) {
+  const { user } = useUser();
+  const currentStaffID = user?.staffID || null;
   const { id, title, message, createdAt, staff, staffID } = announcement;
 
-  const handleDelete = async () => {
-    if (!confirm('Are you sure you want to delete this announcement?')) return;
+  const [showConfirm, setShowConfirm] = useState(false); // State to control the ConfirmModal visibility
+  const [status, setStatus] = useState(''); // State for feedback (success/error messages)
 
+  const handleDelete = async () => {
     try {
       const res = await fetch(`/api/announcement/${id}`, {
         method: 'DELETE',
       });
 
       if (res.ok) {
-        window.location.reload(); // or lift state up and remove it locally
+        setStatus('✅ Announcement deleted successfully!');
+        // Optionally, you can remove the item from the UI without a reload by lifting the state up or using context
+        setTimeout(() => window.location.reload(), 2000); // Refresh the page after a short delay
       } else {
-        alert('Failed to delete announcement');
+        setStatus('❌ Failed to delete announcement.');
       }
     } catch (err) {
       console.error(err);
-      alert('Error deleting announcement');
+      setStatus('❌ Error deleting announcement.');
     }
   };
 
@@ -51,7 +56,7 @@ export default function AnnouncementCard({ announcement}) {
         {/* Delete button (if owner) */}
         {Number(currentStaffID) === staffID && (
           <button
-            onClick={handleDelete}
+            onClick={() => setShowConfirm(true)} // Open the confirm modal
             className="ml-auto text-red-500 hover:text-red-700"
             title="Delete"
           >
@@ -63,6 +68,23 @@ export default function AnnouncementCard({ announcement}) {
       {/* Title & Message */}
       <h2 className="text-lg font-semibold text-gray-800 mb-2">{title}</h2>
       <p className="text-gray-700 text-sm">{message}</p>
+
+      {/* Status Message */}
+      {status && <p className="text-center text-sm mt-4 text-gray-800 font-medium">{status}</p>}
+
+      {/* Confirm Modal for Deletion */}
+      <ConfirmModal
+        show={showConfirm}
+        onClose={() => setShowConfirm(false)} // Close the modal without doing anything
+        onConfirm={() => {
+          handleDelete(); // Call the delete function if confirmed
+          setShowConfirm(false); // Close the modal after confirmation
+        }}
+        title="Delete this announcement?"
+        message="Once deleted, this cannot be recovered."
+        confirmText="Delete"
+        cancelText="Cancel"
+      />
     </div>
   );
 }

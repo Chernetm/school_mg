@@ -1,49 +1,47 @@
 'use client';
 
 import { useUser } from '@/context/UserContext';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { FaBullhorn } from 'react-icons/fa';
 import { MdCampaign } from 'react-icons/md';
 
 export default function CreateAnnouncement() {
   const { user } = useUser();
-  const gradeId = user?.grade;
+  const gradeId = user?.grade|| '';
 
   const [form, setForm] = useState({
     title: '',
     message: '',
-    audience: '',
+    audience: 'ALL',
     gradeId: '',
   });
 
   const [status, setStatus] = useState('');
-
-  useEffect(() => {
-    // Automatically set gradeId if audience is GRADE
-    if (form.audience === 'GRADE' && gradeId) {
-      setForm((prev) => ({ ...prev, gradeId }));
-    }
-  }, [form.audience, gradeId]);
-
   const handleSubmit = async (e) => {
     e.preventDefault();
     setStatus('Creating...');
-
-    const res = await fetch('/api/announcement/create', {
+  
+    const res = await fetch(`/api/teacher/announcement/create`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(form),
+      body: JSON.stringify({
+        title: form.title,
+        message: form.message,
+        audience: form.audience,
+        gradeId: gradeId, // 👈 passed from useUser()
+      }),
     });
-
+  
     if (res.ok) {
-      setForm({ title: '', message: '', audience: '', gradeId: '' });
+      setForm({ title: '', message: '', audience: 'ALL', gradeId: '' });
       setStatus('✅ Announcement created!');
     } else {
       setStatus('❌ Error creating announcement.');
     }
-
+  
     setTimeout(() => setStatus(''), 3000);
   };
+  
 
   return (
     <div className="max-w-2xl mx-auto mt-10 p-8 bg-gradient-to-br from-blue-50 to-white shadow-xl rounded-2xl border border-blue-200">
@@ -83,13 +81,9 @@ export default function CreateAnnouncement() {
             onChange={(e) => setForm({ ...form, audience: e.target.value })}
             className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-400"
           >
-            <option value="GRADE">Grade: {gradeId}</option>
+            <option value="GRADE">For Grade :{gradeId}</option>
           </select>
         </div>
-
-        {form.audience === 'GRADE' && (
-          <p className="text-sm text-gray-600">This will be posted to your assigned grade: <span className="font-semibold">{gradeId}</span></p>
-        )}
 
         <button
           type="submit"

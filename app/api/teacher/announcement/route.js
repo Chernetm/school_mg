@@ -16,6 +16,8 @@ export async function GET(req) {
     
     const decoded = jwt.verify(token.value, SECRET_KEY);
     const gradeId= decoded.grade;
+    console.log("Decoded Token:", decoded);
+    console.log("Grade ID from Token:", gradeId);
     if(!gradeId){
       return Response.json({ error: "Grade ID not found" }, { status: 400 });
     }
