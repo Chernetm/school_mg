@@ -2,11 +2,11 @@
 
 "use client";
 import {
-  BarChart,
   Book,
   Calendar,
   DollarSign,
   LayoutGridIcon,
+  MessageCircleDashedIcon,
   Users
 } from "lucide-react";
 import { MdCampaign } from 'react-icons/md';
@@ -41,6 +41,7 @@ const dropdowns = [
         items: [
           { href: "/admin/student/section", label: "Assign Section to Student" },
           { href: "/admin/rank", label: "Student Rank" },
+          { href: "/head/student/list", label: "Student List" },
         ],
       },
       {
@@ -95,6 +96,7 @@ const dropdowns = [
       roles: ["head"],
       items: [
         { href: "/head/student/active", label: "Active Student" },
+        { href: "/head/student/list", label: "Student List" },
         
       ],
     },
@@ -105,6 +107,15 @@ const dropdowns = [
         items: [
           { href: "/head/financial-summary", label: "Financial Record" },
           { href: "/head/unpaid-student", label: "List of Unpaid Student" },
+        ],
+      },
+      {
+        label: "Comment",
+        icon: <MessageCircleDashedIcon />,
+        roles: ["head"],
+        items: [
+          { href: "/head/message", label: "View Comment" },
+          
         ],
       },
 
@@ -129,16 +140,16 @@ const dropdowns = [
       ],
     },
 
-    {
-      label: "Reports",
-      icon: <BarChart />,
-      roles: ["admin", "head"],
-      items: [
-        { href: "/reports/attendance", label: "Attendance Reports" },
-        { href: "/reports/academic", label: "Academic Reports" },
-        { href: "/reports/finance", label: "Financial Reports" },
-      ],
-    },
+    // {
+    //   label: "Reports",
+    //   icon: <BarChart />,
+    //   roles: ["admin", "head"],
+    //   items: [
+    //     { href: "/reports/attendance", label: "Attendance Reports" },
+    //     { href: "/reports/academic", label: "Academic Reports" },
+    //     { href: "/reports/finance", label: "Financial Reports" },
+    //   ],
+    // },
   ];
 
 export default dropdowns;

@@ -11,14 +11,14 @@ import {
   Tooltip,
 } from 'recharts';
 
-const COLORS = ['#22c55e', '#ef4444']; // ✅ green for Paid, red for Unpaid
+const COLORS = ['#22c55e', '#ef4444']; // green for Paid, red for Unpaid
 
 export default function FinancialSummary({ grade, month, year }) {
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
+
   useEffect(() => {
     const fetchSummary = async () => {
-      setLoading(true); // Start loading spinner
       try {
         const res = await fetch(
           `/api/head/financial-summary?grade=${grade}&month=${month}&year=${year}`
@@ -28,24 +28,15 @@ export default function FinancialSummary({ grade, month, year }) {
       } catch (error) {
         console.error("Error fetching financial summary:", error);
       } finally {
-        setLoading(false); // Stop loading spinner
+        setLoading(false);
       }
     };
 
-    if (grade && month && year) { // Ensure values are set before fetching
+    if (grade && month && year) {
       fetchSummary();
     }
   }, [grade, month, year]);
 
-  
-  
-  const chartData = [
-    { name: 'Paid', value: data.paidCount },
-    { name: 'Unpaid', value: data.unpaidCount },
-  ];
-
-  const renderLabel = ({ name, value, percent }) =>
-    `${name}: ${value} (${(percent * 100).toFixed(0)}%)`;
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-screen">
@@ -53,9 +44,19 @@ export default function FinancialSummary({ grade, month, year }) {
       </div>
     );
   }
+
   if (!data) {
     return <p className="text-center text-gray-500">No data available.</p>;
   }
+
+  // ✅ Now that `data` is guaranteed to exist, it's safe to access
+  const chartData = [
+    { name: 'Paid', value: data.paidCount },
+    { name: 'Unpaid', value: data.unpaidCount },
+  ];
+
+  const renderLabel = ({ name, value, percent }) =>
+    `${name}: ${value} (${(percent * 100).toFixed(0)}%)`;
 
   return (
     <div className="p-6 bg-white rounded-xl shadow max-w-md mx-auto">
@@ -90,3 +91,4 @@ export default function FinancialSummary({ grade, month, year }) {
     </div>
   );
 }
+
