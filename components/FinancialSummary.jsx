@@ -1,34 +1,44 @@
 'use client';
 
+import Spinner from '@/components/Loading/Spinner/page';
 import { useEffect, useState } from 'react';
 import {
-    Cell,
-    Legend,
-    Pie,
-    PieChart,
-    ResponsiveContainer,
-    Tooltip,
+  Cell,
+  Legend,
+  Pie,
+  PieChart,
+  ResponsiveContainer,
+  Tooltip,
 } from 'recharts';
 
 const COLORS = ['#22c55e', '#ef4444']; // ✅ green for Paid, red for Unpaid
 
 export default function FinancialSummary({ grade, month, year }) {
   const [data, setData] = useState(null);
-
+  const [loading, setLoading] = useState(true);
   useEffect(() => {
     const fetchSummary = async () => {
-      const res = await fetch(
-        `/api/head/financial-summary?grade=${grade}&month=${month}&year=${year}`
-      );
-      const json = await res.json();
-      setData(json);
+      setLoading(true); // Start loading spinner
+      try {
+        const res = await fetch(
+          `/api/head/financial-summary?grade=${grade}&month=${month}&year=${year}`
+        );
+        const json = await res.json();
+        setData(json);
+      } catch (error) {
+        console.error("Error fetching financial summary:", error);
+      } finally {
+        setLoading(false); // Stop loading spinner
+      }
     };
 
-    fetchSummary();
+    if (grade && month && year) { // Ensure values are set before fetching
+      fetchSummary();
+    }
   }, [grade, month, year]);
 
-  if (!data) return <p className="p-4">Loading summary...</p>;
-
+  
+  
   const chartData = [
     { name: 'Paid', value: data.paidCount },
     { name: 'Unpaid', value: data.unpaidCount },
@@ -36,6 +46,16 @@ export default function FinancialSummary({ grade, month, year }) {
 
   const renderLabel = ({ name, value, percent }) =>
     `${name}: ${value} (${(percent * 100).toFixed(0)}%)`;
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <Spinner />
+      </div>
+    );
+  }
+  if (!data) {
+    return <p className="text-center text-gray-500">No data available.</p>;
+  }
 
   return (
     <div className="p-6 bg-white rounded-xl shadow max-w-md mx-auto">

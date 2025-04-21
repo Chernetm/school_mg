@@ -2,6 +2,7 @@
 "use client";
 import React, { useState } from "react";
 
+import UploadingSpinner from "@/components/Loading/Uploading/page";
 import { Section } from "@/components/Section";
 import { StudentFields } from "@/components/StudentFields";
 import { SubmitButton } from "@/components/SubmitButton";
@@ -126,6 +127,14 @@ const StudentRegistrationForm = () => {
     setPreviewImage(null);
   };
 
+
+ if (loading) {
+     return (
+       <div className="flex justify-center items-center min-h-screen">
+         <UploadingSpinner />
+       </div>
+     );
+   }
   return (
     <div className="max-w-3xl mx-auto p-6 bg-white rounded-lg shadow-lg">
       <form onSubmit={handleSubmit} className="space-y-6">

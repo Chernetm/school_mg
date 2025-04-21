@@ -1,14 +1,15 @@
 "use client";
 
+import Spinner from "@/components/Loading/Spinner/page";
 import { useEffect, useState } from "react";
 import {
-    Bar,
-    BarChart,
-    CartesianGrid,
-    Cell,
-    Tooltip,
-    XAxis,
-    YAxis,
+  Bar,
+  BarChart,
+  CartesianGrid,
+  Cell,
+  Tooltip,
+  XAxis,
+  YAxis,
 } from "recharts";
 
 const gradeColors = {
@@ -52,6 +53,13 @@ export default function StudentChart() {
   useEffect(() => {
     fetchStudentCounts(selectedYear);
   }, [selectedYear]);
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <Spinner />
+      </div>
+    );
+  }
 
   return (
     <div className="mt-24 px-6 max-w-6xl mx-auto bg-white p-8 rounded-xl shadow-lg">

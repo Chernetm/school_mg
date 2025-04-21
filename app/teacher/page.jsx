@@ -1,8 +1,10 @@
+
 "use client";
 
 import { motion } from "framer-motion";
 import Link from "next/link";
 import { FaBullhorn, FaChalkboardTeacher } from "react-icons/fa";
+import { MdAnnouncement } from "react-icons/md"; // 📣 Icon for new card
 
 const containerVariants = {
   hidden: { opacity: 0, y: 20 },
@@ -40,7 +42,7 @@ export default function Dashboard() {
         animate="visible"
         className="grid grid-cols-1 sm:grid-cols-2 gap-6 w-full max-w-3xl"
       >
-        {/* 📢 Announcements Card */}
+        {/* 📢 Announcements Post Card */}
         <motion.div
           variants={cardVariants}
           whileHover={{ scale: 1.05 }}
@@ -55,6 +57,25 @@ export default function Dashboard() {
               <div>
                 <h2 className="text-xl font-semibold">Announcement Post</h2>
                 <p className="text-sm">Post announcement for student</p>
+              </div>
+            </div>
+          </Link>
+        </motion.div>
+        {/* 🗂️ Announcement List for Grade Section Card */}
+        <motion.div
+          variants={cardVariants}
+          whileHover={{ scale: 1.05 }}
+          whileTap={{ scale: 0.97 }}
+          className="bg-white text-blue-800 p-6 rounded-2xl shadow-lg cursor-pointer hover:shadow-xl transition-all"
+        >
+          <Link href="/teacher/announcement/grade">
+            <div className="flex items-center space-x-4">
+              <div className="bg-blue-200 p-4 rounded-full">
+                <MdAnnouncement size={28} />
+              </div>
+              <div>
+                <h2 className="text-xl font-semibold">Announcement List</h2>
+                <p className="text-sm">View announcements for specific grade and section</p>
               </div>
             </div>
           </Link>
@@ -79,6 +100,8 @@ export default function Dashboard() {
             </div>
           </Link>
         </motion.div>
+
+        
       </motion.div>
     </div>
   );

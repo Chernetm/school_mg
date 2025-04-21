@@ -1,36 +1,16 @@
-
-
 import { getStudentIDFromToken } from "@/utils/auth";
 import { prisma } from "@/utils/prisma";
 import { NextResponse } from "next/server";
 
 export async function GET(req) {
   const studentID = await getStudentIDFromToken();
-  console.log("Student ID from token:", studentID); // Debugging
+  console.log("Student ID from token:", studentID);
+
   if (!studentID) {
     return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
   }
 
   try {
-    // const registrations = await prisma.registration.findMany({
-    //   where: { studentID },
-    //   include: {
-    //     resultDetail: {
-    //       include: {
-    //         semester: {
-    //           select: { name: true },
-    //         },
-    //       },
-    //     },
-    //     resultSummary: {
-    //       include: {
-    //         semester: {
-    //           select: { name: true },
-    //         },
-    //       },
-    //     },
-    //   },
-    // });
     const registrations = await prisma.registration.findMany({
       where: { studentID },
       include: {
@@ -50,7 +30,7 @@ export async function GET(req) {
         },
       },
     });
-     console.log(registrations, "Fetched registrations with results");    
+
     const resultsByGrade = {};
 
     for (const reg of registrations) {
@@ -59,7 +39,7 @@ export async function GET(req) {
 
       // Map scores from resultDetail by semester and subject
       for (const result of reg.resultDetail) {
-        const semName = `Semester ${result.semester.name}`;
+        const semName = `Semester ${result.semesterRef.name}`;
 
         if (!resultsByGrade[gradeKey][semName]) {
           resultsByGrade[gradeKey][semName] = {
@@ -73,7 +53,7 @@ export async function GET(req) {
 
       // Map summary info from resultSummary by semester
       for (const summary of reg.resultSummary) {
-        const semName = `Semester ${summary.semester.name}`;
+        const semName = `Semester ${summary.semesterRef.name}`;
 
         if (!resultsByGrade[gradeKey][semName]) {
           resultsByGrade[gradeKey][semName] = {
@@ -86,6 +66,9 @@ export async function GET(req) {
         resultsByGrade[gradeKey][semName].passStatus = summary.passStatus;
       }
     }
+
+    // Optional: inspect final results for debugging
+    console.dir(resultsByGrade, { depth: null });
 
     return NextResponse.json({ results: resultsByGrade }, { status: 200 });
   } catch (err) {

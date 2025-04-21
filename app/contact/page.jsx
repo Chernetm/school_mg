@@ -1,16 +1,77 @@
 "use client";
 
 import { motion } from "framer-motion";
+import { useState } from "react";
 import {
-    FaEnvelope,
-    FaFacebookF,
-    FaMapMarkerAlt,
-    FaPhoneAlt,
-    FaTelegramPlane,
-    FaYoutube,
+  FaEnvelope,
+  FaFacebookF,
+  FaMapMarkerAlt,
+  FaPhoneAlt,
+  FaTelegramPlane,
+  FaYoutube,
 } from "react-icons/fa";
 
 export default function ContactPage() {
+  // States to hold form values and error/success messages
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [message, setMessage] = useState("");
+  const [wordCountError, setWordCountError] = useState("");
+  const [formStatus, setFormStatus] = useState(""); // For success or error message
+
+  const wordLimit = 20; // Set the word limit for the message
+
+  // Function to handle message input change
+  const handleMessageChange = (e) => {
+    const newMessage = e.target.value;
+    const wordCount = newMessage.trim().split(/\s+/).length;
+
+    if (wordCount <= wordLimit) {
+      setMessage(newMessage);
+      setWordCountError(""); // Clear error if the word count is within the limit
+    } else {
+      setWordCountError(`Message should be under ${wordLimit} words.`);
+    }
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    if (wordCountError) {
+      return; // Prevent form submission if there is a word count error
+    }
+
+    // Data to send to API
+    const formData = { name, email, message };
+
+    try {
+      const response = await fetch("/api/message", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(formData),
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        // Success: Display success message
+        setFormStatus("Your message has been sent successfully!");
+        // Clear the form after successful submission
+        setName("");
+        setEmail("");
+        setMessage("");
+      } else {
+        // Error: Display error message
+        setFormStatus(`Error: ${data.message || "Something went wrong. Please try again."}`);
+      }
+    } catch (error) {
+      // Handle network errors or any unexpected error
+      setFormStatus("Error: Could not submit the message. Please try again.");
+    }
+  };
+
   return (
     <div className="relative min-h-screen bg-gradient-to-br from-indigo-900 to-purple-800 text-white px-4 py-20 flex flex-col items-center">
       <div className="absolute inset-0 bg-black opacity-30"></div>
@@ -41,25 +102,9 @@ export default function ContactPage() {
         transition={{ delay: 0.6, duration: 1 }}
         className="relative z-10 grid md:grid-cols-3 gap-8 mb-16 w-full max-w-5xl"
       >
-        {[
-          {
-            icon: <FaEnvelope className="text-red-400 text-3xl mb-2" />,
-            title: "Email Us",
-            detail: "school@example.com",
-            href: "mailto:school@example.com",
-          },
-          {
-            icon: <FaPhoneAlt className="text-green-400 text-3xl mb-2" />,
-            title: "Call Us",
-            detail: "+251 912 345 678",
-            href: "tel:+251912345678",
-          },
-          {
-            icon: <FaMapMarkerAlt className="text-yellow-300 text-3xl mb-2" />,
-            title: "Visit Us",
-            detail: "Addis Ababa, Ethiopia",
-            href: "https://goo.gl/maps/yourlocation",
-          },
+        {[{ icon: <FaEnvelope className="text-red-400 text-3xl mb-2" />, title: "Email Us", detail: "school@example.com", href: "mailto:school@example.com" },
+          { icon: <FaPhoneAlt className="text-green-400 text-3xl mb-2" />, title: "Call Us", detail: "+251 912 345 678", href: "tel:+251912345678" },
+          { icon: <FaMapMarkerAlt className="text-yellow-300 text-3xl mb-2" />, title: "Visit Us", detail: "Addis Ababa, Ethiopia", href: "https://goo.gl/maps/yourlocation" },
         ].map((item, index) => (
           <a
             key={index}
@@ -80,7 +125,7 @@ export default function ContactPage() {
         initial={{ opacity: 0, scale: 0.95 }}
         animate={{ opacity: 1, scale: 1 }}
         transition={{ delay: 1.2, duration: 0.8 }}
-        onSubmit={(e) => e.preventDefault()}
+        onSubmit={handleSubmit}
         className="relative z-10 w-full max-w-2xl bg-black bg-opacity-40 p-8 rounded-2xl shadow-xl backdrop-blur-md space-y-5"
       >
         <h2 className="text-2xl font-semibold text-white mb-4 text-center">Leave Us a Message</h2>
@@ -88,18 +133,30 @@ export default function ContactPage() {
         <input
           type="text"
           placeholder="Your Name"
+          value={name}
+          onChange={(e) => setName(e.target.value)}
           className="w-full px-4 py-3 rounded-md bg-white bg-opacity-20 text-black placeholder-gray-300 focus:outline-none"
         />
         <input
           type="email"
           placeholder="Your Email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
           className="w-full px-4 py-3 rounded-md bg-white bg-opacity-20 text-black placeholder-gray-300 focus:outline-none"
         />
         <textarea
           placeholder="Your Message"
           rows="5"
+          value={message}
+          onChange={handleMessageChange}
           className="w-full px-4 py-3 rounded-md bg-white bg-opacity-20 text-black placeholder-gray-300 focus:outline-none"
         ></textarea>
+
+        {/* Display word count error if exceeded */}
+        {wordCountError && <p className="text-red-500 text-sm">{wordCountError}</p>}
+
+        {/* Display form submission status */}
+        {formStatus && <p className="text-green-500 text-sm">{formStatus}</p>}
 
         <button
           type="submit"
@@ -132,3 +189,4 @@ export default function ContactPage() {
     </div>
   );
 }
+

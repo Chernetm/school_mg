@@ -1,50 +1,40 @@
-
-const { prisma } = require("@/utils/prisma");
 import { getStaffIDFromToken } from "@/utils/auth";
+import { prisma } from "@/utils/prisma";
 import { NextResponse } from "next/server";
 
 export async function POST(req) {
   try {
     const staffID = Number(await getStaffIDFromToken());
-    console.log(staffID);
     if (!staffID) {
       return NextResponse.json({ error: "Missing staff ID" }, { status: 401 });
     }
 
     const body = await req.json();
     const { results } = body;
+    console.log("Results received:", results);
 
     if (!Array.isArray(results) || results.length === 0) {
       return NextResponse.json({ error: "Results array is required" }, { status: 400 });
     }
 
     const semesterName = results[0].semester;
-    console.log(semesterName);
-
     const currentSemester = await prisma.semester.findUnique({
-      where: { name: semesterName , status: "active" },
-      select: { id: true, name: true },
+      where: { name: semesterName, status:"active" },
     });
-    console.log(currentSemester, "The current semester");
-    if (!currentSemester) {
-      return NextResponse.json({ error: "Semester is not Active" }, { status: 407 });
+
+    if (!currentSemester || currentSemester.status !== "active") {
+      return NextResponse.json({ error: "Semester is not active" }, { status: 407 });
     }
 
     const uploadedResults = [];
 
     for (const resultItem of results) {
-      const { studentID, subject, result, grade, section } = resultItem;
+      const { studentID, subject, result, grade, section,semester } = resultItem;
 
-      if (!studentID || !subject || result === undefined || !grade || !section) {
-        continue; // Skip invalid entries instead of failing the entire batch
-      }
+      if (!studentID || !subject || result === undefined || !grade || !section) continue;
 
       const registration = await prisma.registration.findFirst({
-        where: {
-          studentID,
-          grade,
-          section,
-        },
+        where: { studentID, grade, section },
         select: { registrationID: true },
       });
 
@@ -58,7 +48,7 @@ export async function POST(req) {
           registrationID_subject_semester: {
             registrationID: registration.registrationID,
             subject,
-            semester: currentSemester.name, // ✅ Use correct foreign key field
+            semester: Number(semester)
           },
         },
         update: {
@@ -68,7 +58,7 @@ export async function POST(req) {
         create: {
           registrationID: registration.registrationID,
           staffID,
-          semester: currentSemester.name, // ✅ Use semester ID here
+          semester: Number(semester),
           subject,
           score: Number(result),
         },
@@ -78,7 +68,10 @@ export async function POST(req) {
     }
 
     return NextResponse.json(
-      { message: "Results uploaded successfully", uploadedCount: uploadedResults.length },
+      {
+        message: "Results uploaded successfully",
+        uploadedCount: uploadedResults.length,
+      },
       { status: 201 }
     );
   } catch (error) {

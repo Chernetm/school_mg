@@ -20,18 +20,43 @@ export async function POST(req) {
     console.log(`🔹 Searching for staff: ${username}`);
     const staff = await prisma.staff.findUnique({
       where: { username },
-      select: {
-        id: true,
-        staffID: true,
-        firstName: true,
-        lastName: true,
-        username: true,
-        password: true,
-        role: true,
-        image:true,
-        email:true,
+      include: {
+        assignment: {
+          select: {
+            subject: true,
+            grade: true,
+            section: true,
+          },
+        },
       },
     });
+    
+
+
+    console.log("🔹 Staff fetched from database");    
+    // const staff = await prisma.staff.findUnique({
+    //   where: { username },
+    //   select: {
+    //     id: true,
+    //     staffID: true,
+    //     firstName: true,
+    //     lastName: true,
+    //     username: true,
+    //     password: true,
+    //     role: true,
+    //     image:true,
+    //     email:true,
+    //     include:{
+    //       assignments:{
+    //         select:{
+    //           subject:true,
+    //           grade:true,
+    //           section:true,
+    //         }
+    //       }
+    //     }
+    //   },
+    // });
     console.log("staff ROLE", staff.role)
     if (!staff || staff.role !== 'teacher') {
         return NextResponse.json(
@@ -67,6 +92,8 @@ export async function POST(req) {
         firstName: staff.firstName,
         middleName: staff.middleName,
         lastName: staff.lastName,
+        grade:staff.assignment[0]?.grade?.grade, // 👈 just the first grade
+  
       },
       process.env.JWT_SECRET,
       { expiresIn: "7d" }

@@ -4,7 +4,7 @@ export async function DELETE(req, { params }) {
     const { id } = params;
   
     try {
-      await prisma.announcement.delete({ where: { id } });
+      await prisma.announcement.delete({ where: {id: Number(id) } });
       return Response.json({ message: 'Deleted' }, { status: 200 });
     } catch (error) {
       console.error(error);

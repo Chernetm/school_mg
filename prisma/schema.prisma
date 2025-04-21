@@ -374,6 +374,14 @@ model DisciplineRecord {
   staff      Staff    @relation(fields: [staffID], references: [staffID])
 }
 
+model Message {
+  id        Int      @id @default(autoincrement())
+  name      String
+  email     String
+  message   String
+  createdAt DateTime @default(now())
+}
+
 
 enum MonthEnum {
   January

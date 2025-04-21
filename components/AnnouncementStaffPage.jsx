@@ -2,6 +2,7 @@
 
 import AnnouncementList from '@/components/AnnouncementList';
 import { useEffect, useState } from 'react';
+import Spinner from './Loading/Spinner/page';
 
 export default function AnnouncementsPage() {
   const [announcements, setAnnouncements] = useState([]);
@@ -11,6 +12,8 @@ export default function AnnouncementsPage() {
   // Fetch announcements and auth info
   useEffect(() => {
     const fetchData = async () => {
+      setLoading(true);
+
       try {
         // Fetch announcements
         const annRes = await fetch('/api/announcement/get/staff');
@@ -28,8 +31,7 @@ export default function AnnouncementsPage() {
     fetchData();
   }, []);
 
-  if (loading) return <p className="text-center text-gray-500">Loading announcements...</p>;
-
+  if (loading) return <Spinner />;
   if (!announcements.length) {
     return <p className="text-center text-gray-500">No announcements available.</p>;
   }

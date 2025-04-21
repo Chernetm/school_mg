@@ -1,9 +1,9 @@
 import { DisclosureButton, DisclosurePanel } from "@headlessui/react";
 
 const links = [
-  { name: "Home", href: "#", current: true },
-  { name: "About", href: "#", current: false },
-  { name: "Contact", href: "#", current: false },
+  { name: "Home", href: "/", current: true },
+  { name: "About", href: "/about", current: false },
+  { name: "Contact", href: "/contact", current: false },
 ];
 
 const classNames = (...classes) => classes.filter(Boolean).join(" ");

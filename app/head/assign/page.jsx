@@ -1,15 +1,37 @@
 "use client";
+import Spinner from "@/components/Loading/Spinner/page";
 import { useEffect, useState } from "react";
 
 export default function StaffPage() {
   const [staff, setStaff] = useState([]);
   const [updates, setUpdates] = useState({});
+  const [loading, setLoading] = useState(true);
   
   useEffect(() => {
-    fetch("/api/head/admin")
-      .then((res) => res.json())
-      .then(setStaff);
+    const fetchData = async () => {
+      try {
+        // Fetch staff data
+        const res = await fetch("/api/head/admin");
+        if (!res.ok) {
+          throw new Error("Failed to fetch staff data");
+        }
+        const data = await res.json();
+        setStaff(data);
+      } catch (error) {
+        console.error("Error fetching staff data:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchData();
   }, []);
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <Spinner />
+      </div>
+    );
+  }
 
   const handleChange = (staffID, field, value) => {
     setUpdates((prev) => ({

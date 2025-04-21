@@ -1,4 +1,5 @@
 "use client"
+import Spinner from "@/components/Loading/Spinner/page";
 import { useEffect, useState } from "react";
 
 const StaffAttendancePage = () => {
@@ -38,6 +39,14 @@ const StaffAttendancePage = () => {
 
     fetchAttendance();
   }, [role, range]);
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <Spinner />
+      </div>
+    );
+  }
 
   return (
     <div className="max-w-4xl mx-auto p-6 bg-gray-50 shadow-lg rounded-xl mt-10">

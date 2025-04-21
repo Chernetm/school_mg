@@ -1,9 +1,10 @@
-
-"use client"
+"use client";
+import Spinner from "@/components/Loading/Spinner/page";
 import { useEffect, useState } from "react";
 
 export default function StaffAssignments() {
   const [assignments, setAssignments] = useState([]);
+  const [loading, setLoading] = useState(false);
   const [students, setStudents] = useState([]);
   const [mode, setMode] = useState("attendance");
   const [semester, setSemester] = useState("1");
@@ -14,15 +15,27 @@ export default function StaffAssignments() {
   const [activeAssignment, setActiveAssignment] = useState(null);
 
   useEffect(() => {
-    fetch("/api/teacher/assigned-section")
-      .then((res) => res.json())
-      .then((data) => setAssignments(data.assignments || []));
+    const fetchAssignments = async () => {
+      setLoading(true);
+      try {
+        const res = await fetch("/api/teacher/assigned-section");
+        const data = await res.json();
+        setAssignments(data.assignments || []);
+      } catch (err) {
+        console.error("Error fetching assignments:", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchAssignments();
   }, []);
 
   const getAssignmentKey = (assignment) =>
     `${assignment.grade}-${assignment.section}-${assignment.subject}`;
 
   const fetchStudents = async (grade, section) => {
+    setLoading(true);
     try {
       const response = await fetch(`/api/teacher/student?grade=${grade}&section=${section}`);
       const data = await response.json();
@@ -31,8 +44,22 @@ export default function StaffAssignments() {
     } catch (error) {
       console.error("Error fetching students:", error.message);
       setStudents([]);
+    } finally {
+      setLoading(false);
     }
   };
+
+  // ⬇ ADD THIS: Spinner display
+  if (loading) {
+    return (
+      <div className="flex justify-center items-center min-h-screen">
+        <Spinner />
+      </div>
+    );
+  }
+
+  // ⬇ Continue your return (...)
+
 
   const handleCardClick = (assignment) => {
     const key = getAssignmentKey(assignment);
@@ -59,24 +86,26 @@ export default function StaffAssignments() {
       [id]: prev[id] === status ? undefined : status,
     }));
   };
-
-  const submitAttendance = async () => {
+ const submitAttendance = async () => {
+    setLoading(true);
     try {
       const res = await fetch("/api/teacher/attendance", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ attendance }),
       });
-
+  
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || "Failed to submit attendance");
-
+  
       setFeedback({ type: "success", message: "Attendance submitted successfully!" });
     } catch (error) {
       setFeedback({ type: "error", message: "Failed to submit attendance: " + error.message });
+    } finally {
+      setLoading(false);
     }
   };
-
+  
   const handleResultChange = (studentID, value) => {
     setResults((prev) => ({
       ...prev,
@@ -86,7 +115,7 @@ export default function StaffAssignments() {
 
   const handleUploadAll = async () => {
     if (!activeAssignment) return;
-
+  
     const payload = Object.entries(results).map(([studentID, result]) => ({
       studentID,
       result: Number(result),
@@ -95,23 +124,26 @@ export default function StaffAssignments() {
       grade: Number(activeAssignment.grade),
       section: activeAssignment.section,
     }));
-
+  
+    setLoading(true);
     try {
       const res = await fetch("/api/teacher/resultUpload", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ results: payload }),
       });
-
+  
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || "Failed to upload results");
-
+  
       setFeedback({ type: "success", message: "Results uploaded successfully!" });
     } catch (error) {
       setFeedback({ type: "error", message: "Failed to upload results: " + error.message });
+    } finally {
+      setLoading(false);
     }
   };
-
+  
   return (
     <div className="p-4 sm:p-6 bg-gray-100 min-h-screen text-sm sm:text-base">
       <h1 className="text-2xl font-bold mb-6 text-gray-800">Section List</h1>

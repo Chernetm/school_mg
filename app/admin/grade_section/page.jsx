@@ -1,5 +1,6 @@
 "use client";
 
+import UploadingSpinner from "@/components/Loading/Uploading/page";
 import { useState } from "react";
 
 const GradeSectionForm = () => {
@@ -7,6 +8,7 @@ const GradeSectionForm = () => {
   const [sections, setSections] = useState([{ name: "", capacity: "" }]);
   const [status, setStatus] = useState("active");
   const [message, setMessage] = useState("");
+  const [loading, setLoading] = useState(false);
 
   const handleGradeChange = (e) => setGrade(e.target.value);
   const handleStatusChange = (e) => setStatus(e.target.value);
@@ -24,16 +26,17 @@ const GradeSectionForm = () => {
   const removeSection = (index) => {
     setSections(sections.filter((_, i) => i !== index));
   };
-
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setLoading(true);
     setMessage("");
-
+  
     if (!grade || sections.some(sec => !sec.name.trim() || !sec.capacity)) {
       alert("Grade, section names, and capacities are required.");
+      setLoading(false);
       return;
     }
-
+  
     try {
       const response = await fetch("/api/admin/grade_section", {
         method: "POST",
@@ -44,18 +47,26 @@ const GradeSectionForm = () => {
           status,
         }),
       });
-
+  
       if (!response.ok) throw new Error("Failed to register grade and sections");
-
+  
       setMessage("✅ Grade and sections registered successfully!");
       setGrade("");
       setSections([{ name: "", capacity: "" }]);
       setStatus("active");
     } catch (error) {
       setMessage("❌ Error: " + error.message);
+    } finally {
+      setLoading(false);
     }
   };
-
+ if (loading) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <UploadingSpinner />
+      </div>
+    );
+  }  
   return (
     <div className="max-w-lg mx-auto mt-10 p-8 bg-white text-gray-700 shadow-lg rounded-xl">
       <h2 className="text-2xl font-bold text-center mb-6 text-gray-800">
