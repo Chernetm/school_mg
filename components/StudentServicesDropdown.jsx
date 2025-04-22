@@ -10,6 +10,7 @@ import {
   FaPenAlt,
   FaUser
 } from "react-icons/fa";
+import { MdSettings } from "react-icons/md";
 
 const services = [
   { name: "Profile", href: "/student/profile", icon: <FaUser className="mr-3" /> },
@@ -22,6 +23,7 @@ const services = [
   { name: "Discipline", href: "/student/discipline", icon: <FaExclamationTriangle className="mr-3" /> },
   { name: "Exam", href: "/login/exam", icon: <FaPenAlt className="mr-3" /> },
   { name: "Exam Result", href: "/student/exam/result", icon: <FaClipboardCheck className="mr-3" /> },
+  { name: "Setting", href: "/student/setting", icon: <MdSettings className="mr-3" /> },
 ];
 
 export function StudentServicesDropdown() {

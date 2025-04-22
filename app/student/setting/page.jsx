@@ -25,7 +25,7 @@ export default function SettingsForm() {
     setMessage('');
     setError('');
 
-    const res = await fetch('/api/setting', {
+    const res = await fetch('/api/student/setting', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(formData),
