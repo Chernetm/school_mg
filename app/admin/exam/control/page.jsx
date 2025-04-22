@@ -9,7 +9,11 @@ const StudentActivity = ({ studentId }) => {
   const [loginAttempts, setLoginAttempts] = useState({});
 
   useEffect(() => {
-    const socket = io("http://localhost:4000");
+    const socket = io("https://exam-server-p1p6.onrender.com", {
+      transports: ["websocket"], // 🔐 Forces WebSocket (avoids long polling)
+      withCredentials: true,     // ✅ Sends cookies if needed (optional based on auth)
+    });
+    
 
     socket.on("connect", () => {
       console.log("✅ Connected to WebSocket");
