@@ -2,18 +2,23 @@ const { prisma } = require("@/utils/prisma");
 const { NextResponse } = require("next/server");
 
 export async function GET() {
+  const studentID = 1;
+  if (!studentID) {
+    return NextResponse.json({ error: "Student ID is required" }, { status: 400 });
+  }
+
   try {
     const disciplines = await prisma.disciplineRecord.findMany({
+      where: { studentID : studentID.toString()}, // Ensure it's a number if `studentID` is Int
       select: {
         id: true,
         message: true,
-        staffID:true,
         createdAt: true,
         student: {
           select: {
             firstName: true,
-            middleName: true,
             lastName: true,
+            middleName: true,
           },
         },
       },
