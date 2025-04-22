@@ -36,8 +36,9 @@ export default function StudentExam() {
   useEffect(() => {
     if (!studentId) return;
 
-    const newSocket = io("https://exam-server-p1p6.onrender.com");
-
+    const newSocket = io("https://exam-server-p1p6.onrender.com", {
+      transports: ["websocket"], // 👈 ensures it uses WebSocket over long polling
+    });
     newSocket.on("connect", () => {
       console.log("✅ Connected to WebSocket", studentId);
       newSocket.emit("studentOnline", { studentId });
@@ -77,7 +78,7 @@ export default function StudentExam() {
   const calculateTimeLeft = (start, end) => {
     const startTime = new Date(start).getTime();
     const endTime = new Date(end).getTime();
-    return Math.max(0, Math.floor((endTime - startTime) / 1000));
+    return Math.max(0, Math.floor((endTime - startTime)/1000));
   };
 
   useEffect(() => {
@@ -123,6 +124,8 @@ export default function StudentExam() {
     const secs = seconds % 60;
     return `${minutes}:${secs < 10 ? "0" : ""}${secs}`;
   };
+
+  console.log("Student ID:", studentId);
 
   return (
     <div className="min-h-screen w-full p-4 md:p-6 bg-gray-100 flex items-center justify-center">
