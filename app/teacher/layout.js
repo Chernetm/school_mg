@@ -11,7 +11,7 @@ export default async function TeacherLayout({ children }) {
     staffID: headersList.get("x-user-id"),
     grade: headersList.get("x-user-grade"),
   };
-
+  
   return (
     <UserProvider initialUser={user}>
       <div className="min-h-screen flex flex-col bg-gray-100">

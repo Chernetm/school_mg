@@ -11,7 +11,9 @@ export default async function LibraryLayout({ children }) {
     staffID: headersList.get("x-user-id"),
     grade: headersList.get("x-user-grade"),
   };
-
+ console.log("User in Library Layout:", user); // Log the user object for debugging
+ console.log("User Role in Library Layout:", user.role); // Log the user role for debugging
+  // You can grab other header values similarly
   return (
     <UserProvider initialUser={user}>
       <div className="min-h-screen flex flex-col bg-gray-100">

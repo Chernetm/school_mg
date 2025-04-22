@@ -20,44 +20,30 @@ export async function POST(req) {
     console.log(`🔹 Searching for staff: ${username}`);
     const staff = await prisma.staff.findUnique({
       where: { username },
-      include: {
+      select: {
+        id: true,
+        staffID: true,
+        firstName: true,
+        middleName: true,
+        lastName: true,
+        username: true,
+        password: true,
+        role: true,
+        image: true,
+        email: true,
         assignment: {
           select: {
             subject: true,
-            grade: true,
+            grade: {
+              select: { grade: true }
+            },
             section: true,
           },
         },
       },
     });
     
-
-
-    console.log("🔹 Staff fetched from database");    
-    // const staff = await prisma.staff.findUnique({
-    //   where: { username },
-    //   select: {
-    //     id: true,
-    //     staffID: true,
-    //     firstName: true,
-    //     lastName: true,
-    //     username: true,
-    //     password: true,
-    //     role: true,
-    //     image:true,
-    //     email:true,
-    //     include:{
-    //       assignments:{
-    //         select:{
-    //           subject:true,
-    //           grade:true,
-    //           section:true,
-    //         }
-    //       }
-    //     }
-    //   },
-    // });
-    console.log("staff ROLE", staff.role);
+  console.log("staff ROLE", staff.image, staff.role, staff.assignment[0]?.grade?.grade);
 
 if (!staff || (staff.role !== 'teacher' && staff.role !== 'staff')) {
   

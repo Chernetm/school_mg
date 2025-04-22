@@ -16,6 +16,14 @@ export default function StudentExam() {
       const res = await fetch(`/api/student/exam?title=${examTitle}`);
       if (!res.ok) throw new Error("Exam not found");
       const data = await res.json();
+      console.log("Exam data:", data);
+      console.log("Exam ID:", data.exam.id);
+      console.log("Exam Title:", data.exam.title);
+      console.log("Exam Questions:", data.exam.questions);
+      console.log("Exam Start Time:", data.exam.startTime);
+      console.log("Exam End Time:", data.exam.endTime);
+      console.log("Student ID:", data.studentID);
+      
 
       setExam(data.exam);
       setStudentId(data.studentID);
