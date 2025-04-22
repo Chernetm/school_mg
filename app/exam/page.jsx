@@ -28,7 +28,7 @@ export default function StudentExam() {
   useEffect(() => {
     if (!studentId) return;
 
-    const newSocket = io("http://localhost:4000");
+    const newSocket = io("https://exam-server-p1p6.onrender.com");
 
     newSocket.on("connect", () => {
       console.log("✅ Connected to WebSocket", studentId);

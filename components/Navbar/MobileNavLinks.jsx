@@ -2,7 +2,7 @@ import { DisclosureButton, DisclosurePanel } from "@headlessui/react";
 
 const links = [
   { name: "Home", href: "/", current: true },
-  { name: "Home", href: "/announcement", current: false },
+  { name: "Announcement", href: "/announcement", current: false },
   { name: "About", href: "/about", current: false },
   { name: "Contact", href: "/contact", current: false },
 ];
