@@ -1,5 +1,6 @@
 "use client";
 import InputField from "@/components/InputField";
+import UploadingSpinner from "@/components/Loading/Uploading/page";
 import { useState } from "react";
 
 const StaffRegistrationForm = () => {
@@ -64,7 +65,13 @@ const StaffRegistrationForm = () => {
       setLoading(false);
     }
   };
-
+ if(loading) { 
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <UploadingSpinner />
+      </div>
+    );
+  }
   return (
     <div className="max-w-4xl mx-auto mt-10 p-8 bg-white text-gray-700 shadow-lg rounded-xl">
       <h2 className="text-3xl font-extrabold text-center mb-6 text-gray-800">Staff Registration</h2>

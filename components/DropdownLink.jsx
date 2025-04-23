@@ -41,7 +41,7 @@ const dropdowns = [
         items: [
           { href: "/admin/student/section", label: "Assign Section to Student" },
           { href: "/admin/rank", label: "Student Rank" },
-          { href: "/head/student/list", label: "Student List" },
+          { href: "/admin/student/list", label: "Student List" },
         ],
       },
       {
@@ -125,6 +125,7 @@ const dropdowns = [
       roles: ["registrar"],
       items: [
         { href: "/registrar/student", label: "Student Registration" },
+        { href: "/registrar/student/list", label: "Student List" },
         { href: "/registrar/student/edit", label: "Edit Student" },
         
       ],

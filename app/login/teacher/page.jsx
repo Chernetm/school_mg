@@ -1,5 +1,6 @@
 
 "use client";
+import Spinner from "@/components/Loading/Spinner/page";
 import LoginForm from "@/components/LoginForm";
 import { useRouter } from "next/navigation";
 import {
@@ -50,6 +51,13 @@ export default function StaffLogin() {
     }
   };
 
+  if(loading) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <Spinner />
+      </div>
+    );
+  }
  
   // Desktop login screen
   return (

@@ -1,4 +1,5 @@
 "use client";
+import Spinner from "@/components/Loading/Spinner/page";
 import LoginForm from "@/components/LoginForm";
 import { getDeviceFingerprint } from "@/utils/fingerPrint"; // Import the function
 import { useRouter } from "next/navigation";
@@ -41,6 +42,14 @@ export default function LoginPage() {
       setLoading(false);
     }
   };
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <Spinner />
+      </div>
+    );
+  }
 
   return (
     
