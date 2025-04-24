@@ -24,15 +24,23 @@ export async function POST(req) {
           headers: { "Content-Type": "application/json" },
         });
       }
-
+      const staffId = await prisma.staff.findUnique({ 
+        where: { staffID: parseInt(staffID, 10) } // Convert to number
+      });
+      if (staffId) {
+        return new Response(JSON.stringify({ error: "Staff ID already exists!" }), {
+          status: 400
+        });
+      }
+      
       const existingStaff = await prisma.staff.findUnique({
         where: { username }
       });
   
       if (existingStaff) {
-        return new Response(JSON.stringify({ error: "Email already exists!" }), { status: 400 });
+        return new Response(JSON.stringify({ error: "Username already exists!" }), { status: 400 });
       }
-  
+      
       const randomPassword = crypto.randomBytes(5).toString("hex");
 
       // ✅ Hash the password before saving

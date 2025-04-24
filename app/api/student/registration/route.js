@@ -5,6 +5,7 @@ export async function POST(req) {
   try {
     const body = await req.json();
     const { year, grade, stream } = body;
+    console.log("Request body:", body); // Debugging
     
     const studentID = await getStudentIDFromToken();
     console.log("Student ID from token:", studentID); // Debugging
@@ -40,7 +41,7 @@ export async function POST(req) {
     const semester3Summary = await prisma.resultSummary.findFirst({
       where: {
         registrationID: latestRegistration.registrationID,
-        semesterID: 6,
+        semester: 3,
       },
     });
 

@@ -67,8 +67,8 @@ export default function RegisterPage() {
               required
             >
               <option value="">Select Stream</option>
-              <option value="Natural Science">Natural Science</option>
-              <option value="Social Science">Social Science</option>
+              <option value="Natural">Natural Science</option>
+              <option value="Social">Social Science</option>
             </select>
           )}
 
