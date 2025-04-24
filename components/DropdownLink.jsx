@@ -41,7 +41,9 @@ const dropdowns = [
         items: [
           { href: "/admin/student/section", label: "Assign Section to Student" },
           { href: "/admin/rank", label: "Student Rank" },
+          { href: "/admin/rank/academic", label: "Academic Rank" },
           { href: "/admin/student/list", label: "Student List" },
+          { href: "/admin/rank/academic", label: "Academic Rank" },
         ],
       },
       {

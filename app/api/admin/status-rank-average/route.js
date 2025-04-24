@@ -10,10 +10,11 @@ export async function PUT(req) {
     const totalSubjects = 6;
 
     // 🔍 1️⃣ Get current active semester
-    const semester = await prisma.semester.findUnique({
+    const semester = await prisma.semester.findFirst({
       where: { status: "active" },
       select: { name: true },
     });
+    
 
     if (!semester) {
       return NextResponse.json({ message: "No active semester found" }, { status: 404 });
