@@ -11,6 +11,19 @@ export async function GET(req) {
   }
 
   try {
+    const student = await prisma.student.findUnique({
+      where: { studentID },
+      select: {
+        id: true,
+        firstName: true,
+        middleName: true,
+        lastName: true,
+        age: true,
+        gender: true,
+        image:true,
+
+      },
+    });
     const registrations = await prisma.registration.findMany({
       where: { studentID },
       include: {
@@ -70,7 +83,7 @@ export async function GET(req) {
     // Optional: inspect final results for debugging
     console.dir(resultsByGrade, { depth: null });
 
-    return NextResponse.json({ results: resultsByGrade }, { status: 200 });
+    return NextResponse.json({student, results: resultsByGrade }, { status: 200 });
   } catch (err) {
     console.error("Error fetching student result:", err);
     return NextResponse.json({ message: "Something went wrong" }, { status: 500 });

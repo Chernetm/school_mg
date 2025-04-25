@@ -22,7 +22,7 @@ export async function POST(req) {
     }
 
     const student = await prisma.student.findUnique({
-      where: { studentID },
+      where: { studentID: studentID, status: "active" },
       select: {
         studentID: true,
         firstName: true,
@@ -39,7 +39,7 @@ export async function POST(req) {
      console.log(student,"student")
     if (!student) {
       return new NextResponse(
-        JSON.stringify({ message: "Invalid studentID or password" }),
+        JSON.stringify({ message: "Student not found!" }),
         { status: 401, headers: { "student-exam": "error" } }
       );
     }

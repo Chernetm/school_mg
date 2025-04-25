@@ -19,7 +19,7 @@ export async function POST(req) {
     // 🔹 Fetch staff from the database
     console.log(`🔹 Searching for staff: ${username}`);
     const staff = await prisma.staff.findUnique({
-      where: { username },
+      where: { staffID: Number(staffID), username:username, status: "active" },
       select: {
         id: true,
         staffID: true,
@@ -44,8 +44,12 @@ export async function POST(req) {
     });
     
   console.log("staff ROLE", staff.image, staff.role, staff.assignment[0]?.grade?.grade);
+if (!staff) {
+      console.log("❌ Staff not found");
+      return NextResponse.json({ message: "Staff not found" }, { status: 404 });
+    }
 
-if (!staff || (staff.role !== 'teacher' && staff.role !== 'staff')) {
+if ( (staff.role !== 'teacher' && staff.role !== 'staff')) {
   
   return NextResponse.json(
     { message: 'Access denied. Teacher or Staff only.' },
