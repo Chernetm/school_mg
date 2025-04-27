@@ -12,38 +12,62 @@ export default function StaffPage() {
       .then(setStaff);
   }, []);
 
+ 'use client';
+
+
   return (
     <div className="p-6 bg-gray-100 min-h-screen">
       <h1 className="text-2xl font-bold mb-6 text-gray-800">Staff Management</h1>
+
       <div className="overflow-x-auto">
-        <table className="w-full border-collapse shadow-lg bg-white rounded-lg">
-          <thead>
-            <tr className="bg-gray-800 text-white">
-              <th className="border px-6 py-3">Staff ID</th>
-              <th className="border px-6 py-3">First Name</th>
-              <th className="border px-6 py-3">Last Name</th>
-              <th className="border px-6 py-3">Role</th>
-              <th className="border px-6 py-3">Status</th>
-              <th className="border px-6 py-3">Assign</th>
-              
+        <table className="min-w-full bg-white border border-gray-200 rounded-lg shadow">
+          <thead className="bg-blue-100">
+            <tr>
+              <th className="px-4 py-2 text-left text-sm font-semibold text-blue-800">Profile</th>
+              <th className="px-4 py-2 text-left text-sm font-semibold text-blue-800">Staff ID</th>
+              <th className="px-4 py-2 text-left text-sm font-semibold text-blue-800">First Name</th>
+              <th className="px-4 py-2 text-left text-sm font-semibold text-blue-800">Middle Name</th>
+              <th className="px-4 py-2 text-left text-sm font-semibold text-blue-800">Last Name</th>
+              <th className="px-4 py-2 text-left text-sm font-semibold text-blue-800">Phone</th>
+              <th className="px-4 py-2 text-left text-sm font-semibold text-blue-800">Role</th>
+              <th className="px-4 py-2 text-left text-sm font-semibold text-blue-800">Status</th>
+              <th className="px-4 py-2 text-center text-sm font-semibold text-blue-800">Assign</th>
             </tr>
           </thead>
+
           <tbody>
             {staff.map((member, index) => (
               <tr
                 key={member.staffID}
-                className={index % 2 === 0 ? "bg-gray-100" : "bg-white"}
-              >
-                <td className="border px-6 py-3 text-gray-700">{member.staffID}</td>
-                <td className="border px-6 py-3 text-gray-700">{member.firstName}</td>
-                <td className="border px-6 py-3 text-gray-700">{member.lastName}</td>
-                <td className="border px-6 py-3 text-gray-700">{member.role}</td>
-                <td className="border px-6 py-3 text-gray-700">{member.status}</td>
-                
-                
-                <td className="border px-6 py-3 space-x-2">
+                className={`border-t ${index % 2 === 0 ? 'bg-gray-100' : 'bg-white'} hover:bg-gray-50`}
+              >  
+                <td className="px-4 py-2 text-center">
+                  <img
+                    src={member.image || "/default-avatar.png"}
+                    alt="Staff"
+                    className="w-10 h-10 rounded-full object-cover mx-auto"
+                  />
+                </td>
+                <td className="px-4 py-2 font-mono">{member.staffID}</td>
+                <td className="px-4 py-2 text-gray-700">{member.firstName}</td>
+                <td className="px-4 py-2 text-gray-700">{member.middleName}</td>
+                <td className="px-4 py-2 text-gray-700">{member.lastName}</td>
+                <td className="px-4 py-2 text-gray-700">{member.phoneNumber}</td>
+                <td className="px-4 py-2 text-gray-700 capitalize">{member.role}</td>
+                <td className="px-4 py-2">
+                  <span
+                    className={`px-3 py-1 rounded-full text-xs font-semibold ${
+                      member.status === 'active'
+                        ? 'bg-green-100 text-green-700'
+                        : 'bg-red-100 text-red-700'
+                    }`}
+                  >
+                    {member.status}
+                  </span>
+                </td>
+                <td className="px-4 py-2 text-center">
                   <button
-                    className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded"
+                    className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded transition"
                     onClick={() => setAssigningStaff(member)}
                   >
                     Assign

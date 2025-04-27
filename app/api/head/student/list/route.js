@@ -33,7 +33,13 @@ export async function GET(req) {
       select: {
         firstName: true,
         lastName: true,
+        middleName:true,
+        email: true,
+        phoneNumber: true,
         studentID: true,
+        image: true,
+
+        status: true
       },
     });
 
