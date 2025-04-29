@@ -185,10 +185,9 @@
 //   );
 // }
 "use client";
-
 import React from "react";
 
-export default function StudentResultCard({ student, results }) {
+const StudentResultCard = ({ student, results }) => {
   const gradeOrder = ["Grade 9", "Grade 10", "Grade 11", "Grade 12"];
   const displaySemesters = ["Semester 1", "Semester 2"];
   const allSubjects = [
@@ -255,19 +254,16 @@ export default function StudentResultCard({ student, results }) {
     .filter(Boolean);
 
   return (
-    <div className="w-[794px] mx-auto p-8 bg-white border shadow-md text-[10px] font-sans leading-tight">
+    <div className="printable-area w-[794px] mx-auto p-8 bg-white border shadow-md text-[10px] font-sans leading-tight">
       {/* Header */}
       <div className="flex items-center justify-between mb-4">
-        {/* Logo */}
         <div className="w-20 h-20">
           <img
-            src="/school-logo.png" // <-- Replace with your real logo path
+            src="/school-logo.png"
             alt="School Logo"
             className="w-full h-full object-contain"
           />
         </div>
-
-        {/* School Info */}
         <div className="text-center flex-1">
           <h1 className="text-lg font-bold uppercase">South West Academy</h1>
           <p className="text-sm italic">Committed to Quality Education</p>
@@ -278,8 +274,6 @@ export default function StudentResultCard({ student, results }) {
             📍 Address: 1234 Addis Ababa, Ethiopia
           </p>
         </div>
-
-        {/* Empty space to balance layout */}
         <div className="w-20 h-20" />
       </div>
 
@@ -309,25 +303,15 @@ export default function StudentResultCard({ student, results }) {
         <table className="table-auto w-full border-collapse text-[9px]">
           <thead>
             <tr className="bg-gray-100">
-              <th className="border px-1 py-1 text-left" rowSpan={2}>
-                Subject
-              </th>
+              <th className="border px-1 py-1 text-left" rowSpan={2}>Subject</th>
               {columnsByGrade.map(({ grade, cols }) => (
-                <th
-                  key={grade}
-                  colSpan={cols.length}
-                  className="border px-1 py-1 text-center"
-                >
-                  {grade}
-                </th>
+                <th key={grade} colSpan={cols.length} className="border px-1 py-1 text-center">{grade}</th>
               ))}
             </tr>
             <tr className="bg-gray-50">
               {columnsByGrade.map(({ cols }) =>
                 cols.map((col) => (
-                  <th key={col.key} className="border px-1 py-1 text-center">
-                    {col.label}
-                  </th>
+                  <th key={col.key} className="border px-1 py-1 text-center">{col.label}</th>
                 ))
               )}
             </tr>
@@ -349,9 +333,7 @@ export default function StudentResultCard({ student, results }) {
           <tfoot className="font-medium bg-gray-100">
             {["average", "rank", "status"].map((rowType) => (
               <tr key={rowType}>
-                <td className="border px-1 py-1 text-left capitalize">
-                  {rowType}
-                </td>
+                <td className="border px-1 py-1 text-left capitalize">{rowType}</td>
                 {columnsByGrade.map(({ cols }) =>
                   cols.map((col) => (
                     <td
@@ -391,4 +373,7 @@ export default function StudentResultCard({ student, results }) {
       </div>
     </div>
   );
-}
+};
+
+
+export default StudentResultCard;

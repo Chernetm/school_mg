@@ -88,7 +88,9 @@ const StudentAttendanceRecord = () => {
             <table className="w-full border-collapse border bg-white shadow-md">
               <thead>
                 <tr className="bg-gray-200 text-gray-800">
-                  <th className="border p-2">Student</th>
+                  <th className="border p-2">Student ID</th>
+                  <th className="border p-2">First Name</th>
+                  <th className="border p-2">Middle Name</th>
                   <th className="border p-2">Present (%)</th>
                   <th className="border p-2">Absent (%)</th>
                   <th className="border p-2">Late (%)</th>
@@ -97,7 +99,9 @@ const StudentAttendanceRecord = () => {
               <tbody>
                 {attendanceData.map((student) => (
                   <tr key={student.studentID} className="text-center text-gray-700">
-                    <td className="border p-2">{student.name}</td>
+                    <td className="border p-2">{student.studentID}</td>
+                    <td className="border p-2">{student.firstName}</td>
+                    <td className="border p-2">{student.middleName}</td>
                     <td className="border p-2">{student.presentPercentage.toFixed(2)}%</td>
                     <td className="border p-2">{student.absentPercentage.toFixed(2)}%</td>
                     <td className="border p-2">{student.latePercentage.toFixed(2)}%</td>

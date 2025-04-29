@@ -101,6 +101,7 @@ export default function StudentList() {
                 <th className="px-4 py-2 text-left text-sm font-semibold text-blue-800">#</th>
                 <th className="px-4 py-2 text-left text-sm font-semibold text-blue-800">Student ID</th>
                 <th className="px-4 py-2 text-left text-sm font-semibold text-blue-800">First Name</th>
+                <th className="px-4 py-2 text-left text-sm font-semibold text-blue-800">Middle Name</th>
                 <th className="px-4 py-2 text-left text-sm font-semibold text-blue-800">Last Name</th>
               </tr>
             </thead>
@@ -110,6 +111,7 @@ export default function StudentList() {
                   <td className="px-4 py-2">{idx + 1}</td>
                   <td className="px-4 py-2 font-mono">{student.studentID}</td>
                   <td className="px-4 py-2">{student.firstName}</td>
+                  <td className="px-4 py-2">{student.middleName}</td>
                   <td className="px-4 py-2">{student.lastName}</td>
                 </tr>
               ))}

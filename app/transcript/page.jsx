@@ -1,45 +1,38 @@
 "use client";
 
-import StudentResultCard from "@/components/StudentResultCard";
+import PrintTranscript from "@/components/PrintStudentPage";
 import React, { useEffect, useState } from "react";
 
 export default function StudentPage() {
   const [student, setStudent] = useState(null);
   const [results, setResults] = useState(null);
+  const [loading, setLoading] = useState(true);
+
 
   useEffect(() => {
     async function fetchData() {
-      const res = await fetch("/api/student/result");
-      const data = await res.json();
-
-      setStudent(data.student);
-      setResults(data.results);
+      try {
+        const res = await fetch("/api/student/result");
+        const data = await res.json();
+        setStudent(data.student);
+        setResults(data.results);
+      } catch (error) {
+        console.error("Failed to fetch student data", error);
+      } finally {
+        setLoading(false);
+      }
     }
-
     fetchData();
   }, []);
 
-  const handlePrint = () => {
-    if (typeof window !== "undefined") {
-      window.print();
-    }
-  };
+ 
 
-  if (!student || !results) return <p className="text-center">Loading...</p>;
+  if (loading) return <p>Loading...</p>;
+  if (!student || !results) return <p>No student data found.</p>;
 
   return (
-    <div className="px-4 py-6">
-      {/* Print button, hidden when printing */}
-      <div className="mb-4 flex justify-end print:hidden">
-        <button
-          onClick={handlePrint}
-          className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 text-sm"
-        >
-          Print Transcript
-        </button>
-      </div>
-
-      <StudentResultCard student={student} results={results} />
+    <div className="p-4">
+      <PrintTranscript  student={student} results={results} />
     </div>
   );
 }

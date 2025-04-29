@@ -42,6 +42,40 @@
   --radius-lg: var(--radius);
   --radius-xl: calc(var(--radius) + 4px);
 }
+@media print {
+  body * {
+    visibility: hidden;
+  }
+
+  /* Ensure only the printable area is visible */
+  .printable-area, .printable-area * {
+    visibility: visible;
+  }
+
+  /* Hide elements that should not be printed */
+  .print\:hidden {
+    display: none;
+  }
+
+  /* Full A4 page size: 794px x 1123px */
+  .printable-area {
+    position: relative;
+    width: 100%;  /* Full width of the page */
+    height: 100%; /* Full height of the page */
+    margin: 0;    /* Remove any default margin */
+    padding: 0;   /* Remove any padding */
+    background-color: white;
+    box-sizing: border-box;
+  }
+
+  /* Force a page break after each student */
+  .print\:page-break {
+    page-break-before: always;
+    page-break-inside: avoid;
+    margin-bottom: 10px; /* Optional: space between cards */
+  }
+}
+
 
 :root {
   --radius: 0.625rem;
