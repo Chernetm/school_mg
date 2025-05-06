@@ -9,7 +9,7 @@ import {
   MessageCircleDashedIcon,
   Users
 } from "lucide-react";
-import { MdCampaign } from 'react-icons/md';
+import { MdCampaign, MdDescription } from 'react-icons/md';
 
 
 
@@ -63,6 +63,14 @@ const dropdowns = [
         items: [
           { href: "/admin/attendance", label: "Taking Staff Attendance" },
           { href: "/admin/attendance/student", label: "Student Attendance Reports" },
+        ],
+      },
+      {
+        label: "Transcript",
+        icon: <MdDescription  />,
+        roles: ["admin"],
+        items: [
+          { href: "/admin/student/transcript", label: "Transcript Print" },
         ],
       },
     {
