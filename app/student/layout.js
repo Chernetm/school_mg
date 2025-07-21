@@ -26,6 +26,7 @@
 // }
 
 import Navbar from "@/components/Navbar/NavBar";
+import { Providers } from "@/components/Providers";
 import { StudentServicesDropdown } from "@/components/StudentServicesDropdown";
 
 // layout.jsx or AdminLayout.jsx
@@ -33,15 +34,9 @@ import { UserProvider } from "@/context/UserContext";
 import { headers } from "next/headers";
 
 export default async function studentLayout({ children }) {
-  const headersList = await headers(); // ✅ await here
-
-  const user = {
-    role: headersList.get("x-student-role"),
-    grade: headersList.get("x-student-grade"),
-  };
-  console.log("studentGrade",user.grade)
+  
   return (
-    <UserProvider initialUser={user}>
+    <Providers>
       <div className="min-h-screen flex flex-col bg-gray-100">
         <Navbar />
         
@@ -60,6 +55,6 @@ export default async function studentLayout({ children }) {
         </div>
 
       </div>
-    </UserProvider>
+    </Providers>
   );
 }

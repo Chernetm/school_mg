@@ -3,16 +3,16 @@
 
 // Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
 // Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
+//
 generator client {
   provider = "prisma-client-js"
 }
 
 datasource db {
-
-  provider = "mysql"
+  provider = "postgres"
   url      = env("DATABASE_URL")
 }
+
 
 
 
@@ -267,30 +267,36 @@ model StaffAttendance {
 }
 
 
-
 model Exam {
-  id          Int       @id @default(autoincrement())
-  title       String    @unique
-  description String?
-  startTime   DateTime
-  endTime     DateTime
-  createdBy   Int       // Staff who created the exam
-  staff       Staff     @relation(fields: [createdBy], references: [staffID])
-  questions   Question[]
-  responses   Response[]
+  id              Int        @id @default(autoincrement())
+  title           String     @unique
+  grade           Int
+  status          Status     @default(INACTIVE)
+  type            Type
+  description     String?    @db.Text
+  durationMinutes Int
+  createdBy       Int
+  createdAt       DateTime   @default(now())
+  user            Staff       @relation(fields: [createdBy], references: [staffID])
+  questions       Question[]
+  responses       Response[]
+
+  @@index([createdBy])
 }
 
 model Question {
-  id        Int      @id @default(autoincrement())
-  examId    Int
-  content   String   // Question text
-  optionA      String
-  optionB      String
-  optionC      String
-  optionD      String
-  correct   String   // Correct option (e.g., "A")
-  exam      Exam     @relation(fields: [examId], references: [id])
-  response Response[]
+  id       Int        @id @default(autoincrement())
+  examId   Int
+  content  String
+  optionA  String
+  optionB  String
+  optionC  String
+  optionD  String
+  correct  String
+  exam     Exam       @relation(fields: [examId], references: [id], onDelete: Cascade)
+  responses Response[]
+
+  @@index([examId])
 }
 
 model Response {
@@ -298,12 +304,16 @@ model Response {
   examId      Int
   studentID   String
   questionId  Int
-  answer      String?   // Student's chosen option
-  submittedAt DateTime? // Auto-submit if time runs out
+  answer      String?
+  submittedAt DateTime?
+  exam        Exam      @relation(fields: [examId], references: [id], onDelete: Cascade)
+  question    Question  @relation(fields: [questionId], references: [id], onDelete: Cascade)
   student     Student   @relation(fields: [studentID], references: [studentID])
-  exam        Exam      @relation(fields: [examId], references: [id])
-  question    Question  @relation(fields: [questionId], references: [id])
-  @@unique([studentID, questionId, examId])  // ✅ Ensure this unique constraint exists
+
+  @@unique([studentID, questionId, examId])
+  @@index([examId])
+  @@index([questionId])
+  @@index([studentID])
 }
 
 
@@ -382,7 +392,17 @@ model Message {
   createdAt DateTime @default(now())
 }
 
+enum Status {
+  ACTIVE
+  INACTIVE
+}
 
+
+
+enum Type {
+  MODEL
+  EXAM
+}
 enum MonthEnum {
   January
   February

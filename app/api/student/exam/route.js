@@ -1,35 +1,47 @@
-const {prisma}=require("@/utils/prisma")
-import { getStudentIDFromExamToken } from "@/utils/auth";
-import { NextResponse } from "next/server";
 
-export async function GET(req) {
+import { authOptions } from '@/app/api/auth/[...nextauth]/route';
+import ApiError from '@/lib/api-error';
+import {prisma} from '@/utils/prisma';
+import { getServerSession } from 'next-auth';
+import { NextResponse } from 'next/server';
+
+export async function GET() {
   try {
-
-    const { searchParams } = new URL(req.url);
-    const title = searchParams.get("title");
-
-    const studentID = await getStudentIDFromExamToken();
-    console.log("Student ID from token:", studentID); // Debugging
-    if (!studentID) {
-      return NextResponse.json({ message: "Exam login is required" }, { status: 400 });
-    }
-    if (!title || !studentID) {
-      return NextResponse.json({ message: "Title is required" }, { status: 400 });
+    const session = await getServerSession(authOptions);
+    if (!session || session.user.role !== 'STUDENT') {
+      throw new ApiError(403, 'Unauthorized access');
     }
 
-    const exam = await prisma.exam.findFirst({
-      where: { title: { equals: title } }, // Case-insensitive search
-      include: { questions: true },
+    const studentID = session.user.studentID;
+    const grade = session.user.grade;
+
+    if (!grade || isNaN(parseInt(grade))) {
+      throw new ApiError(400, 'Student grade is required and must be a number');
+    }
+
+    const exams = await prisma.exam.findMany({
+      where: {
+        grade: parseInt(grade),
+        status: 'ACTIVE',
+        type: 'EXAM',
+        responses: {
+          none: {
+            studentID,
+          },
+        },
+      },
+      select: {
+        id: true,
+        title: true,
+      },
     });
 
-    if (!exam) {
-      return NextResponse.json({ message: "Exam not found" }, { status: 404 });
-    }
- 
-
-    return NextResponse.json({ studentID, exam }, { status: 200 });
+    return NextResponse.json({ studentID, exams });
   } catch (error) {
-    console.error("Error fetching exam:", error);
-    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
+    console.error('Error fetching exams:', error);
+    if (error instanceof ApiError) {
+      return NextResponse.json({ message: error.message }, { status: error.status });
+    }
+    return NextResponse.json({ message: 'Failed to fetch exams' }, { status: 500 });
   }
 }

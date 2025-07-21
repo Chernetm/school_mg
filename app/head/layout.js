@@ -123,21 +123,14 @@
 // layout.jsx or AdminLayout.jsx
 import { Dashboard } from "@/components/Dashboard";
 import { Navbar } from "@/components/Navbar/NavBar";
+import { Providers } from "@/components/Providers";
 import { UserProvider } from "@/context/UserContext";
 import { headers } from "next/headers";
 
 export default async function headLayout({ children }) {
-  const headersList = await headers(); // ✅ await here
-
-  const user = {
-    role: headersList.get("x-user-role"),
-    image: headersList.get("x-user-image"),
-    staffID:headersList.get("x-user-id"),
-    // You can grab other header values similarly
-  };
 
   return (
-    <UserProvider initialUser={user}>
+    <Providers>
       <div className="min-h-screen flex flex-col bg-gray-100">
         <Navbar />
         <div className="flex flex-1">
@@ -149,6 +142,6 @@ export default async function headLayout({ children }) {
           </main>
         </div>
       </div>
-    </UserProvider>
+    </Providers>
   );
 }

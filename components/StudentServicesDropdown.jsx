@@ -21,8 +21,7 @@ const services = [
   { name: "Fee Record", href: "/student/fee", icon: <FaFileInvoiceDollar className="mr-3" /> },
   { name: "Pay Fee", href: "/fee", icon: <FaMoneyCheckAlt className="mr-3" /> },
   { name: "Discipline", href: "/student/discipline", icon: <FaExclamationTriangle className="mr-3" /> },
-  { name: "Exam", href: "/login/exam", icon: <FaPenAlt className="mr-3" /> },
-  { name: "Exam Result", href: "/student/exam/result", icon: <FaClipboardCheck className="mr-3" /> },
+  { name: "Exam Room", href: "/exam", icon: <FaPenAlt className="mr-3" /> },
   { name: "Setting", href: "/student/setting", icon: <MdSettings className="mr-3" /> },
 ];
 

@@ -1,7 +1,5 @@
 
 "use client";
-
-import { useUser } from "@/context/UserContext";
 import {
   ChevronDown,
   ChevronUp
@@ -9,11 +7,17 @@ import {
 import Link from "next/link";
 import { useState } from "react";
 import dropdowns from "./DropdownLink";
+import { useSession } from "next-auth/react";
 
 export const Dashboard = () => {
-  const role = useUser()?.user?.role;
+  
+  const { data: session, status } = useSession();
 
   const [openDropdown, setOpenDropdown] = useState(null);
+  if (!session) return <div>Access denied</div>;
+
+  const role = session.user.role; // dynamic role from session
+
 
   const toggleDropdown = (label) => {
     setOpenDropdown((prev) => (prev === label ? null : label));

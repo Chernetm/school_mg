@@ -14,58 +14,54 @@ const currentYear = new Date().getFullYear();
 
 export default function HomePage() {
   return (
-    <div className="relative bg-gradient-to-br from-blue-900 to-blue-600 min-h-screen flex flex-col">
-      <div className="absolute inset-0 bg-black opacity-40"></div>
-
+    <div className="min-h-screen flex flex-col bg-white text-gray-800 font-serif">
       {/* Header Section */}
-      <header className="relative z-10 flex flex-col items-center text-center text-white pt-24 px-4 mb-12">
+      <header className="flex flex-col items-center text-center pt-32 px-6 mb-20">
         <motion.h1
-          initial={{ opacity: 0, y: -50 }}
+          initial={{ opacity: 0, y: -30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 1 }}
-          className="text-4xl md:text-5xl font-bold mb-4"
+          className="text-5xl md:text-6xl font-extrabold mb-4 bg-gradient-to-r from-yellow-600 to-black bg-clip-text text-transparent"
         >
-          Welcome to Our School
+          Welcome to Daraaro Boarding School
         </motion.h1>
 
         <motion.p
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.5, duration: 1 }}
-          className="text-lg sm:text-xl max-w-2xl"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.4, duration: 1 }}
+          className="text-lg sm:text-xl max-w-2xl text-gray-600"
         >
-          We are committed to providing a nurturing environment where students thrive academically and personally.
+          A premier destination for academic excellence and student growth.
         </motion.p>
       </header>
 
       {/* Info Cards Section */}
-      <section className="relative z-10 flex flex-wrap justify-center gap-6 px-4 mb-20">
+      <section className="flex flex-wrap justify-center gap-10 px-6 mb-32">
         {[
           {
             title: 'Students',
-            text: 'Empowering over 1,200 students with quality education.',
-            icon: <FaUserGraduate className="text-3xl text-blue-700" />,
-            bg: 'bg-white',
+            text: 'Empowering over 230 students with quality education.',
+            icon: <FaUserGraduate className="text-4xl text-blue-600" />,
           },
           {
             title: 'Staff',
             text: 'Dedicated and passionate educators fostering growth.',
-            icon: <FaChalkboardTeacher className="text-3xl text-green-700" />,
-            bg: 'bg-white',
+            icon: <FaChalkboardTeacher className="text-4xl text-green-600" />,
           },
           {
             title: 'Reputation',
-            text: 'Recognized among the top 10 schools in the region.',
-            icon: <FaAward className="text-3xl text-yellow-600" />,
-            bg: 'bg-white',
+            text: 'Recognized among the top 3 schools in the region.',
+            icon: <FaAward className="text-4xl text-yellow-600" />,
           },
         ].map((card, index) => (
           <motion.div
             key={index}
             initial={{ opacity: 0, y: 40 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 1 + index * 0.3, duration: 0.8 }}
-            className={`rounded-2xl shadow-lg p-6 w-64 bg-opacity-90 ${card.bg}`}
+            transition={{ delay: 0.5 + index * 0.3, duration: 0.8 }}
+            whileHover={{ scale: 1.05 }}
+            className="bg-white border border-gray-200 rounded-2xl shadow-xl p-6 w-72 text-center"
           >
             <div className="mb-3">{card.icon}</div>
             <h3 className="text-xl font-semibold mb-2">{card.title}</h3>
@@ -74,12 +70,9 @@ export default function HomePage() {
         ))}
       </section>
 
-      {/* Spacer to push footer down if content is short */}
-      <div className="flex-grow"></div>
-
       {/* Footer */}
       <footer className="relative z-10 text-center text-white text-sm py-6 px-4 bg-black bg-opacity-30">
-        <p className="mb-2">&copy; {currentYear} All rights reserved.</p>
+        <p className="mb-2">&copy; {currentYear} Daraaro Boarding School. All rights reserved.</p>
         <div className="flex justify-center gap-4 text-xl">
           <a
             href="https://t.me/your_school_telegram"

@@ -1,76 +1,29 @@
 
-
-
 "use client";
+
 import LoginForm from "@/components/LoginForm";
-import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import {
-  MdBadge,
-  MdDesktopMac,
-  MdLock,
-  MdLogin,
-  MdPerson,
-  MdPhoneIphone,
-} from "react-icons/md";
+import { MdDesktopMac, MdPhoneIphone } from "react-icons/md";
 
-export default function StaffLogin() {
-  const router = useRouter();
+export default function AdminLoginPage() {
   const [isMobile, setIsMobile] = useState(false);
+  const [loading, setLoading] = useState(true); // <-- Add loading state
 
-  // Detect screen size
   useEffect(() => {
     const handleResize = () => {
-      setIsMobile(window.innerWidth < 768);
+      const mobile = window.innerWidth < 768;
+      setIsMobile(mobile);
+      setLoading(false); // <-- Only finish loading after first check
     };
 
     handleResize();
     window.addEventListener("resize", handleResize);
-
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
-  const handleStaffLogin = async (credentials, setError, setLoading) => {
-    setLoading(true);
-    setError(null);
+  // While loading, render nothing
+  if (loading) return null;
 
-    try {
-      const res = await fetch("/api/login/admin", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(credentials),
-      });
-
-      const data = await res.json();
-
-      if (!res.ok) {
-        throw new Error(data.message);
-      }
-
-      const role = data.staff?.role;
-
-      switch (role) {
-      
-        case "registrar":
-          router.push("/registrar/student");
-          break;
-        case "admin":
-          router.push("/admin/attendance");
-          break;
-        case "head":
-          router.push("/head/announcement");
-          break;
-        default:
-          router.push("/home");
-      }
-    } catch (err) {
-      setError(err.message);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  // Mobile block screen
   if (isMobile) {
     return (
       <div className="flex flex-col items-center justify-center h-screen text-center px-4 bg-gray-100">
@@ -87,32 +40,5 @@ export default function StaffLogin() {
     );
   }
 
-  // Desktop login screen
-  return (
-    <LoginForm
-      title="Staff Login"
-      icon={<MdLogin className="text-5xl text-blue-500 mx-auto mb-4" />}
-      fields={[
-        {
-          name: "staffID",
-          type: "number",
-          placeholder: "Staff ID",
-          icon: <MdBadge className="text-gray-400" />,
-        },
-        {
-          name: "username",
-          type: "text",
-          placeholder: "Username",
-          icon: <MdPerson className="text-gray-400" />,
-        },
-        {
-          name: "password",
-          type: "password",
-          placeholder: "Password",
-          icon: <MdLock className="text-gray-400" />,
-        },
-      ]}
-      onSubmit={handleStaffLogin}
-    />
-  );
+  return <LoginForm type="admin" />;
 }

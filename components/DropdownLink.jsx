@@ -51,9 +51,10 @@ const dropdowns = [
         icon: <Book />,
         roles: ["admin"],
         items: [
-          { href: "/admin/exam/control", label: "Control Exams" },
-          { href: "/admin/exam/create", label: "Create Exam" },
+          { href: "/admin/exam/control", label: "Realtime Detection" },
+          { href: "/admin/exam", label: "Create Exam" },
           { href: "/admin/exam/result", label: "Exam Result" },
+          { href: "/admin/exam/edit", label: "Edit Exam" },
         ],
       },
       {

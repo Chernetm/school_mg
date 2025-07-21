@@ -1,6 +1,7 @@
 
 import { Dashboard } from "@/components/Dashboard";
 import { Navbar } from "@/components/Navbar/NavBar";
+import { Providers } from "@/components/Providers";
 import { UserProvider } from "@/context/UserContext";
 import { headers } from "next/headers";
 
@@ -15,7 +16,7 @@ export default async function AdminLayout({ children }) {
   };
 
   return (
-    <UserProvider initialUser={user}>
+    <Providers>
       <div className="min-h-screen flex flex-col bg-gray-100">
         <Navbar />
         <div className="flex flex-1">
@@ -27,6 +28,6 @@ export default async function AdminLayout({ children }) {
           </main>
         </div>
       </div>
-    </UserProvider>
+    </Providers>
   );
 }

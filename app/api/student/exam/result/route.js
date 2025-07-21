@@ -1,41 +1,77 @@
-import { getStudentIDFromToken } from "@/utils/auth";
+import { authOptions } from '@/app/api/auth/[...nextauth]/route';
+import ApiError from '@/lib/api-error';
+import {prisma} from '@/utils/prisma';
+import { getServerSession } from 'next-auth';
+import { NextResponse } from 'next/server';
 
-const { prisma } = require("@/utils/prisma");
-const { NextResponse } = require("next/server");
-
-export async function GET(req) {
+export async function GET(request) {
   try {
-    const { searchParams } = new URL(req.url);
-    const title = searchParams.get("title");
-    const studentID = await getStudentIDFromToken();
-    console.log("Student ID from token:", studentID); // Debugging
+    const session = await getServerSession(authOptions);
+    if (!session || session.user.role !== 'STUDENT') {
+      throw new ApiError(403, 'Unauthorized access');
+    }
+
+    const studentID = session.user.studentID;
+    const grade = session.user.grade;
+    const { searchParams } = new URL(request.url);
+    const title = searchParams.get('title');
+
     if (!title || !studentID) {
-      return NextResponse.json({ message: "Exam title and studentID are required" }, { status: 400 });
+      throw new ApiError(400, 'Exam title and studentID are required');
+    }
+
+    if (!grade || isNaN(parseInt(grade))) {
+      throw new ApiError(400, 'Student grade is required and must be a number');
     }
 
     // Find the exam by title
-    const exam = await prisma.exam.findUnique({
-      where: { title },
+    const exam = await prisma.exam.findFirst({
+      where: {
+        title: { equals: title},
+        grade: parseInt(grade),
+      },
       select: { id: true },
     });
 
     if (!exam) {
-      return NextResponse.json({ message: "Exam not found" }, { status: 404 });
+      throw new ApiError(404, 'Exam not found or not published');
     }
 
     const examId = exam.id;
+
+    // Check for existing submission
+    const submission = await prisma.response.findFirst({
+      where: {
+        studentID: studentID,
+        examId,
+      },
+    });
+
+    if (!submission) {
+      throw new ApiError(404, 'No submission found for this student and exam');
+    }
 
     // Fetch responses for the student in the given exam
     const responses = await prisma.response.findMany({
       where: { examId, studentID },
       include: {
-        question: true, // Include the related question
+        question: {
+          select: {
+            id: true,
+            content: true,
+            optionA: true,
+            optionB: true,
+            optionC: true,
+            optionD: true,
+            correct: true,
+          },
+        },
       },
     });
 
     // If no responses found
     if (responses.length === 0) {
-      return NextResponse.json({ message: "No responses found for this student" }, { status: 404 });
+      throw new ApiError(404, 'No responses found for this student');
     }
 
     // Format data for frontend
@@ -55,7 +91,10 @@ export async function GET(req) {
 
     return NextResponse.json(formattedQuestions, { status: 200 });
   } catch (error) {
-    console.error("Error fetching student answers:", error);
-    return NextResponse.json({ message: "Internal Server Error" }, { status: 500 });
+    console.error('Error fetching student answers:', error);
+    if (error instanceof ApiError) {
+      return NextResponse.json({ message: error.message }, { status: error.status });
+    }
+    return NextResponse.json({ message: 'Failed to fetch responses' }, { status: 500 });
   }
 }

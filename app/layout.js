@@ -2,6 +2,7 @@
 import { Navbar } from "@/components/Navbar/NavBar";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
+import { Providers } from "@/components/Providers";
 
 export const metadata = {
   title: "School Management System",
@@ -24,12 +25,15 @@ export default function RootLayout({ children }) {
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        <div className="flex flex-col min-h-screen">
+        <Providers>
+          <div className="flex flex-col min-h-screen">
           <Navbar/>
           <div className="flex-1 pt-15"> {/* Adjust this value if needed */}
             {children}
           </div>
         </div>
+        </Providers>
+        
       </body>
     </html>
   );

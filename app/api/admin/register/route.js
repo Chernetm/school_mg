@@ -2,7 +2,7 @@
 const { prisma } = require("@/utils/prisma");
 const { sendEmail } =require("@/utils/email"); // ✅ Import email function
 import { hash } from "bcryptjs";
-import crypto from "crypto";
+ import crypto from "crypto";
 
 import { uploadToCloudinary } from "@/utils/cloudinary"; // Adjust the import if needed
 export async function POST(req) {
@@ -42,6 +42,8 @@ export async function POST(req) {
       }
       
       const randomPassword = crypto.randomBytes(5).toString("hex");
+// const randomPassword = 1234;
+// const hashedPassword = await hash(String(randomPassword), 10); // ✅ works
 
       // ✅ Hash the password before saving
       const hashedPassword = await hash(randomPassword, 10);

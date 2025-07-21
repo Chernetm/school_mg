@@ -9,7 +9,7 @@ export async function GET() {
       const staff = await prisma.staff.findMany();
       return Response.json(staff, { status: 201 });
     } catch (error) {
-      res.status(500).json({ error: 'Error fetching staff' });
+      return NextResponse.json({ message:'Error fetching', error:error.message || error }, { status: 500  });
     }
 }
 

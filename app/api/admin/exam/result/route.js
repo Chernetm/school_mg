@@ -1,23 +1,34 @@
-const { prisma } = require("@/utils/prisma");
-const { NextResponse } = require("next/server");
+import { authOptions } from '@/app/api/auth/[...nextauth]/route';
+import ApiError from '@/lib/api-error';
+import {prisma}  from '@/utils/prisma';
+import { getServerSession } from 'next-auth';
+import { NextResponse } from 'next/server';
 
-export async function GET(req) {
+export async function GET(request) {
   try {
-    const { searchParams } = new URL(req.url);
-    const title = searchParams.get("title");
+    const session = await getServerSession(authOptions);
+    if (!session || !['admin'].includes(session.user.role)) {
+      throw new ApiError(403, 'Unauthorized access');
+    }
+    
+    const { searchParams } = new URL(request.url);
+    const title = searchParams.get('title');
 
     if (!title) {
-      return NextResponse.json({ message: "Exam title is required" }, { status: 400 });
+      throw new ApiError(400, 'Exam title is required');
     }
-
-    // Fetch examId using the title
-    const exam = await prisma.exam.findUnique({
-      where: { title },
+    
+    
+    // Fetch exam by title
+    const exam = await prisma.exam.findFirst({
+      where: {
+        title: { equals: title },
+      },
       select: { id: true },
     });
 
     if (!exam) {
-      return NextResponse.json({ message: "Exam not found" }, { status: 404 });
+      throw new ApiError(404, 'Exam not found, not active, or not a model exam');
     }
 
     const examId = exam.id;
@@ -32,37 +43,60 @@ export async function GET(req) {
       where: { examId },
       include: {
         student: {
-          select: { firstName: true }, // Get only student name
+          select: { 
+            firstName: true,
+            lastName:true,
+            studentID:true,
+            grade:true,
+            section:true
+
+          },
         },
         question: {
-          select: { correct: true }, // Get only the correct answer
+          select: { correct: true },
         },
       },
     });
 
     // Object to store student scores
     const studentScores = {};
-
     results.forEach((response) => {
-      const studentId = response.studentID;
-      const studentName = response.student?.firstName || "Unknown";
+      const student = response.student;
+      if (!student) return;
+    
+      const studentId = student.id;
       const isCorrect = response.answer === response.question?.correct;
-
+    
       if (!studentScores[studentId]) {
-        studentScores[studentId] = { name: studentName, score: 0 };
+        studentScores[studentId] = {
+          studentID:student.studentID,
+          firstName: student.firstName,
+          lastName: student.lastName,
+          grade: student.grade,
+          section: student.section,
+          score: 0,
+        };
       }
-
+    
       if (isCorrect) {
         studentScores[studentId].score += 1;
       }
     });
-     console.log(totalQuestions, Object.values(studentScores))
-    return NextResponse.json({
-      totalQuestions,
-      students: Object.values(studentScores),
-    }, { status: 200 });
+    
+    console.log('Total Questions:', totalQuestions, 'Student Scores:', Object.values(studentScores));
+
+    return NextResponse.json(
+      {
+        totalQuestions,
+        students: Object.values(studentScores),
+      },
+      { status: 200 }
+    );
   } catch (error) {
-    console.error("Error fetching exam results:", error);
-    return NextResponse.json({ message: "Internal Server Error" }, { status: 500 });
+    console.error('Error fetching exam results:', error);
+    if (error instanceof ApiError) {
+      return NextResponse.json({ message: error.message }, { status: error.status });
+    }
+    return NextResponse.json({ message: 'Failed to fetch exam results' }, { status: 500 });
   }
 }
