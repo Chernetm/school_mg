@@ -33,9 +33,9 @@ export async function middleware(req) {
   }
 
   // ✅ Teacher Authentication Middleware (for `/api/teacher/`)
-  if (req.nextUrl.pathname.startsWith("/api/teacher/")|| req.nextUrl.pathname.startsWith("/teacher")) {
-    return teacherAuthMiddleware(req);
-  }
+  // if (req.nextUrl.pathname.startsWith("/api/teacher/")|| req.nextUrl.pathname.startsWith("/teacher")) {
+  //   return teacherAuthMiddleware(req);
+  // }
 
   // ✅ Default logging middleware
   // return loggingMiddleware(req);    

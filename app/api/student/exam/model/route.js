@@ -12,7 +12,7 @@ export async function GET() {
     }
     
 
-    const studentId = session.user.studentId;
+    const studentId = session.user.studentID;
     const grade = session.user.grade;
 
     

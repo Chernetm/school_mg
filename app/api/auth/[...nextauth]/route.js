@@ -56,7 +56,7 @@ export const authOptions = {
         return {
           id: student.id,
           name: `${student.firstName} ${student.lastName}`,
-          role: 'STUDENT',
+          role: 'student',
           studentID: student.studentID,
           grade: latestGrade,
         };
@@ -81,7 +81,9 @@ export const authOptions = {
           where: {
             staffID: Number(credentials.staffID),
             email: credentials.email,
-            status: 'active',
+            // status: 'active',
+            
+      
           },
         });
         console.log("Staff List ", staff)
@@ -98,6 +100,7 @@ export const authOptions = {
           role: staff.role, // 🔐 e.g., 'ADMIN', 'TEACHER', etc.
           staffID: staff.staffID,
           image: staff.image,
+        
         };
       },
     }),
