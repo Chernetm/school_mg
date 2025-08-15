@@ -14,6 +14,14 @@ import { MdCampaign, MdDescription } from 'react-icons/md';
 
 
 const dropdowns = [
+     {
+        label: "Announcement",
+        icon: <MdCampaign/>,
+        roles: ["admin"],
+        items: [
+          { href: "/admin/announcement/post", label: "Post Announcement" },
+        ],
+      },
     {
       label: "Academic",
       icon: <LayoutGridIcon />,

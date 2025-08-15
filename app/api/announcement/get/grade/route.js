@@ -1,19 +1,22 @@
-import { prisma } from "@/utils/prisma";
-import jwt from "jsonwebtoken";
-import { cookies } from "next/headers";
 
-const SECRET_KEY = process.env.JWT_SECRET || "your_secret_key";
 
-export async function GET(req) {
+import { authOptions } from '@/app/api/auth/[...nextauth]/route';
+import ApiError from '@/lib/api-error';
+import { prisma } from '@/utils/prisma';
+import { getServerSession } from 'next-auth';
+import { NextResponse } from 'next/server';
+
+
+
+export async function GET() {
   try {
-    const token = cookies().get("studentToken")?.value;
+    const session = await getServerSession(authOptions);
+    console.log("Session data:", session);
+    const gradeId = session?.user?.grade;
 
-    if (!token) {
-      return Response.json({ error: "Unauthorized" }, { status: 401 });
+    if (!session) {
+      throw new ApiError(403, 'Unauthorized access');
     }
-
-    const decoded = jwt.verify(token, SECRET_KEY);
-    const gradeId = decoded.grade;
 
     const announcements = await prisma.announcement.findMany({
       where: {

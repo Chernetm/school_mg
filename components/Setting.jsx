@@ -42,7 +42,7 @@ export default function SettingsForm() {
 
   return (
     <div className="max-w-md mx-auto mt-10 bg-white p-6 rounded-2xl shadow-xl">
-      <h2 className="text-2xl font-bold mb-6 text-center text-gray-800">Update Settings</h2>
+      <h2 className="text-2xl font-bold mb-6 text-center text-gray-800">Privacy and Security</h2>
 
       <form onSubmit={handleSubmit} className="space-y-4">
         {/* Email */}

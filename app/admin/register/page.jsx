@@ -1,6 +1,7 @@
 "use client";
 import InputField from "@/components/InputField";
 import UploadingSpinner from "@/components/Loading/Uploading/page";
+import LoadingButton from "@/components/LoadingButton";
 import { useState } from "react";
 
 const StaffRegistrationForm = () => {
@@ -65,13 +66,6 @@ const StaffRegistrationForm = () => {
       setLoading(false);
     }
   };
- if(loading) { 
-    return (
-      <div className="flex items-center justify-center min-h-screen">
-        <UploadingSpinner />
-      </div>
-    );
-  }
   return (
     <div className="max-w-4xl mx-auto mt-10 p-8 bg-white text-gray-700 shadow-lg rounded-xl">
       <h2 className="text-3xl font-extrabold text-center mb-6 text-gray-800">Staff Registration</h2>
@@ -98,14 +92,11 @@ const StaffRegistrationForm = () => {
           </div>
         </div>
 
-        <button
-          type="submit"
-          className="w-full py-3 bg-green-500 hover:bg-green-400 transition rounded-lg text-white font-bold text-lg"
-          disabled={loading}
-        >
-          {loading ? "Submitting..." : "Register"}
-        </button>
-
+         <LoadingButton
+          loading={loading}
+          text="Register"
+          loadingText="Registering ..."
+        />
         {message && (
           <p className={`mt-4 text-center text-lg font-semibold ${message.includes("✅") ? "text-green-600" : "text-red-600"}`}>
             {message}

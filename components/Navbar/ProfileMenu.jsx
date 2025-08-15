@@ -5,14 +5,13 @@ import { Menu, MenuButton, MenuItem, MenuItems } from "@headlessui/react";
 import { BellIcon } from "@heroicons/react/24/outline";
 import Link from "next/link";
 
-const ProfileMenu = ({ loading, user }) => {
+const ProfileMenu = ({ user }) => {
   const role = user?.role || "student"; // fallback if role is undefined
   const announRole= user?.role || "announcement"
   const annuHref=`/${announRole}/announcement/staff`
 
   const menuItems = [
-    { label: "Settings", href: `/${role}/setting` },
-    { label: "Sign out", isLogout: true },
+    { label: "Privacy and security", href: `/${role}/setting` },
   ];
 
   return (
@@ -47,35 +46,13 @@ const ProfileMenu = ({ loading, user }) => {
 
             <MenuItems className="absolute right-0 z-10 mt-2 w-48 origin-top-right rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
               <div className="px-4 py-2 text-sm text-gray-700 font-semibold border-b">
-                Role: {loading ? "Loading..." : user.role}
+                Role: {  user?.role || null}
               </div>
 
               {menuItems.map(({ label, href, isLogout }) => (
                 <MenuItem key={label}>
                   {({ active }) =>
-                    isLogout ? (
-                      <button
-                        onClick={async () => {
-                          try {
-                            const res = await fetch("/api/logout", {
-                              method: "POST",
-                            });
-                            if (res.ok) {
-                              window.location.href = "/";
-                            } else {
-                              console.error("Logout failed");
-                            }
-                          } catch (err) {
-                            console.error("Logout error:", err);
-                          }
-                        }}
-                        className={`block w-full text-left px-4 py-2 text-sm ${
-                          active ? "bg-gray-100 text-gray-900" : "text-gray-700"
-                        }`}
-                      >
-                        {label}
-                      </button>
-                    ) : (
+                    
                       <Link
                         href={href}
                         className={`block px-4 py-2 text-sm ${
@@ -84,7 +61,7 @@ const ProfileMenu = ({ loading, user }) => {
                       >
                         {label}
                       </Link>
-                    )
+                    
                   }
                 </MenuItem>
               ))}

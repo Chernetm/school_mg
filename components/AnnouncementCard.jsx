@@ -9,7 +9,8 @@ dayjs.extend(relativeTime);
 
 export default function AnnouncementCard({ announcement }) {
   const { user } = useUser();
-  const currentStaffID = user?.staffID || null;
+  const currentStaffID = user?.staffID;
+  console.log("Announcement User", user)
   const { id, title, message, createdAt, staff, staffID } = announcement;
 
   const [showConfirm, setShowConfirm] = useState(false); // State to control the ConfirmModal visibility
@@ -24,7 +25,7 @@ export default function AnnouncementCard({ announcement }) {
       if (res.ok) {
         setStatus('✅ Announcement deleted successfully!');
         // Optionally, you can remove the item from the UI without a reload by lifting the state up or using context
-        setTimeout(() => window.location.reload(), 2000); // Refresh the page after a short delay
+        // setTimeout(() => window.location.reload(), 2000); // Refresh the page after a short delay
       } else {
         setStatus('❌ Failed to delete announcement.');
       }

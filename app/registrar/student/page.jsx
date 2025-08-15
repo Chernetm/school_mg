@@ -5,7 +5,7 @@ import React, { useState } from "react";
 import UploadingSpinner from "@/components/Loading/Uploading/page";
 import { Section } from "@/components/Section";
 import { StudentFields } from "@/components/StudentFields";
-import { SubmitButton } from "@/components/SubmitButton";
+import LoadingButton from "@/components/LoadingButton";
 
 const StudentRegistrationForm = () => {
   const initialFormData = {
@@ -54,7 +54,7 @@ const StudentRegistrationForm = () => {
     }
     return trimmed;
   };
-  
+
 
   const handleFileChange = (e) => {
     const file = e.target.files?.[0] || null;
@@ -75,33 +75,33 @@ const StudentRegistrationForm = () => {
     setLoading(true);
     setMessage(null);
     setIsError(false);
-  
+
     try {
       validateFormData();
-  
+
       const trimmedStudent = trimObjectStrings(formData.student);
-  
+
       const formDataToSend = new FormData();
       formDataToSend.append("student", JSON.stringify(trimmedStudent));
-  
+
       if (formData.student.image) {
         formDataToSend.append("student.image", formData.student.image);
       } else {
         throw new Error("Image is required for student registration.");
       }
-  
+
       const response = await fetch("/api/registrar/student", {
         method: "POST",
         body: formDataToSend,
       });
-  
+
       const responseData = await response.json();
-  
+
       if (!response.ok) {
         const errorMsg = responseData?.error || "Something went wrong.";
         throw new Error(errorMsg);
       }
-  
+
       setMessage("✅ Student information saved successfully!");
       resetForm();
     } catch (error) {
@@ -112,12 +112,12 @@ const StudentRegistrationForm = () => {
       setLoading(false);
     }
   };
-  
+
   const validateFormData = () => {
     const { student } = formData;
     if (!student.firstName || !student.email || !student.age || !student.grade ||
-       !student.gender|| !student.image || !student.studentID|| !student.year|| 
-       !student.stream|| !student.phoneNumber|| !student.middleName|| !student.lastName) {
+      !student.gender || !student.image || !student.studentID || !student.year ||
+      !student.stream || !student.phoneNumber || !student.middleName || !student.lastName) {
       throw new Error("Missing required fields.");
     }
   };
@@ -128,13 +128,13 @@ const StudentRegistrationForm = () => {
   };
 
 
- if (loading) {
-     return (
-       <div className="flex justify-center items-center min-h-screen">
-         <UploadingSpinner />
-       </div>
-     );
-   }
+  if (loading) {
+    return (
+      <div className="flex justify-center items-center min-h-screen">
+        <UploadingSpinner />
+      </div>
+    );
+  }
   return (
     <div className="max-w-3xl mx-auto p-6 bg-white rounded-lg shadow-lg">
       <form onSubmit={handleSubmit} className="space-y-6">
@@ -175,14 +175,16 @@ const StudentRegistrationForm = () => {
           </div>
         </Section>
 
-        {/* Submit */}
-        <SubmitButton loading={loading} />
 
+        <LoadingButton
+          loading={loading}
+          text="Register"
+          loadingText="Registering ..."
+        />
         {message && (
           <p
-            className={`text-center mt-4 text-sm font-medium ${
-              isError ? "text-red-600" : "text-green-600"
-            }`}
+            className={`text-center mt-4 text-sm font-medium ${isError ? "text-red-600" : "text-green-600"
+              }`}
           >
             {message}
           </p>

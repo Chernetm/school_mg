@@ -81,12 +81,12 @@ export const authOptions = {
           where: {
             staffID: Number(credentials.staffID),
             email: credentials.email,
-            // status: 'active',
+            status: 'active',
             
       
           },
         });
-        console.log("Staff List ", staff)
+        
         if (!staff) throw new ApiError('No staff user found', 404);
         if (!['teacher', 'staff', 'library'].includes(staff.role)) {
           throw new ApiError(403, 'Unauthorized access');
@@ -125,12 +125,13 @@ export const authOptions = {
           where: {
             staffID: Number(credentials.staffID),
             email: credentials.email,
-            status: 'active',
+            status: 'active'
+        
           },
         });
-        console.log("Staff List ", staff)
+        
         if (!staff) throw new ApiError('No staff user found', 404);
-        if (!['admin', 'head', 'registrar'].includes(staff.role)) {
+        if (!['admin', 'head','registrar'].includes(staff.role)) {
           throw new ApiError(403, 'Unauthorized access');
         }
         const isValid = await bcrypt.compare(credentials.password, staff.password);
@@ -177,6 +178,7 @@ export const authOptions = {
       session.user.grade=token.grade
       return session;
     },
+    
   },
 
   //   pages: {
