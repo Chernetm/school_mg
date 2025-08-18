@@ -1,12 +1,19 @@
-import { getStaffIDFromToken } from "@/utils/auth";
-import { prisma } from "@/utils/prisma";
+
+
+import { authOptions } from '@/app/api/auth/[...nextauth]/route';
+import ApiError from '@/lib/api-error';
+import {prisma} from '@/utils/prisma';
+import { getServerSession } from 'next-auth';
+
 import { NextResponse } from "next/server";
 
 export async function POST(req) {
   try {
-    const staffID = Number(await getStaffIDFromToken());
+    const session = await getServerSession(authOptions);
+    const staffID = session?.user?.staffID;
+
     if (!staffID) {
-      return NextResponse.json({ error: "Missing staff ID" }, { status: 401 });
+      throw new ApiError(403, 'Unauthorized access');
     }
 
     const body = await req.json();

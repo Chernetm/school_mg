@@ -1,18 +1,22 @@
-const {prisma} = require('@/utils/prisma');
-import { getStudentIDFromToken } from '@/utils/auth';
-import { NextResponse } from 'next/server';
+import { authOptions } from '@/app/api/auth/[...nextauth]/route';
+import ApiError from '@/lib/api-error';
+import {prisma} from '@/utils/prisma';
+import { getServerSession } from 'next-auth';
+
+import { NextResponse } from "next/server";
+
 export async function POST(req) {
   try {
     const body = await req.json();
     const { year, grade, stream } = body;
     console.log("Request body:", body); // Debugging
     
-    const studentID = await getStudentIDFromToken();
-    console.log("Student ID from token:", studentID); // Debugging
-
-    if (!studentID) {
-      return NextResponse.json({ message: 'studentID is required' }, { status: 400 });
-    }
+     const session = await getServerSession(authOptions);
+        const studentID = session?.user?.studentID;
+    
+        if (!studentID) {
+          throw new ApiError(403, 'Unauthorized access');
+        }
 
     
     const latestYear = await prisma.year.findFirst({

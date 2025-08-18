@@ -1,14 +1,17 @@
-const {prisma}=require("@/utils/prisma")
-import { getStudentIDFromToken } from "@/utils/auth";
-import { NextResponse } from 'next/server';
+import { authOptions } from '@/app/api/auth/[...nextauth]/route';
+import ApiError from '@/lib/api-error';
+import {prisma} from '@/utils/prisma';
+import { getServerSession } from 'next-auth';
+
+import { NextResponse } from "next/server";
 
 export async function GET(req) {
-  const studentID = await getStudentIDFromToken();
-  console.log("Student ID from token:", studentID); // Debugging
+   const session = await getServerSession(authOptions);
+    const studentID = session?.user?.studentID;
 
-  if (!studentID) {
-    return NextResponse.json({ message: 'Missing studentID' }, { status: 400 });
-  }
+    if (!studentID) {
+      throw new ApiError(403, 'Unauthorized access');
+    }
 
   try {
     const fees = await prisma.fee.findMany({

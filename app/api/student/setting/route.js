@@ -1,17 +1,21 @@
-import { getStudentIDFromToken } from '@/utils/auth';
-import { prisma } from '@/utils/prisma';
-import bcrypt from 'bcryptjs';
-import { NextResponse } from 'next/server';
+import { authOptions } from '@/app/api/auth/[...nextauth]/route';
+import ApiError from '@/lib/api-error';
+import {prisma} from '@/utils/prisma';
+import { getServerSession } from 'next-auth';
+
+import { NextResponse } from "next/server";
+
 
 export async function POST(req) {
+  const session = await getServerSession(authOptions);
+    const studentID = session?.user?.studentID;
+
+    if (!studentID) {
+      throw new ApiError(403, 'Unauthorized access');
+    }
   try {
     const body = await req.json();
     const { email, phoneNumber, password, currentPassword } = body;
-    const  studentID = await getStudentIDFromToken();
-    console.log(studentID)
-    if (!studentID) {
-      return NextResponse.json({ message: 'Student ID is required.' }, { status: 400 });
-    }
     
 
     if (!currentPassword) {

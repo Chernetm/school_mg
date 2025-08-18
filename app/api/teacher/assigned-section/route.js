@@ -1,24 +1,28 @@
-const { prisma } =require("@/utils/prisma");
-import { parse } from "cookie";
-import jwt from "jsonwebtoken";
+
+
+
+
+import { authOptions } from '@/app/api/auth/[...nextauth]/route';
+import ApiError from '@/lib/api-error';
+import {prisma} from '@/utils/prisma';
+import { getServerSession } from 'next-auth';
+
 import { NextResponse } from "next/server";
+
+
 
 export async function GET(req) {
   try {
     // Get token from cookies
-    const cookies = parse(req.headers.get("cookie") || "");
-    const token = cookies.staffToken;
+   const session = await getServerSession(authOptions);
+    const staffID = session?.user?.staffID;
 
-    if (!token) {
-      return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
+    if (!staffID) {
+      throw new ApiError(403, 'Unauthorized access');
     }
-
-    // Verify JWT and decode the token
-    const decoded = jwt.verify(token, process.env.JWT_SECRET);
-
     // Fetch staff data with grade and section names
     const staff = await prisma.staff.findUnique({
-      where: { id: decoded.id },
+      where: { staffID: Number(staffID) },
       select: {
         id: true,
         staffID: true,

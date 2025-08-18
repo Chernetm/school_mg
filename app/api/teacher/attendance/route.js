@@ -1,25 +1,24 @@
 
-const { prisma } = require("@/utils/prisma");
-import jwt from "jsonwebtoken";
+import { authOptions } from '@/app/api/auth/[...nextauth]/route';
+import ApiError from '@/lib/api-error';
+import {prisma} from '@/utils/prisma';
+import { getServerSession } from 'next-auth';
+
 import { NextResponse } from "next/server";
+
+
 
 export async function POST(req) {
   try {
     // 🔹 Extract token from cookies
-    const token = req.cookies.get("staffToken")?.value;
-    if (!token) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
+    
 
-    // 🔹 Decode staffToken to get staffID
-    let decoded;
-    try {
-      decoded = jwt.verify(token, process.env.JWT_SECRET);
-    } catch (error) {
-      return NextResponse.json({ error: "Invalid token" }, { status: 403 });
-    }
+    const session = await getServerSession(authOptions);
+    const staffID = session?.user?.staffID;
 
-    const staffID = decoded.staffID; // Extract staffID from token
+    if (!staffID) {
+      throw new ApiError(403, 'Unauthorized access');
+    }
     const body = await req.json();
     const { attendance } = body;
     console.log("student-attendance",staffID,attendance)
