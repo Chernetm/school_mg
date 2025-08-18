@@ -75,7 +75,7 @@ export default function Dashboard() {
               </div>
               <div>
                 <h2 className="text-xl font-semibold">Announcement List</h2>
-                <p className="text-sm">View announcements for specific grade and section</p>
+                <p className="text-sm">View announcements for your grade and section</p>
               </div>
             </div>
           </Link>
