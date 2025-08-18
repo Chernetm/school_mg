@@ -1,4 +1,5 @@
 "use client"
+import LoadingButton from "@/components/LoadingButton";
 import React, { useState } from "react";
 
 export default function StudentRankUpdater() {
@@ -73,13 +74,11 @@ export default function StudentRankUpdater() {
             required
           />
         </div>
-        <button
-          type="submit"
-          className="w-full bg-blue-600 text-white py-2.5 text-lg font-semibold rounded-lg hover:bg-blue-700 transition disabled:opacity-50"
-          disabled={loading}
-        >
-          {loading ? "Updating..." : "Update Ranks"}
-        </button>
+        <LoadingButton
+          loading={loading}
+          text="Update Ranks"
+          loadingText="Updating ..."
+        />
       </form>
 
       {message && <p className="text-green-600 font-medium text-center">{message}</p>}

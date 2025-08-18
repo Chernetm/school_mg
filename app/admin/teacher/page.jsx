@@ -59,6 +59,7 @@ export default function StaffAssignments() {
           <thead>
             <tr className="bg-gray-800 text-white">
               <th className="border px-6 py-3">First Name</th>
+              <th className="border px-6 py-3">Middle Name</th>
               <th className="border px-6 py-3">Last Name</th>
               <th className="border px-6 py-3">Grade</th>
               <th className="border px-6 py-3">Subject</th>
@@ -70,6 +71,7 @@ export default function StaffAssignments() {
             {assignments.map((staff, index) => (
               <tr key={staff.staffID} className={index % 2 === 0 ? "bg-gray-100" : "bg-white"}>
                 <td className="border px-6 py-3 text-gray-700">{staff.firstName}</td>
+                <td className="border px-6 py-3 text-gray-700">{staff.middleName}</td>
                 <td className="border px-6 py-3 text-gray-700">{staff.lastName}</td>
                 <td className="border px-6 py-3 text-gray-700">{staff.grade}</td>
                 <td className="border px-6 py-3 text-gray-700">{staff.subject}</td>

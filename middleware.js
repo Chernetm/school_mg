@@ -8,7 +8,7 @@ import { studentAuthMiddleware } from "./middleware/studentAuthMiddleware";
 import { teacherAuthMiddleware } from "./middleware/teacherAuthMiddleware";
 
 export async function middleware(req) {
-  console.log("✅ Middleware triggered for:", req.nextUrl.pathname);
+  // console.log("✅ Middleware triggered for:", req.nextUrl.pathname);
 
   // ✅ Student Authentication Middleware (Only for `/api/exam/`)
   if (req.nextUrl.pathname.startsWith("/api/student/") || req.nextUrl.pathname.startsWith("/student") ||req.nextUrl.pathname.startsWith("/exam")) {
@@ -23,7 +23,8 @@ export async function middleware(req) {
     return adminAuthMiddleware(req);
   }
   // // // ✅ Head Authentication Middleware (for both page and API routes)
-   if (req.nextUrl.pathname.startsWith("/api/head") || req.nextUrl.pathname.startsWith("/head")) {
+   
+  if (req.nextUrl.pathname.startsWith("/api/head") || req.nextUrl.pathname.startsWith("/head")) {
    return headAuthMiddleware(req);
    }
 

@@ -21,6 +21,8 @@ export const authOptions = {
         studentID: { label: 'Student ID', type: 'text' },
         password: { label: 'Password', type: 'password' },
       },
+
+       // Debugging line
       async authorize(credentials, req) {
         const ip = req.headers['x-forwarded-for'] || req.connection?.remoteAddress;
         await rateLimiter.consume(ip).catch(() => {
@@ -30,21 +32,21 @@ export const authOptions = {
         const student = await prisma.student.findUnique({
           where: {
             studentID: credentials.studentID,
-            status: 'active',
+            // status: 'active',
           },
           include: {
             registrations: {
               orderBy: { createdAt: 'desc' },
-              take: 1, // get latest registration (adjust as needed)
               select: {
                 grade: true,
-                course: { select: { name: true } },
-                academicYear: true,
-                semester: true,
+      
               },
             },
           },
         });
+        
+
+        console.log(student, "student"); // Debugging line to check student data
 
         if (!student) throw new ApiError('No student found', 404);
         const isValid = await bcrypt.compare(credentials.password, student.password);

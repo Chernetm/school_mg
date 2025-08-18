@@ -1,11 +1,10 @@
 
 "use client";
 import React, { useState } from "react";
-
-import UploadingSpinner from "@/components/Loading/Uploading/page";
 import { Section } from "@/components/Section";
 import { StudentFields } from "@/components/StudentFields";
 import LoadingButton from "@/components/LoadingButton";
+import Spinner from "@/components/Loading/Spinner/page";
 
 const StudentRegistrationForm = () => {
   const initialFormData = {
@@ -127,14 +126,6 @@ const StudentRegistrationForm = () => {
     setPreviewImage(null);
   };
 
-
-  if (loading) {
-    return (
-      <div className="flex justify-center items-center min-h-screen">
-        <UploadingSpinner />
-      </div>
-    );
-  }
   return (
     <div className="max-w-3xl mx-auto p-6 bg-white rounded-lg shadow-lg">
       <form onSubmit={handleSubmit} className="space-y-6">
@@ -179,7 +170,7 @@ const StudentRegistrationForm = () => {
         <LoadingButton
           loading={loading}
           text="Register"
-          loadingText="Registering ..."
+          loadingText="Registering student ..."
         />
         {message && (
           <p

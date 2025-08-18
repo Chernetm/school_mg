@@ -1,4 +1,5 @@
 "use client"
+import LoadingButton from "@/components/LoadingButton";
 import { useEffect, useState } from "react";
 
 export default function YearManager() {
@@ -6,6 +7,7 @@ export default function YearManager() {
   const [year, setYear] = useState("");
   const [status, setStatus] = useState("active");
   const [message, setMessage] = useState("");
+  const [loading, setLoading] = useState(false)
 
   useEffect(() => {
     fetchYears();
@@ -24,16 +26,24 @@ export default function YearManager() {
 
   const handleCreate = async (e) => {
     e.preventDefault();
-    const res = await fetch("/api/head/year", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ year: parseInt(year), status })
-    });
-    if (res.ok) {
-      setMessage("Year added successfully");
-      fetchYears();
-    } else {
-      setMessage("Error adding year");
+    setLoading(true);
+
+    try {
+      const res = await fetch("/api/head/year", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ year: parseInt(year), status })
+      });
+      if (res.ok) {
+        setMessage("Year added successfully");
+        fetchYears();
+      }
+
+    }
+    catch (error) {
+      setMessage("Error adding year", error);
+    } finally {
+      setLoading(false)
     }
   };
 
@@ -59,7 +69,7 @@ export default function YearManager() {
     <div className="max-w-lg mx-auto p-4 bg-gray-100 shadow-lg rounded-lg text-gray-800">
       <h2 className="text-xl font-semibold mb-4">Manage Years</h2>
       {message && <p className="text-green-600">{message}</p>}
-      
+
       <form onSubmit={handleCreate} className="mb-4">
         <input
           type="number"
@@ -77,12 +87,13 @@ export default function YearManager() {
           <option value="active">Active</option>
           <option value="inactive">Inactive</option>
         </select>
-        <button
-          type="submit"
-          className="w-full bg-blue-500 text-white py-2 rounded"
-        >
-          Add Year
-        </button>
+
+        <LoadingButton
+          loading={loading}
+          text="Login"
+          loadingText="Registering year ..."
+        />
+
       </form>
 
       <ul className="space-y-2">

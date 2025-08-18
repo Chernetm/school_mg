@@ -87,6 +87,7 @@ export default function StaffPage() {
               <th className="px-4 py-3 text-left text-sm font-semibold text-blue-800">Profile</th>
               <th className="px-4 py-3 text-left text-sm font-semibold text-blue-800">Staff ID</th>
               <th className="px-4 py-2 text-left text-sm font-semibold text-blue-800">First Name</th>
+              <th className="px-4 py-2 text-left text-sm font-semibold text-blue-800">Middle Name</th>
               <th className="px-4 py-2 text-left text-sm font-semibold text-blue-800">Last Name</th>
               <th className="px-4 py-2 text-left text-sm font-semibold text-blue-800">Role</th>
               <th className="px-4 py-2 text-left text-sm font-semibold text-blue-800">Status</th>
@@ -112,6 +113,7 @@ export default function StaffPage() {
 
                 <td className="px-4 py-2 font-mono text-gray-700">{member.staffID}</td>
                 <td className="px-4 py-2 text-gray-700">{member.firstName}</td>
+                <td className="px-4 py-2 text-gray-700">{member.middleName}</td>
                 <td className="px-4 py-2 text-gray-700">{member.lastName}</td>
                 <td className="px-4 py-2 text-gray-700">{member.role}</td>
 

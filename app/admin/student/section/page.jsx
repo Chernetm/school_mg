@@ -1,5 +1,6 @@
 "use client";
 
+import LoadingButton from "@/components/LoadingButton";
 import { useState } from "react";
 
 const AssignSectionForm = () => {
@@ -67,13 +68,13 @@ const AssignSectionForm = () => {
           />
         </div>
 
-        <button
-          type="submit"
-          disabled={loading}
-          className="w-full py-3 bg-green-600 hover:bg-green-500 text-white font-bold rounded-lg transition"
-        >
-          {loading ? "Assigning..." : "Assign Sections"}
-        </button>
+        <LoadingButton
+                  loading={loading}
+                  text="Assign Sections"
+                  loadingText="Assigning section ..."
+          />
+
+        
 
         {message && (
           <p className="mt-4 text-center font-medium text-blue-700">

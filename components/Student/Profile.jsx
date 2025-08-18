@@ -1,4 +1,3 @@
-
 "use client";
 import { useEffect, useState } from "react";
 import { FaGraduationCap, FaUser } from "react-icons/fa"; // import icons
@@ -35,6 +34,9 @@ export default function StudentDashboard() {
     return <div className="text-center mt-20 text-red-600">Error: {error}</div>;
   }
 
+  // safely pick the latest registration
+  const latestRegistration = studentData?.registrations?.[0] || {};
+
   return (
     <div className="min-h-screen bg-gray-100 flex items-center justify-center py-4">
       <div className="bg-white rounded-xl shadow-lg p-4 w-full max-w-md md:max-w-2xl">
@@ -48,12 +50,12 @@ export default function StudentDashboard() {
             />
           ) : (
             <div className="w-20 h-20 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 text-3xl mb-4">
-              {studentData.firstName.charAt(0)}
+              {studentData.firstName?.charAt(0)}
             </div>
           )}
 
           <h2 className="text-xl font-bold text-gray-800">
-            {studentData.firstName} {studentData.lastName}
+            {studentData.firstName} {studentData.middleName}
           </h2>
           <p className="text-gray-600 text-sm">{studentData.email}</p>
 
@@ -64,11 +66,15 @@ export default function StudentDashboard() {
             </div>
             <div className="flex justify-between text-gray-700 text-sm">
               <span className="font-medium">Grade:</span>
-              <span>{studentData.grade || "N/A"}</span>
+              <span>{latestRegistration.grade || "N/A"}</span>
+            </div>
+            <div className="flex justify-between text-gray-700 text-sm">
+              <span className="font-medium">Year:</span>
+              <span>{latestRegistration.year || "N/A"}</span>
             </div>
             <div className="flex justify-between text-gray-700 text-sm">
               <span className="font-medium">Section:</span>
-              <span>{studentData.section || "N/A"}</span>
+              <span>{latestRegistration.section || "N/A"}</span>
             </div>
           </div>
         </div>
@@ -99,23 +105,9 @@ export default function StudentDashboard() {
             <h3 className="text-lg font-bold text-blue-700 mb-4">
               Welcome, {studentData.firstName}!
             </h3>
-            <p className="text-gray-600 mb-4 text-sm">Here is your latest academic information.</p>
-          </div>
-        )}
-
-        {activeTab === "results" && (
-          <div>
-            <h3 className="text-lg font-bold text-blue-700 mb-4">Academic Results</h3>
-            <p className="text-gray-600 text-sm">Your semester results will appear here.</p>
-            <div className="bg-gray-50 p-4 rounded-lg mt-4">
-              <h4 className="font-semibold">Your Exam Results</h4>
-              {/* Example of exam result */}
-              <p className="text-sm">You have completed 2 exams with the following results:</p>
-              <ul className="list-disc pl-6 mt-2 text-gray-700">
-                <li>Math Exam - Grade: A</li>
-                <li>Science Exam - Grade: B+</li>
-              </ul>
-            </div>
+            <p className="text-gray-600 mb-4 text-sm">
+              Here is your latest academic information.
+            </p>
           </div>
         )}
       </div>

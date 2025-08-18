@@ -1,15 +1,22 @@
-const{prisma}=require("@/utils/prisma")
 
-import { getStudentIDFromToken } from "@/utils/auth";
-import { NextResponse } from "next/server";
 
-export async function GET(req) {
+
+import { authOptions } from '@/app/api/auth/[...nextauth]/route';
+import ApiError from '@/lib/api-error';
+import {prisma} from '@/utils/prisma';
+import { getServerSession } from 'next-auth';
+import { NextResponse } from 'next/server';
+
+
+
+export async function GET() {
   try {
-    const studentID = await getStudentIDFromToken();
-    console.log("Student ID from token:", studentID); // Debugging
-    
+    const session = await getServerSession(authOptions);
+    console.log("Session data:", session);
+    const studentID = session?.user?.studentID;
+
     if (!studentID) {
-          return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
+          throw new ApiError(403, 'Unauthorized access');
     }
 
     const student = await prisma.student.findUnique({
@@ -20,13 +27,18 @@ export async function GET(req) {
         middleName: true,
         email: true,
         image:true,
+
+
         registrations: {
-          orderBy: { year: "desc" },
-          take: 1,
-          select: { grade: true, year: true, section: true },
-        },
+              orderBy: { createdAt: 'desc' },
+              select: {
+                grade: true, year: true, section: true,
+      
+              },
+            },
       },
     });
+    console.log("Fetched student data:", student);
 
     if (!student) {
       return NextResponse.json({ message: "Student not found" }, {status: 404});
