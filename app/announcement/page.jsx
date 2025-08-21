@@ -17,14 +17,6 @@ export default function AnnouncementsPage() {
         const announcementsData = await annRes.json();
         setAnnouncements(announcementsData);
 
-        // Fetch current staff info
-        const authRes = await fetch('/api/auth', {
-          method: 'GET',
-          headers: {
-            'Content-Type': 'application/json',
-           
-          },
-        });
       } catch (err) {
         console.error('Error loading data:', err);
       } finally {

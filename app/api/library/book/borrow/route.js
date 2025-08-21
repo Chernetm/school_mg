@@ -1,11 +1,22 @@
-const { prisma } = require('@/utils/prisma');
-import { getStaffIDFromToken } from '@/utils/auth';
+
+import { authOptions } from '@/app/api/auth/[...nextauth]/route';
+import ApiError from '@/lib/api-error';
+import {prisma} from '@/utils/prisma';
+import { getServerSession } from 'next-auth';
+import { NextResponse } from 'next/server';
 
 export async function POST(req) {
   try {
     const body = await req.json();
     const { studentId, bookId, borrowDate, returnDate } = body;
-    const staffID = await getStaffIDFromToken();
+    
+    const session = await getServerSession(authOptions);
+    console.log("Session data:", session);
+    const staffID = session?.user?.staffID;
+    
+    if (!staffID) {
+      throw new ApiError(403, 'Unauthorized access');
+    }
 
     if (!studentId || !bookId || !borrowDate || !returnDate) {
       return Response.json({ error: 'All fields are required.' }, { status: 400 });

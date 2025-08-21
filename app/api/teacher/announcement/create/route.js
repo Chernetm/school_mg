@@ -1,36 +1,41 @@
-import { getStaffIDFromToken } from "@/utils/auth";
-import { prisma } from "@/utils/prisma";
+
+
+import { authOptions } from '@/app/api/auth/[...nextauth]/route';
+import ApiError from '@/lib/api-error';
+import { prisma } from '@/utils/prisma';
+import { getServerSession } from 'next-auth';
+
+import { NextResponse } from "next/server";
 export async function POST(req) {
-    try {
-      const body = await req.json();
-      const { title, message, audience, gradeId } = body;
-      console.log(title, message, audience, gradeId);   
-  
-      const staffID = await getStaffIDFromToken();
-        console.log("Staff ID:", staffID);
-  
-      if (!staffID) {
-        return new Response(JSON.stringify({ error: 'Unauthorized' }), { status: 401 });
-      }
-  
-      if (!title || !message || !audience || !gradeId) {
-        return new Response(JSON.stringify({ error: 'Missing fields' }), { status: 400 });
-      }
-  
-      const announcement = await prisma.announcement.create({
-        data: {
-          title,
-          message,
-          audience,
-          gradeId: Number(gradeId),
-          staffID: Number(staffID),
-        },
-      });
-  
-      return new Response(JSON.stringify(announcement), { status: 200 });
-    } catch (error) {
-      console.error('Create Announcement Error:', error);
-      return new Response(JSON.stringify({ error: 'Failed to create announcement' }), { status: 500 });
+  try {
+    const body = await req.json();
+    const { title, message, audience, gradeId } = body;
+    console.log(title, message, audience, gradeId);
+
+    const session = await getServerSession(authOptions);
+    const staffID = session?.user?.staffID;
+
+    if (!staffID) {
+      throw new ApiError(403, 'Unauthorized access');
     }
+
+    if (!title || !message || !audience || !gradeId) {
+      return new Response(JSON.stringify({ error: 'Missing fields' }), { status: 400 });
+    }
+
+    const announcement = await prisma.announcement.create({
+      data: {
+        title,
+        message,
+        audience,
+        gradeId: Number(gradeId),
+        staffID: Number(staffID),
+      },
+    });
+
+    return new Response(JSON.stringify(announcement), { status: 200 });
+  } catch (error) {
+    console.error('Create Announcement Error:', error);
+    return new Response(JSON.stringify({ error: 'Failed to create announcement' }), { status: 500 });
   }
-  
+}

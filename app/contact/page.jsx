@@ -1,5 +1,6 @@
 "use client";
 
+import Footer from "@/components/Footer";
 import { motion } from "framer-motion";
 import {
     FaEnvelope,
@@ -12,7 +13,8 @@ import {
 
 export default function ContactPage() {
   return (
-    <div className="min-h-screen bg-white text-gray-800 font-serif px-4 py-20 flex flex-col items-center">
+    <div>
+      <div className="min-h-screen bg-white text-gray-800 font-serif px-4 py-20 flex flex-col items-center">
       {/* Header */}
       <motion.h1
         initial={{ opacity: 0, y: -40 }}
@@ -72,43 +74,8 @@ export default function ContactPage() {
           </a>
         ))}
       </motion.div>
-
-      {/* Footer */}
-      <motion.footer
-  initial={{ opacity: 0, y: 30 }}
-  animate={{ opacity: 1, y: 0 }}
-  transition={{ delay: 1.6, duration: 1 }}
-  className="mt-16 text-center text-gray-600 text-sm"
->
-  <div className="flex justify-center gap-6 text-xl mb-3">
-    <a
-      href="https://t.me/your_school"
-      target="_blank"
-      rel="noopener noreferrer"
-      className="hover:text-blue-500 transition"
-    >
-      <FaTelegramPlane />
-    </a>
-    <a
-      href="https://facebook.com/your_school"
-      target="_blank"
-      rel="noopener noreferrer"
-      className="hover:text-blue-700 transition"
-    >
-      <FaFacebookF />
-    </a>
-    <a
-      href="https://youtube.com/your_school"
-      target="_blank"
-      rel="noopener noreferrer"
-      className="hover:text-red-500 transition"
-    >
-      <FaYoutube />
-    </a>
-  </div>
-  <p>&copy; {new Date().getFullYear()} Daraaro Boarding School. All rights reserved.</p>
-</motion.footer>
-
+    </div>
+    <Footer/>
     </div>
   );
 }

@@ -20,6 +20,7 @@ export async function GET() {
         acc[staffKey] = {
           staffID: staff.staffID,
           firstName: staff.firstName,
+          middleName:staff.middleName,
           lastName: staff.lastName,
           grade: grade.grade,
           subject: subject.name,

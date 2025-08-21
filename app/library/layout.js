@@ -1,19 +1,19 @@
 import { Navbar } from "@/components/Navbar/NavBar";
 import { UserProvider } from "@/context/UserContext";
-import { headers } from "next/headers";
+import { authOptions } from '@/app/api/auth/[...nextauth]/route';
+import { getServerSession } from 'next-auth';
 
 export default async function LibraryLayout({ children }) {
-  const headersList = await headers();
-
+ 
+const session = await getServerSession(authOptions);
+    
   const user = {
-    role: headersList.get("x-user-role"),
-    image: headersList.get("x-user-image"),
-    staffID: headersList.get("x-user-id"),
-    grade: headersList.get("x-user-grade"),
+    role: session?.user.role,
+    image: session?.user.image,
+    staffID:session?.user.staffID,
+    // You can grab other header values similarly
   };
- console.log("User in Library Layout:", user); // Log the user object for debugging
- console.log("User Role in Library Layout:", user.role); // Log the user role for debugging
-  // You can grab other header values similarly
+
   return (
     <UserProvider initialUser={user}>
       <div className="min-h-screen flex flex-col bg-gray-100">

@@ -1,5 +1,13 @@
-import { getStaffIDFromToken } from '@/utils/auth';
+
+
+import { authOptions } from '@/app/api/auth/[...nextauth]/route';
+import ApiError from '@/lib/api-error';
 import { prisma } from '@/utils/prisma';
+import { getServerSession } from 'next-auth';
+
+import { NextResponse } from "next/server";
+
+
 
 export async function POST(req, { params }) {
   try {
@@ -7,9 +15,11 @@ export async function POST(req, { params }) {
     const body = await req.json();
     const { title, message, audience } = body;
 
-    const staffID = await getStaffIDFromToken();
+    const session = await getServerSession(authOptions);
+    const staffID = session?.user?.staffID;
+
     if (!staffID) {
-      return new Response(JSON.stringify({ error: 'Unauthorized' }), { status: 401 });
+      throw new ApiError(403, 'Unauthorized access');
     }
 
     if (!title || !message || !audience) {
