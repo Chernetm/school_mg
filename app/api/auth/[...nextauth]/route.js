@@ -84,15 +84,7 @@ export const authOptions = {
             staffID: Number(credentials.staffID),
             email: credentials.email,
             status: 'active',
-            assignment: {
-              select: {
-                grade: {
-                  select: {
-                    grade: true, // Fetch grade value
-                  },
-                },
-              }
-            }
+            
 
 
           },
@@ -111,7 +103,7 @@ export const authOptions = {
           role: staff.role, // 🔐 e.g., 'ADMIN', 'TEACHER', etc.
           staffID: staff.staffID,
           image: staff.image,
-          grade:staff.assignment?.grade?.grade
+          
 
         };
       },
