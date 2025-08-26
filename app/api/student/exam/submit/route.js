@@ -8,7 +8,7 @@ import { NextResponse } from 'next/server';
 export async function POST(request) {
   try {
     const session = await getServerSession(authOptions);
-    if (!session || session.user.role !== "STUDENT") {
+    if (!session) {
       throw new ApiError(403, "Unauthorized access");
     }
 
