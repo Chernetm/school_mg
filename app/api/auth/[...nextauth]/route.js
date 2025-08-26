@@ -58,7 +58,7 @@ export const authOptions = {
         return {
           id: student.id,
           name: `${student.firstName} ${student.lastName}`,
-          role: 'STUDENT',
+          role: 'student',
           studentID: student.studentID,
           grade: latestGrade,
         };
