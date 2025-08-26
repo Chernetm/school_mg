@@ -22,7 +22,7 @@ export const authOptions = {
         password: { label: 'Password', type: 'password' },
       },
 
-       // Debugging line
+      // Debugging line
       async authorize(credentials, req) {
         const ip = req.headers['x-forwarded-for'] || req.connection?.remoteAddress;
         await rateLimiter.consume(ip).catch(() => {
@@ -39,12 +39,12 @@ export const authOptions = {
               orderBy: { createdAt: 'desc' },
               select: {
                 grade: true,
-      
+
               },
             },
           },
         });
-        
+
 
         console.log(student, "student"); // Debugging line to check student data
 
@@ -84,11 +84,20 @@ export const authOptions = {
             staffID: Number(credentials.staffID),
             email: credentials.email,
             status: 'active',
-            
-      
+            assignment: {
+              select: {
+                grade: {
+                  select: {
+                    grade: true, // Fetch grade value
+                  },
+                },
+              }
+            }
+
+
           },
         });
-        
+
         if (!staff) throw new ApiError('No staff user found', 404);
         if (!['teacher', 'staff', 'library'].includes(staff.role)) {
           throw new ApiError(403, 'Unauthorized access');
@@ -102,7 +111,8 @@ export const authOptions = {
           role: staff.role, // 🔐 e.g., 'ADMIN', 'TEACHER', etc.
           staffID: staff.staffID,
           image: staff.image,
-        
+          grade:staff.assignment?.grade?.grade
+
         };
       },
     }),
@@ -128,12 +138,12 @@ export const authOptions = {
             staffID: Number(credentials.staffID),
             email: credentials.email,
             status: 'active'
-        
+
           },
         });
-        
+
         if (!staff) throw new ApiError('No staff user found', 404);
-        if (!['admin', 'head','registrar'].includes(staff.role)) {
+        if (!['admin', 'head', 'registrar'].includes(staff.role)) {
           throw new ApiError(403, 'Unauthorized access');
         }
         const isValid = await bcrypt.compare(credentials.password, staff.password);
@@ -177,10 +187,10 @@ export const authOptions = {
       session.user.name = token.name;
       session.user.staffID = token.staffID;
       session.user.studentID = token.studentID;
-      session.user.grade=token.grade
+      session.user.grade = token.grade
       return session;
     },
-    
+
   },
 
   //   pages: {

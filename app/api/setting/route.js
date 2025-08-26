@@ -1,13 +1,26 @@
-import { getStaffIDFromToken } from '@/utils/auth';
-import { prisma } from '@/utils/prisma';
+
 import bcrypt from 'bcryptjs';
-import { NextResponse } from 'next/server';
+
+import { authOptions } from '@/app/api/auth/[...nextauth]/route';
+import ApiError from '@/lib/api-error';
+import {prisma} from '@/utils/prisma';
+import { getServerSession } from 'next-auth';
+
+import { NextResponse } from "next/server";
+
+import bcrypt from 'bcryptjs';
 
 export async function POST(req) {
   try {
     const body = await req.json();
     const { email, phoneNumber, password, currentPassword } = body;
-    const staffID = await getStaffIDFromToken();
+    const session = await getServerSession(authOptions);
+    const staffID = session?.user?.staffID;
+
+    if (!staffID) {
+      throw new ApiError(403, 'Unauthorized access');
+    }
+    
     console.log(staffID)
     if (!staffID) {
       return NextResponse.json({ message: 'Staff ID is required.' }, { status: 400 });

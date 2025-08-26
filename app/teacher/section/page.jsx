@@ -237,7 +237,7 @@ export default function StaffAssignments() {
                             students.map((student) => (
                               <tr key={student.studentID} className="even:bg-gray-50 text-gray-800">
                                 <td className="border px-2 py-1">{student.studentID}</td>
-                                <td className="border px-2 py-1">{student.firstName} {student.lastName}</td>
+                                <td className="border px-2 py-1">{student.firstName} {student.middleName}</td>
                                 {mode === "attendance" ? (
                                   <>
                                     <td className="border px-2 py-1 text-center">

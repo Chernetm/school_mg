@@ -265,7 +265,7 @@ const StudentResultCard = ({ student, results }) => {
           />
         </div>
         <div className="text-center flex-1">
-          <h1 className="text-lg font-bold uppercase">South West Academy</h1>
+          <h1 className="text-lg font-bold uppercase">Chelelektu Secondary School</h1>
           <p className="text-sm italic">Committed to Quality Education</p>
           <p className="text-[9px] mt-1">
             📧 Email: info@swa.edu.et | 📞 Phone: +251 900 000 000

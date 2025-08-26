@@ -22,7 +22,7 @@ export default function HomePage() {
           transition={{ duration: 1 }}
           className="text-5xl md:text-6xl font-extrabold mb-4 bg-gradient-to-r from-yellow-600 to-black bg-clip-text text-transparent"
         >
-          Welcome to Daraaro Boarding School
+          Welcome to Chelelektu Secondary School
         </motion.h1>
 
         <motion.p

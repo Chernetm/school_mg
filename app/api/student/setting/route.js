@@ -2,6 +2,7 @@ import { authOptions } from '@/app/api/auth/[...nextauth]/route';
 import ApiError from '@/lib/api-error';
 import {prisma} from '@/utils/prisma';
 import { getServerSession } from 'next-auth';
+import bcrypt from 'bcryptjs';
 
 import { NextResponse } from "next/server";
 
