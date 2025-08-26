@@ -1,5 +1,4 @@
 
-import bcrypt from 'bcryptjs';
 
 import { authOptions } from '@/app/api/auth/[...nextauth]/route';
 import ApiError from '@/lib/api-error';
