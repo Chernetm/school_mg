@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import LoadingButton from './LoadingButton';
 
 export default function SettingsForm() {
   const [formData, setFormData] = useState({
@@ -12,6 +13,7 @@ export default function SettingsForm() {
 
   const [message, setMessage] = useState('');
   const [error, setError] = useState('');
+  const [loading, setLoading] = useState('')
 
   const handleChange = (e) => {
     setFormData((prev) => ({
@@ -24,6 +26,7 @@ export default function SettingsForm() {
     e.preventDefault();
     setMessage('');
     setError('');
+    setLoading(true)
 
     const res = await fetch('/api/setting', {
       method: 'POST',
@@ -38,6 +41,7 @@ export default function SettingsForm() {
     } else {
       setError(result.message);
     }
+    setLoading(false)
   };
 
   return (
@@ -100,12 +104,18 @@ export default function SettingsForm() {
 
         {/* Submit Button */}
         <div className="pt-4">
-          <button
+          <LoadingButton
+            loading={loading}
+            text="Save Changes"
+            loadingText='Saving ...'
+
+          />
+          {/* <button
             type="submit"
             className="w-full bg-blue-600 text-white py-2 px-4 rounded-xl hover:bg-blue-700 transition-colors duration-200"
           >
             Save Changes
-          </button>
+          </button> */}
         </div>
 
         {/* Feedback Messages */}

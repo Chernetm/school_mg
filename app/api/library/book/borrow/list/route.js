@@ -11,6 +11,7 @@ export async function GET() {
             select: {
               studentID: true,
               firstName: true,
+              middleName:true,
               lastName: true,
               registrations: {  // Include registration to fetch grade
                 select: {

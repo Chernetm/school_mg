@@ -1,9 +1,10 @@
 
-const { prisma } = require("@/utils/prisma");
 
-import { getStaffIDFromToken } from "@/utils/auth";
-import { NextResponse } from "next/server";
-
+import { authOptions } from '@/app/api/auth/[...nextauth]/route';
+import ApiError from '@/lib/api-error';
+import {prisma} from '@/utils/prisma';
+import { getServerSession } from 'next-auth';
+import { NextResponse } from 'next/server';
 export async function GET(req) {
   try {
     const { searchParams } = new URL(req.url);
@@ -31,13 +32,17 @@ export async function GET(req) {
 
 export async function POST(req) {
   try {
-    const userID = await getStaffIDFromToken();
+    const session = await getServerSession(authOptions);
+    console.log("Session data:", session);
+    const userID = session?.user?.staffID;
+    
+    if (!session  || !userID) {
+      throw new ApiError(403, 'Unauthorized access');
+    }
+    
     // Check if userID is available
   
 
-    if (!userID) {
-      return NextResponse.json({ message: "Staff ID is required" }, { status: 401 });
-    }
     const body = await req.json();
     const { attendance } = body;
 

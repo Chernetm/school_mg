@@ -21,6 +21,7 @@ export async function GET(req) {
 
     const students = await prisma.student.findMany({
       where: {
+        status:'active',
         registrations: {
           some: {
             grade: parseInt(grade),
@@ -36,7 +37,13 @@ export async function GET(req) {
         lastName: true,
         image:true,
         studentID: true,
-        
+        registrations: {
+              orderBy: { createdAt: 'desc' },
+              select: {
+                grade: true, year: true, section: true,
+      
+              },
+        },
       },
     });
 

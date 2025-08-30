@@ -54,7 +54,7 @@ export default function BorrowedBookList() {
                 <tr key={borrow.id}>
                   <td className="border p-2">{borrow.book.title}</td>
                   <td className="border p-2">
-                    {borrow.student.firstName} {borrow.student.lastName}
+                    {borrow.student.firstName} {borrow.student.middleName} {borrow.student.lastName} (ID: {borrow.student.studentID})
                   </td>
                   <td className="border p-2">
                     {registration ? registration.grade : 'N/A'}

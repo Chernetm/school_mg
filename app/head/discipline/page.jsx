@@ -4,7 +4,6 @@ import { useState } from 'react';
 
 export default function AddDisciplineRecordPage() {
   const [studentID, setStudentID] = useState('');
-  const [staffID, setStaffID] = useState('');
   const [message, setMessage] = useState('');
   const [status, setStatus] = useState({ type: '', message: '' });
 
@@ -24,7 +23,6 @@ export default function AddDisciplineRecordPage() {
       if (res.ok) {
         setStatus({ type: 'success', message: data.message });
         setStudentID('');
-        setStaffID('');
         setMessage('');
       } else {
         setStatus({ type: 'error', message: data.message });

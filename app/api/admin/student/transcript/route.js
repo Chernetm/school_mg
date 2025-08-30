@@ -41,6 +41,8 @@ export async function GET(req) {
       },
     });
 
+  console.log("Fetched Registrations:", registrations);
+
     const groupedByStudent = {};
 
     registrations.forEach((reg) => {
@@ -82,6 +84,7 @@ export async function GET(req) {
     });
 
     const result = Object.values(groupedByStudent); // Convert map to array
+    console.log("Grouped Transcript Data:", result?.[0].student, result?.[0].results);
     return NextResponse.json(result, { status: 200 });
   } catch (err) {
     console.error("Error fetching student transcript data:", err);

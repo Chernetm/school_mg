@@ -161,7 +161,7 @@ export default function StudentExam() {
 
       if (!response.ok) throw new Error('Failed to submit');
 
-      router.push('/student/exam/result');
+      router.push('/exam/result');
     } catch (error) {
       setErrorMessage('You have already submitted this exam! Take another exam.');
     }

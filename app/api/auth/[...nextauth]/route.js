@@ -4,7 +4,8 @@ import { prisma } from '@/utils/prisma';
 import bcrypt from 'bcryptjs';
 import NextAuth from 'next-auth';
 import CredentialsProvider from 'next-auth/providers/credentials';
-import { RateLimiterMemory } from 'rate-limiter-flexible';
+const { RateLimiterMemory } = require("rate-limiter-flexible");
+
 
 const rateLimiter = new RateLimiterMemory({
   points: 5,
@@ -32,7 +33,7 @@ export const authOptions = {
         const student = await prisma.student.findUnique({
           where: {
             studentID: credentials.studentID,
-            // status: 'active',
+            status: 'active',
           },
           include: {
             registrations: {
@@ -78,15 +79,20 @@ export const authOptions = {
         await rateLimiter.consume(ip).catch(() => {
           throw new ApiError('Too many login attempts. Please try again later.', 429);
         });
-
         const staff = await prisma.staff.findUnique({
           where: {
             staffID: Number(credentials.staffID),
             email: credentials.email,
             status: 'active',
-            
-
-
+          },
+          include: {
+            assignment: {
+              include: {
+                grade: {
+                  select: { grade: true },
+                },
+              },
+            },
           },
         });
 
@@ -103,7 +109,8 @@ export const authOptions = {
           role: staff.role, // 🔐 e.g., 'ADMIN', 'TEACHER', etc.
           staffID: staff.staffID,
           image: staff.image,
-          
+          grade: staff?.assignment?.[0]?.grade?.grade||null,
+
 
         };
       },

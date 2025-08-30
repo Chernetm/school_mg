@@ -13,7 +13,7 @@ export default function AnnouncementsPage() {
     const fetchData = async () => {
       try {
         // Fetch announcements
-        const annRes = await fetch('/api/teacher/announcement');
+        const annRes = await fetch('/api/announcement/get/grade');
         const announcementsData = await annRes.json();
         setAnnouncements(announcementsData);
 

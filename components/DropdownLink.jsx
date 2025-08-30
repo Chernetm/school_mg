@@ -52,6 +52,7 @@ const dropdowns = [
           { href: "/admin/rank/academic", label: "Academic Rank" },
           { href: "/admin/student/list", label: "Student List" },
           { href: "/admin/rank/academic", label: "Academic Rank" },
+          
         ],
       },
       {
@@ -116,8 +117,18 @@ const dropdowns = [
       items: [
         { href: "/head/student/active", label: "Active Student" },
         { href: "/head/student/list", label: "Student List" },
+        { href: "/head/student/deactivate", label: "Deactivate" },
         
       ],
+    },
+
+    {
+      label:"Payment",
+      icon:<DollarSign/>,
+      roles:["admin"],
+      items:[
+        {href:"/admin/payment", label:"Payment Form"},
+      ]
     },
     {
         label: "Fees",

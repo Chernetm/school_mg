@@ -12,7 +12,7 @@ export default function CreateAnnouncement() {
   const [form, setForm] = useState({
     title: '',
     message: '',
-    audience: 'ALL',
+    audience: 'GRADE',
     gradeId: '',
   });
 
@@ -33,7 +33,7 @@ export default function CreateAnnouncement() {
     });
   
     if (res.ok) {
-      setForm({ title: '', message: '', audience: 'ALL', gradeId: '' });
+      setForm({ title: '', message: '', audience: 'GRADE', gradeId: '' });
       setStatus('✅ Announcement created!');
     } else {
       setStatus('❌ Error creating announcement.');

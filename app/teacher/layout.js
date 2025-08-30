@@ -45,6 +45,7 @@ export default async function teacherLayout({ children }) {
     role: session?.user.role,
     image: session?.user.image,
     staffID:session?.user.staffID,
+    grade:session?.user.grade,
     
   };
 

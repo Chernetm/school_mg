@@ -86,7 +86,10 @@ const StaffAttendancePage = () => {
           <table className="w-full border-collapse">
             <thead>
               <tr className="bg-blue-100">
-                <th className="border p-3 text-left text-gray-700">Staff Name</th>
+                <th className="border p-3 text-left text-gray-700">StaffID</th>
+                <th className="border p-3 text-left text-gray-700">FirstName</th>
+                <th className="border p-3 text-left text-gray-700">MiddleName</th>
+                <th className="border p-3 text-left text-gray-700">LastName</th>
                 <th className="border p-3 text-left text-gray-700">Present (%)</th>
                 <th className="border p-3 text-left text-gray-700">Absent (%)</th>
                 <th className="border p-3 text-left text-gray-700">Late (%)</th>
@@ -95,7 +98,10 @@ const StaffAttendancePage = () => {
             <tbody>
               {staffAttendance.map((staff) => (
                 <tr key={staff.staffID} className="text-center">
-                  <td className="border p-3 text-gray-700">{staff.name}</td>
+                  <td className="border p-3 text-gray-700">{staff.staffID}</td>
+                  <td className="border p-3 text-gray-700">{staff.firstName}</td>
+                  <td className="border p-3 text-gray-700">{staff.middleName}</td>
+                  <td className="border p-3 text-gray-700">{staff.lastName}</td>
                   <td className="border p-3 text-green-500">{staff.presentPercentage.toFixed(2)}%</td>
                   <td className="border p-3 text-red-500">{staff.absentPercentage.toFixed(2)}%</td>
                   <td className="border p-3 text-yellow-500">{staff.latePercentage.toFixed(2)}%</td>

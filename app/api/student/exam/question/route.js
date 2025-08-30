@@ -82,11 +82,12 @@ export async function GET(request) {
 export async function POST(request) {
   try {
     const session = await getServerSession(authOptions);
-    if (!session || session.user.role !== 'STUDENT') {
+    const studentId = session.user.studentID;
+    if (!session||!studentId) {
       throw new ApiError(403, 'Unauthorized access');
     }
 
-    const studentId = session.user.studentID;
+   
     const { title } = await request.json();
 
     if (!title) {

@@ -2,6 +2,7 @@
 "use client";
 
 import { sanitizeInput, validateForm } from "@/utils/formUtils";
+import { getSession } from "next-auth/react";
 import { signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
@@ -46,7 +47,20 @@ const handleLogin = async (e) => {
   
   if (res.ok) {
 
-    router.push("/teacher");
+       const session = await getSession();
+      const role = session?.user.role;
+
+      switch (role) {
+        case "teacher":
+          router.push("/teacher");
+          break;
+        case "library":
+          router.push("/library");
+          break;
+        default:
+          router.push("/announcement");
+      }
+
    
   }
    else {

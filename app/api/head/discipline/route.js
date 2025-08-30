@@ -1,15 +1,23 @@
 
-const { prisma } = require("@/utils/prisma")
-import { getStaffIDFromToken } from "@/utils/auth";
+
+import { authOptions } from '@/app/api/auth/[...nextauth]/route';
+import ApiError from '@/lib/api-error';
+import {prisma} from '@/utils/prisma';
+import { getServerSession } from 'next-auth';
 import { NextResponse } from 'next/server';
 
 export async function POST(req) {
   try {
-    const { studentID, message } = await req.json();
-    const staffID = await getStaffIDFromToken();
-    if (!staffID) {
-      return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
+    const session = await getServerSession(authOptions);
+    console.log("Session data:", session);
+    const staffID = session?.user?.staffID;
+    
+    if (!session  || !staffID) {
+      throw new ApiError(403, 'Unauthorized access');
     }
+    const { studentID, message } = await req.json();
+    
+  
     console.log("Staff ID:", staffID);
 
     // Basic field presence check

@@ -90,7 +90,7 @@ export default function YearManager() {
 
         <LoadingButton
           loading={loading}
-          text="Login"
+          text="Year"
           loadingText="Registering year ..."
         />
 

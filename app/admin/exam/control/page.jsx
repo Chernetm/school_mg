@@ -91,7 +91,6 @@ const StudentActivity = () => {
     };
 
     const allStudentIds = Array.from(new Set([...Object.keys(cheatingLog), ...onlineStudents]));
-    
 
     return (
         <div className="min-h-screen p-6 bg-gray-100 flex flex-col items-center">
@@ -124,9 +123,9 @@ const StudentActivity = () => {
                                     <tr key={id} className="text-center hover:bg-gray-50">
                                         <td className="border px-4 text-gray-700 py-2">{id}</td>
                                         <td className="border px-4 text-gray-700 py-2">{student.firstName || "-"}</td>
-                                        <td className="border px-4 text-gray-700 py-2">{student.lastName || "-"}</td>
-                                        <td className="border px-4 text-gray-700 py-2">{student.grade || "-"}</td>
-                                        <td className="border px-4 text-gray-700 py-2">{student.section || "-"}</td>
+                                        <td className="border px-4 text-gray-700 py-2">{student.middleName || "-"}</td>
+                                        <td className="border px-4 text-gray-700 py-2">{student.registrations?.grade || "-"}</td>
+                                        <td className="border px-4 text-gray-700 py-2">{student.registrations?.section|| "-"}</td>
                                         <td className="border px-4  py-2 font-semibold">
                                             <span className={clsx(isOnline ? "text-green-600" : "text-red-600")}>
                                                 {isOnline ? "Online" : "Offline"}

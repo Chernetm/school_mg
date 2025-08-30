@@ -45,6 +45,7 @@ export async function GET(req) {
       },
       select: {
         firstName: true,
+        middleName: true,
         lastName: true,
         studentID: true,
       },

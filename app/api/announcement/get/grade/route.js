@@ -17,6 +17,7 @@ export async function GET() {
     if (!session) {
       throw new ApiError(403, 'Unauthorized access');
     }
+  console.log(gradeId,"gradeId");
 
     const announcements = await prisma.announcement.findMany({
       where: {
@@ -36,7 +37,7 @@ export async function GET() {
         },
       },
     });
-
+     console.log(announcements,"announcement-grade")
     return Response.json(announcements, { status: 200 });
   } catch (error) {
     console.error("Fetch Announcements Error:", error);

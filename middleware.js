@@ -19,9 +19,9 @@ export async function middleware(req) {
   }
 
   //✅ Admin Authentication Middleware (Only for `/api/admin/`)
-  if (req.nextUrl.pathname.startsWith("/api/admin") || req.nextUrl.pathname.startsWith("/admin")) {
-    return adminAuthMiddleware(req);
-  }
+  // if (req.nextUrl.pathname.startsWith("/api/admin") || req.nextUrl.pathname.startsWith("/admin")) {
+  //   return adminAuthMiddleware(req);
+  // }
   // // // ✅ Head Authentication Middleware (for both page and API routes)
    
   if (req.nextUrl.pathname.startsWith("/api/head") || req.nextUrl.pathname.startsWith("/head")) {
