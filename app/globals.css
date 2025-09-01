@@ -74,8 +74,23 @@
     page-break-inside: avoid;
     margin-bottom: 10px; /* Optional: space between cards */
   }
+
+  .break-inside-avoid {
+    break-inside: avoid;
+    page-break-inside: avoid;
+  }
+  * {
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+
+  
 }
 
+@page {
+    size: A4 landscape; /* force landscape mode */
+    margin: 10mm;       /* adjust margins */
+  }
 
 :root {
   --radius: 0.625rem;
