@@ -1,6 +1,6 @@
 
 import ApiError from '@/lib/api-error';
-import prisma from '@/lib/prisma';
+import prisma from '@/utils/prisma';
 import { NextResponse } from 'next/server';
 
 export async function GET(req, { params }) {
