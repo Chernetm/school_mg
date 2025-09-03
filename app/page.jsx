@@ -1,3 +1,25 @@
+// "use client";
+
+// import { useTranslation } from "./providers";
+
+// export default function HomePage() {
+//   const { t, locale, setLocale } = useTranslation();
+
+//   return (
+//     <div style={{ padding: 20 }}>
+//       <h1>{t("hello")}</h1>
+//       <p>{t("welcome", { name: "Alice" })}</p>
+
+//       <button onClick={() => setLocale(locale === "en" ? "fr" : "en")}>
+//         Switch to {locale === "en" ? "French" : "English"}
+//       </button>
+//     </div>
+//   );
+// }
+
+
+
+
 "use client";
 
 import Footer from '@/components/Footer';

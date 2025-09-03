@@ -7,19 +7,14 @@ import { NextResponse } from 'next/server';
 export async function GET() {
   try {
     const session = await getServerSession(authOptions);
-    if (!session) {
-      throw new ApiError(403, 'Unauthorized access');
-    }
     
-
     const studentId = session.user.studentID;
     const grade = session.user.grade;
 
-    
-
-    if (!grade || isNaN(parseInt(grade))) {
-      throw new ApiError(400, 'Student grade is required and must be a number');
+    if (!session||!studentId||!grade) {
+      throw new ApiError(403, 'Unauthorized access');
     }
+    
 
     const exams = await prisma.exam.findMany({
       where: {
