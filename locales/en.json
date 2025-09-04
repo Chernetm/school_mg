@@ -1,5 +1,23 @@
+{ 
+  "contact_header": "Get in Touch with Chelelektu Boarding School",
+  "contact_subtext": "Have questions, suggestions, or want to collaborate? We’d love to hear from you.",
 
-{
+  "email_us": "Email Us",
+  "call_us": "Call Us",
+  "visit_us": "Visit Us",
+  "teacher":"Teacher",
+
+  "email_detail": "daraaroschool@gmail.com",
+  "phone_detail": "+251 912 345 678",
+  "visit_detail": "Dilla, Ethiopia",
+  "welcome_message": "Welcome to Chelelektu Secondary School",
+  "tagline": "A premier destination for academic excellence and student growth.",
+  "students": "Students",
+  "students_text": "Empowering over 230 students with quality education.",
+  "staff": "Staff",
+  "staff_text": "Dedicated and passionate educators fostering growth.",
+  "reputation": "Reputation",
+  "reputation_text": "Recognized among the top 3 schools in the region.",
   "home": "Home",
   "contact": "Contact",
   "announcement": "Announcement",
@@ -56,5 +74,18 @@
   "payFee": "Pay Fee",
   "discipline": "Discipline",
   "examRoom": "Exam Room",
-  "setting": "Setting"
+  "setting": "Setting",
+  "student_login": "Student Login",
+  "enter_student_id": "Enter your Student ID",
+  "admin_login": "Admin Login",
+  "teacher_login":"Teacher Login",
+  "enter_teacher_id":"Enter your Teacher ID",
+  "enter_admin_id": "Enter your Admin ID",
+  "enter_email":"Enter Email",
+  "enter_password": "Enter your password",
+  "error_too_many_attempts": "Too many login attempts. Please wait 10 minutes.",
+  "error_invalid_credentials": "Login failed. Please check your credentials.",
+  "access_denied": "Access Denied",
+  "staff_login_not_available": "Staff login is not available on mobile devices.",
+  "please_switch": "Please switch to a desktop or tablet"
 }

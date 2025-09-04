@@ -11,6 +11,7 @@ import { useRouter } from "next/navigation";
 import { FaEnvelope, FaKey, FaUser } from "react-icons/fa";
 import Spinner from "@/components/Loading/Spinner/page";
 import Footer from "@/components/Footer";
+import { useTranslation } from "@/app/providers";
 
 export default function AdminLoginPage() {
     const [id, setId] = useState("");
@@ -20,6 +21,7 @@ export default function AdminLoginPage() {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const router = useRouter();
+  const{t}=useTranslation()
 
   useEffect(() => {
     const handleResize = () => {
@@ -82,9 +84,9 @@ export default function AdminLoginPage() {
 
     } else {
       if (res.error === "429") {
-        setError("Too many login attempts. Please wait 10 minutes.");
+       setError(t("error_too_many_attempts"));
       } else {
-        setError("Login failed. Please check your credentials.");
+        setError(t("error_invalid_credentials"));
       }
       setLoading(false);
     }
@@ -98,13 +100,14 @@ export default function AdminLoginPage() {
     return (
       <div className="flex flex-col items-center justify-center h-screen text-center px-4 bg-gray-100">
         <MdPhoneIphone className="text-red-500 text-6xl mb-4 animate-bounce" />
-        <h1 className="text-2xl font-bold text-gray-800 mb-2">Access Denied</h1>
+        <h1 className="text-2xl font-bold text-gray-800 mb-2">{t("access_denied")}</h1>
         <p className="text-lg text-gray-600 mb-4">
-          Staff login is <span className="text-red-600 font-semibold">not available</span> on mobile devices.
+          {/* Staff login is <span className="text-red-600 font-semibold">not available</span> on mobile devices. */}
+          {t("staff_login_not_available")}
         </p>
         <div className="flex items-center gap-2 text-gray-500">
           <MdDesktopMac className="text-2xl" />
-          <span className="text-md">Please switch to a desktop or tablet</span>
+          <span className="text-md">{t("please_switch")}</span>
         </div>
       </div>
     );
@@ -119,7 +122,7 @@ export default function AdminLoginPage() {
         className="w-full max-w-md bg-white p-8 rounded-2xl shadow-xl space-y-6"
       >
         <h2 className="text-2xl font-bold text-center text-indigo-800">
-          Admin Login
+          {t("admin_login")}
         </h2>
 
         {error && <p className="text-red-500 text-sm text-center">{error}</p>}
@@ -131,7 +134,7 @@ export default function AdminLoginPage() {
             value={id}
             onChange={(e) => setId(sanitizeInput(e.target.value))}
             className="w-full px-4 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500 text-black rounded-r-lg"
-            placeholder={`Enter your Staff ID`}
+            placeholder={t("enter_admin_id")}
             required
           />
         </div>
@@ -144,7 +147,7 @@ export default function AdminLoginPage() {
             value={email}
             onChange={(e) => setEmail(sanitizeInput(e.target.value))}
             className="w-full px-4 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500 text-black rounded-r-lg"
-            placeholder="Enter your email"
+            placeholder={t("enter_email")}
             required
           />
         </div>
@@ -157,7 +160,7 @@ export default function AdminLoginPage() {
             value={password}
             onChange={(e) => setPassword(sanitizeInput(e.target.value))}
             className="w-full px-4 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500 text-black rounded-r-lg"
-            placeholder="Enter your password"
+            placeholder={t("enter_password")}
             required
           />
         </div>
@@ -166,7 +169,7 @@ export default function AdminLoginPage() {
           type="submit"
           className="w-full bg-blue-500 text-white font-bold py-2 rounded-md hover:bg-blue-700"
         >
-          Login
+          {t("login")}
         </button>
       </form>
     </div>

@@ -9,6 +9,7 @@ import { useState } from "react";
 import { FaEnvelope, FaKey, FaUser } from "react-icons/fa";
 import Spinner from "@/components/Loading/Spinner/page";
 import Footer from "@/components/Footer";
+import { useTranslation } from "@/app/providers";
 
 export default function LoginForm() {
   const [id, setId] = useState("");
@@ -17,6 +18,7 @@ export default function LoginForm() {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const router = useRouter();
+  const {t}=useTranslation();
   
 const handleLogin = async (e) => {
   
@@ -65,9 +67,9 @@ const handleLogin = async (e) => {
   }
    else {
     if (res.error === "429") {
-      setError("Too many login attempts. Please wait 10 minutes.");
+      setError(t("error_too_many_attempts"));
     } else {
-      setError("Login failed. Please check your credentials.");
+      setError(t("error_invalid_credentials"));
     }
     setLoading(false);
   }
@@ -83,7 +85,7 @@ if(loading) return <Spinner/>
         className="w-full max-w-md bg-white p-8 rounded-2xl shadow-xl space-y-6"
       >
         <h2 className="text-2xl font-bold text-center text-indigo-800">
-          Teacher Login
+          {t("teacher_login")}
         </h2>
 
         {error && <p className="text-red-500 text-sm text-center">{error}</p>}
@@ -95,7 +97,7 @@ if(loading) return <Spinner/>
             value={id}
             onChange={(e) => setId(sanitizeInput(e.target.value))}
             className="w-full px-4 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500 text-black rounded-r-lg"
-            placeholder={`Enter your Staff ID`}
+            placeholder={t("enter_teacher_id")}
             required
           />
         </div>
@@ -108,7 +110,7 @@ if(loading) return <Spinner/>
               value={email}
               onChange={(e) => setEmail(sanitizeInput(e.target.value))}
               className="w-full px-4 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500 text-black rounded-r-lg"
-              placeholder="Enter your email"
+              placeholder={t("enter_email")}
               required
             />
           </div>
@@ -121,7 +123,7 @@ if(loading) return <Spinner/>
             value={password}
             onChange={(e) => setPassword(sanitizeInput(e.target.value))}
             className="w-full px-4 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500 text-black rounded-r-lg"
-            placeholder="Enter your password"
+            placeholder={t("enter_password")}
             required
           />
         </div>
@@ -130,7 +132,7 @@ if(loading) return <Spinner/>
             type="submit"
             className="w-full bg-blue-500 text-white font-bold py-2 rounded-md hover:bg-blue-700"
           >
-            Login
+            {t("login")}
           </button>
       </form>
     </div>

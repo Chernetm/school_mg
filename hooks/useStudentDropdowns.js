@@ -9,7 +9,7 @@ const useStudentDropdowns = () => {
 
   return [
     {
-      label: t("student_services"),
+      label: t("studentServices"),
       icon: null,
       roles: ["student"],
       items: [
@@ -18,10 +18,10 @@ const useStudentDropdowns = () => {
         { href: "/student/result", label: t("results"), icon: <FaChartBar /> },
         { href: "/student/registration", label: t("registration"), icon: <FaFileAlt /> },
         { href: "/student/attendance", label: t("attendance"), icon: <FaClipboardCheck /> },
-        { href: "/student/fee", label: t("fee_record"), icon: <FaFileInvoiceDollar /> },
-        { href: "/fee", label: t("pay_fee"), icon: <FaMoneyCheckAlt /> },
+        { href: "/student/fee", label: t("feeRecord"), icon: <FaFileInvoiceDollar /> },
+        { href: "/fee", label: t("payFee"), icon: <FaMoneyCheckAlt /> },
         { href: "/student/discipline", label: t("discipline"), icon: <FaExclamationTriangle /> },
-        { href: "/exam", label: t("exam_room"), icon: <FaPenAlt /> },
+        { href: "/exam", label: t("examRoom"), icon: <FaPenAlt /> },
         { href: "/student/setting", label: t("setting"), icon: <MdSettings /> },
       ],
     },
