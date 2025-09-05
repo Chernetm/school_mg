@@ -44,7 +44,7 @@ export const Navbar = () => {
           <div className="flex items-center space-x-4">
             {/* Profile menu if logged in */}
             <NavLinks role={role} />
-            {user && <ProfileMenu user={user} />}
+            
 
             {/* Login button (always visible if not logged in) */}
             {!user && (
@@ -92,6 +92,7 @@ export const Navbar = () => {
           </button>)
 
             }
+            {user && <ProfileMenu user={user} />}
 
             {/* Language switcher */}
             <button

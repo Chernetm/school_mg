@@ -27,7 +27,7 @@
   "subject_view_edit": "የትምህርት ዓይነት/ማስተካከል",
   "register_grade_section": "ደረጃ እና ክፍል መመዝገብ",
   "edit_grade_section": "ደረጃ እና ክፍል ማስተካከል",
-  "admin": "አስተዳዳሪ",
+  "admin": "አስተዳደር",
   "register_staff": "ሰራተኞችን መመዝገብ",
   "assign_teacher": "አስተማሪ መመደብ",
   "class_assignments": "ምደባ ማየት",
@@ -87,6 +87,6 @@
   "enter_admin_id": "የአስተዳደር መለያ አስገባ",
   "enter_teacher_id": "የአስተማር መለያ አስገባ",
   "access_denied": "መዳረሻ ተከልክሏል",
-  "staff_login_not_available": "የሰራተኛ መግቢያ በሞባይል አይገኝም።",
+  "staff_login_not_available": "የአስተዳደር መግቢያ በሞባይል አይገኝም።",
   "please_switch": "እባክዎ ወደ ዴስክቶፕ ወይም ታብሌት ይለውጡ"
 }
