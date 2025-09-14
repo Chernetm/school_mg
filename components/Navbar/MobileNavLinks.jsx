@@ -43,8 +43,6 @@ const MobileNavLinks = () => {
           </DisclosureButton>
         ))}
 
-        {/* Logout button only if logged in */}
-        
       </div>
     </DisclosurePanel>
   );

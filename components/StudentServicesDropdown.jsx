@@ -32,7 +32,7 @@ export function StudentServicesDropdown() {
             <Link
               key={index}
               href={service.href}
-              className="flex items-center px-6 py-3 hover:bg-blue-50 transition-colors duration-200 border-b border-gray-100 last:border-0"
+              className="flex items-center px-6 py-3 hover:bg-blue-100 transition-colors duration-200 border-b border-gray-100 last:border-0"
             >
               {service.icon && <span className="mr-3">{service.icon}</span>}
               <span>{service.label}</span>
