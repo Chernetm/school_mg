@@ -1,12 +1,19 @@
 const Logo = () => (
-    <div className="flex flex-1 items-center justify-center sm:items-stretch sm:justify-start">
-      <div className="flex shrink-0 items-center">
-        <h2 className="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-yellow-300 to-yellow-100">
-         EduTrack
-        </h2>
-      </div>
+  <div className="flex items-center ml-0 space-x-2">
+    {/* Circular image */}
+    <div className="w-10 h-10 rounded-full overflow-hidden">
+      <img
+        src="/school_logo.jpeg"
+        alt="School Logo"
+        className="w-full h-full object-cover"
+      />
     </div>
-  );
-  
-  export default Logo;
-  
+
+    {/* Logo text */}
+    <h2 className="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-yellow-300 to-yellow-100">
+      EduTrack
+    </h2>
+  </div>
+);
+
+export default Logo;
