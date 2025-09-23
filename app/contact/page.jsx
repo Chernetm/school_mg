@@ -42,7 +42,7 @@ export default function ContactPage() {
           initial={{ opacity: 0, y: -40 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 1 }}
-          className="text-5xl font-extrabold mb-6 text-center bg-gradient-to-r from-yellow-600 to-black bg-clip-text text-transparent"
+          className="text-2xl font-extrabold mb-6 text-center bg-gradient-to-r from-yellow-600 to-black bg-clip-text text-transparent"
         >
           {t("contact_header")}
         </motion.h1>

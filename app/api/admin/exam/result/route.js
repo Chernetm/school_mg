@@ -1,15 +1,10 @@
-import { authOptions } from '@/app/api/auth/[...nextauth]/route';
+
 import ApiError from '@/lib/api-error';
 import {prisma}  from '@/utils/prisma';
-import { getServerSession } from 'next-auth';
 import { NextResponse } from 'next/server';
 
 export async function GET(request) {
   try {
-    const session = await getServerSession(authOptions);
-    if (!session || !['admin'].includes(session.user.role)) {
-      throw new ApiError(403, 'Unauthorized access');
-    }
     
     const { searchParams } = new URL(request.url);
     const title = searchParams.get('title');
@@ -45,10 +40,9 @@ export async function GET(request) {
         student: {
           select: { 
             firstName: true,
+            middleName:true,
             lastName:true,
             studentID:true,
-            grade:true,
-            section:true
 
           },
         },
