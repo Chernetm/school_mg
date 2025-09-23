@@ -88,5 +88,18 @@
   "enter_teacher_id": "የአስተማር መለያ አስገባ",
   "access_denied": "መዳረሻ ተከልክሏል",
   "staff_login_not_available": "የአስተዳደር መግቢያ በሞባይል አይገኝም።",
-  "please_switch": "እባክዎ ወደ ዴስክቶፕ ወይም ታብሌት ይለውጡ"
+  "please_switch": "እባክዎ ወደ ዴስክቶፕ ወይም ታብሌት ይለውጡ",
+  "january": "መስከረም",
+  "february": "ጥቅምት",
+  "march": "ኅዳር",
+  "april": "ታኅሣሥ",
+  "may": "ጥር",
+  "june": "የካቲት",
+  "july": "መጋቢት",
+  "august": "ሚያዝያ",
+  "september": "ግንቦት",
+  "october": "ሰኔ",
+  "november": "ሐምሌ",
+  "december": "ነሐሴ",
+  "pagumen": "ጳጉሜን"
 }

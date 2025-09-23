@@ -131,14 +131,14 @@ export default function UnpaidStudents({ grade, month, year }) {
   return (
     <div className="p-6 max-w-4xl mx-auto">
       <div className="flex items-center justify-between mb-4">
-        <h2 className="text-xl font-semibold">
+        <h2 className="font-semibold">
           Unpaid Students - Grade {grade}, {month} {year}
         </h2>
         <button
           onClick={exportToCSV}
-          className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
+          className="bg-blue-600 text-white px-2 py-2 rounded hover:bg-blue-700"
         >
-          Export to CSV
+          Print
         </button>
       </div>
 

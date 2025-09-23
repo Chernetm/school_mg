@@ -9,8 +9,7 @@ import {
   Users
 } from "lucide-react";
 import { MdCampaign, MdDescription } from 'react-icons/md';
-import { useTranslation } from "@/app/providers"; // ✅ import translation
-
+import { useTranslation } from "@/app/providers";
 const useDropdowns = () => {
   const { t } = useTranslation();
 
@@ -79,10 +78,7 @@ const useDropdowns = () => {
         
         { href: "/head/year", label: t("year_view_edit") },
         { href: "/head/semester", label: t("semester_view_edit") },
-        { href: "/admin/subject", label: t("subject_view_edit") },
-        { href: "/admin/grade_section", label: t("register_grade_section") },
-        { href: "/admin/grade_section/edit", label: t("edit_grade_section") },
-      ],
+        ],
     },
     {
       label: t("announcement"),
