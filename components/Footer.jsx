@@ -19,7 +19,7 @@ const Footer = () => {
                 <p className="mb-2">&copy; {currentYear} South West Academy. All rights reserved.</p>
                 <div className="flex justify-center gap-4 text-xl">
                   <a
-                    href="https://t.me/your_school_telegram"
+                    href="https://t.me/Swa01"
                     target="_blank"
                     rel="noopener noreferrer"
                     className="hover:text-blue-400 transition"
@@ -27,7 +27,7 @@ const Footer = () => {
                     <FaTelegramPlane />
                   </a>
                   <a
-                    href="https://facebook.com/your_school_page"
+                    href="https://web.facebook.com/SWAethio/"
                     target="_blank"
                     rel="noopener noreferrer"
                     className="hover:text-blue-300 transition"

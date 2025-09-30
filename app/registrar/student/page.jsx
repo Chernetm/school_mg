@@ -68,54 +68,95 @@ const StudentRegistrationForm = () => {
       reader.readAsDataURL(file);
     }
   };
+const handleSubmit = async (e) => {
+  e.preventDefault();
+  setLoading(true);
+  setMessage(null);
+  setIsError(false);
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setLoading(true);
-    setMessage(null);
-    setIsError(false);
+  try {
+    validateFormData();
 
-    try {
-      validateFormData();
+    const trimmedStudent = trimObjectStrings(formData.student);
 
-      const trimmedStudent = trimObjectStrings(formData.student);
+    const formDataToSend = new FormData();
+    formDataToSend.append("student", JSON.stringify(trimmedStudent));
 
-      const formDataToSend = new FormData();
-      formDataToSend.append("student", JSON.stringify(trimmedStudent));
-
-      if (formData.student.image) {
-        formDataToSend.append("student.image", formData.student.image);
-      } else {
-        throw new Error("Image is required for student registration.");
-      }
-
-      const response = await fetch("/api/registrar/student", {
-        method: "POST",
-        body: formDataToSend,
-      });
-
-      const responseData = await response.json();
-
-      if (!response.ok) {
-        const errorMsg = responseData?.error || "Something went wrong.";
-        throw new Error(errorMsg);
-      }
-
-      setMessage("✅ Student information saved successfully!");
-      resetForm();
-    } catch (error) {
-      console.error("🚨 Submission error:", error);
-      setIsError(true);
-      setMessage(`❌ ${error.message}`);
-    } finally {
-      setLoading(false);
+    // Append image only if it exists
+    if (formData.student.image) {
+      formDataToSend.append("student.image", formData.student.image);
     }
-  };
+
+    const response = await fetch("/api/registrar/student", {
+      method: "POST",
+      body: formDataToSend,
+    });
+
+    const responseData = await response.json();
+
+    if (!response.ok) {
+      const errorMsg = responseData?.error || "Something went wrong.";
+      throw new Error(errorMsg);
+    }
+
+    setMessage("✅ Student information saved successfully!");
+    resetForm();
+  } catch (error) {
+    console.error("🚨 Submission error:", error);
+    setIsError(true);
+    setMessage(`❌ ${error.message}`);
+  } finally {
+    setLoading(false);
+  }
+};
+
+  // const handleSubmit = async (e) => {
+  //   e.preventDefault();
+  //   setLoading(true);
+  //   setMessage(null);
+  //   setIsError(false);
+
+  //   try {
+  //     validateFormData();
+
+  //     const trimmedStudent = trimObjectStrings(formData.student);
+
+  //     const formDataToSend = new FormData();
+  //     formDataToSend.append("student", JSON.stringify(trimmedStudent));
+
+  //     if (formData.student.image) {
+  //       formDataToSend.append("student.image", formData.student.image);
+  //     } else {
+  //       throw new Error("Image is required for student registration.");
+  //     }
+
+  //     const response = await fetch("/api/registrar/student", {
+  //       method: "POST",
+  //       body: formDataToSend,
+  //     });
+
+  //     const responseData = await response.json();
+
+  //     if (!response.ok) {
+  //       const errorMsg = responseData?.error || "Something went wrong.";
+  //       throw new Error(errorMsg);
+  //     }
+
+  //     setMessage("✅ Student information saved successfully!");
+  //     resetForm();
+  //   } catch (error) {
+  //     console.error("🚨 Submission error:", error);
+  //     setIsError(true);
+  //     setMessage(`❌ ${error.message}`);
+  //   } finally {
+  //     setLoading(false);
+  //   }
+  // };
 
   const validateFormData = () => {
     const { student } = formData;
     if (!student.firstName || !student.email || !student.age || !student.grade ||
-      !student.gender || !student.image || !student.studentID || !student.year ||
+      !student.gender  || !student.studentID || !student.year ||
       !student.stream || !student.phoneNumber || !student.middleName || !student.lastName) {
       throw new Error("Missing required fields.");
     }
@@ -138,32 +179,8 @@ const StudentRegistrationForm = () => {
             previewImage={previewImage}
           />
 
-          {/* Gender Radio Buttons */}
-          <div>
-            <label className="block font-medium text-gray-700 mb-2">Gender</label>
-            <div className="flex gap-4">
-              {["MALE", "FEMALE"].map((genderOption) => (
-                <label
-                  key={genderOption}
-                  className={`flex items-center gap-2 px-4 py-2 rounded-md cursor-pointer border 
-                    ${formData.student.gender === genderOption
-                      ? "bg-blue-100 border-blue-500 text-blue-700"
-                      : "bg-white border-gray-300 text-gray-700"
-                    } transition`}
-                >
-                  <input
-                    type="radio"
-                    name="student.gender"
-                    value={genderOption}
-                    checked={formData.student.gender === genderOption}
-                    onChange={(e) => handleChange(e, genderOption)}
-                    className="hidden"
-                  />
-                  {genderOption}
-                </label>
-              ))}
-            </div>
-          </div>
+          {/* Gender Radio Buttons (full width row) */}
+
         </Section>
 
 

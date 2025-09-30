@@ -40,7 +40,6 @@ const useDropdowns = () => {
       items: [
         { href: "/admin/student/section", label: t("assign_section_student") },
         { href: "/admin/rank", label: t("student_rank") },
-        { href: "/admin/rank/academic", label: t("academic_rank") },
         { href: "/admin/student/list", label: t("student_list") },
       ],
     },
@@ -76,8 +75,8 @@ const useDropdowns = () => {
       roles: ["head"],
       items: [
         
-        { href: "/head/year", label: t("year_view_edit") },
-        { href: "/head/semester", label: t("semester_view_edit") },
+        { href: "/head/AcademicParameters", label: t("academicParameters") },
+        
         ],
     },
     {

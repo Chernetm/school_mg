@@ -11,7 +11,7 @@ const Logo = () => (
 
     {/* Logo text */}
     <h2 className="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-yellow-300 to-yellow-100">
-      EduTrack
+      South West Academy
     </h2>
   </div>
 );

@@ -1,13 +1,12 @@
 // Assuming Prisma is used for DB operations
 const { prisma } = require("@/utils/prisma");
-const { sendEmail } = require("@/utils/email"); // ✅ Import email function
+const { sendEmail } = require("@/utils/email");
 import { hash } from "bcryptjs";
-//import crypto from "crypto";
+import { uploadToCloudinary } from "@/utils/cloudinary";
 
-import { uploadToCloudinary } from "@/utils/cloudinary"; // Adjust the import if needed
 export async function POST(req) {
   try {
-    const formData = await req.formData(); // ✅ Use formData for file uploads
+    const formData = await req.formData();
     const staffID = formData.get("staffID");
     const firstName = formData.get("firstName");
     const middleName = formData.get("middleName");
@@ -15,68 +14,58 @@ export async function POST(req) {
     const phoneNumber = formData.get("phoneNumber");
     const username = formData.get("username");
     const email = formData.get("email");
-    const image = formData.get("image"); // File upload (optional)
+    const image = formData.get("image"); // optional file
 
-    // Validate required fields
+    // ✅ Required fields validation
     if (!staffID || !firstName || !middleName || !lastName || !phoneNumber || !username || !email) {
       return new Response(JSON.stringify({ error: "All required fields must be filled!" }), {
         status: 400,
         headers: { "Content-Type": "application/json" },
       });
     }
+
+    // ✅ Check for duplicate staffID
     const staffId = await prisma.staff.findUnique({
-      where: { staffID: parseInt(staffID, 10) } // Convert to number
+      where: { staffID: parseInt(staffID, 10) }
     });
     if (staffId) {
-      return new Response(JSON.stringify({ error: "Staff ID already exists!" }), {
-        status: 400
-      });
+      return new Response(JSON.stringify({ error: "Staff ID already exists!" }), { status: 400 });
     }
 
+    // ✅ Check for duplicate username
     const existingStaff = await prisma.staff.findUnique({
       where: { username }
     });
-
     if (existingStaff) {
       return new Response(JSON.stringify({ error: "Username already exists!" }), { status: 400 });
     }
 
-    //const randomPassword = crypto.randomBytes(5).toString("hex");
+    // Temporary password
     const randomPassword = 1234;
-    const hashedPassword = await hash(String(randomPassword), 10); // ✅ works
+    const hashedPassword = await hash(String(randomPassword), 10);
 
-    // ✅ Hash the password before saving
-    //const hashedPassword = await hash(randomPassword, 10);
-
-    if (image && image.size > 5 * 1024 * 1024) {
-      return new Response(JSON.stringify({ error: "Image size exceeds 5MB" }), {
-        status: 400,
-        headers: { "Content-Type": "application/json" },
-      });
-    }
-    if (image && !["image/jpeg", "image/png", "image/webp"].includes(image.type)) {
-      return new Response(JSON.stringify({ error: "Unsupported image format" }), {
-        status: 400,
-        headers: { "Content-Type": "application/json" },
-      });
-    }
-    // Upload image if provided
+    // ✅ Validate image if provided
     let imageUrl = null;
-    if (image && image instanceof File) {
+    if (image) {
+      if (image.size > 5 * 1024 * 1024) {
+        return new Response(JSON.stringify({ error: "Image size exceeds 5MB" }), { status: 400 });
+      }
+      if (!["image/jpeg", "image/png", "image/webp"].includes(image.type)) {
+        return new Response(JSON.stringify({ error: "Unsupported image format" }), { status: 400 });
+      }
+
+      // Upload if provided
       imageUrl = await uploadToCloudinary(image);
       if (!imageUrl) {
-        return new Response(JSON.stringify({ error: "Image upload failed" }), {
-          status: 500,
-          headers: { "Content-Type": "application/json" },
-        });
+        return new Response(JSON.stringify({ error: "Image upload failed" }), { status: 500 });
       }
       console.log("🖼️ Image uploaded successfully!");
     }
 
-    // Create staff in the database
+    // ✅ Create staff record
     const newStaff = await prisma.staff.create({
       data: {
-        staffID: parseInt(staffID, 10), // Convert to number
+        staffID: parseInt(staffID, 10),
         firstName,
         middleName,
         lastName,
@@ -87,18 +76,29 @@ export async function POST(req) {
         image: imageUrl,
       },
     });
-    await sendEmail(email, "Your Staff Account Credentials", `
-        <h2>Welcome, ${firstName}!</h2>
-        <p>Your staff account has been created successfully.</p>
-        <p><strong>Username:</strong> ${username}</p>
-        <p><strong>Password:</strong> ${randomPassword}</p>
-        <p>Please change your password after logging in.</p>
-      `);
 
-    return new Response(JSON.stringify({ message: "✅ Staff registered successfully!", staff: newStaff }), {
-      status: 201,
-      headers: { "Content-Type": "application/json" },
-    });
+    // ✅ Try sending email, but do not block success if it fails
+    try {
+      await sendEmail(
+        email,
+        "Your Staff Account Credentials",
+        `
+          <h2>Welcome, ${firstName}!</h2>
+          <p>Your staff account has been created successfully.</p>
+          <p><strong>Username:</strong> ${username}</p>
+          <p><strong>Password:</strong> ${randomPassword}</p>
+          <p>Please change your password after logging in.</p>
+        `
+      );
+      console.log("📧 Email sent successfully!");
+    } catch (emailError) {
+      console.warn("⚠️ Email sending failed, but staff registered:", emailError.message);
+    }
+
+    return new Response(
+      JSON.stringify({ message: "✅ Staff registered successfully!", staff: newStaff }),
+      { status: 201, headers: { "Content-Type": "application/json" } }
+    );
 
   } catch (error) {
     console.error("❌ Error registering staff:", error);

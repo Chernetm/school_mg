@@ -1,0 +1,8 @@
+-- AlterTable
+ALTER TABLE `fee` ADD COLUMN `staffID` INTEGER NULL;
+
+-- AlterTable
+ALTER TABLE `staff` MODIFY `image` VARCHAR(191) NULL;
+
+-- AddForeignKey
+ALTER TABLE `Fee` ADD CONSTRAINT `Fee_staffID_fkey` FOREIGN KEY (`staffID`) REFERENCES `Staff`(`staffID`) ON DELETE SET NULL ON UPDATE CASCADE;

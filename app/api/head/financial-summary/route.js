@@ -42,7 +42,9 @@ export async function GET(request) {
     const unpaidCount = totalActiveStudents - paidCount;
 
     const totalExpected = (gradeFees[grade] || 0) * totalActiveStudents;
-    const totalPaid = fees.reduce((sum, fee) => sum + (fee.amountPaid || 0), 0);
+    // const totalPaid = fees.reduce((sum, fee) => sum + (fee.amountPaid || 0), 0);
+    const totalPaid = (gradeFees[grade] || 0) * paidCount;
+
 
     return NextResponse.json({
       grade,

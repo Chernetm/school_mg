@@ -6,6 +6,7 @@ import {prisma} from '@/utils/prisma';
 import { getServerSession } from 'next-auth';
 import { NextResponse } from 'next/server';
 
+
 export async function GET(req) {
   console.log("🚀 API HIT: /api/teacher/student");
 
@@ -14,12 +15,13 @@ export async function GET(req) {
     const grade = searchParams.get("grade");
     const section = searchParams.get("section");
     const year = searchParams.get("year");
+    const month = searchParams.get("month"); // ✅ added month
 
-    console.log("📌 Params Received - Grade:", grade, "Section:", section, "Year:", year);
+    console.log("📌 Params Received - Grade:", grade, "Section:", section, "Year:", year, "Month:", month);
 
-    if (!grade || !section || !year) {
+    if (!grade || !section || !year || !month) {
       return NextResponse.json(
-        { error: "Grade, Section, and Year are required.", students: [] },
+        { error: "Grade, Section, Year, and Month are required.", students: [] },
         { status: 400 }
       );
     }
@@ -28,10 +30,9 @@ export async function GET(req) {
       where: {
         registrations: {
           some: {
-            grade: parseInt(grade),
+            grade: Number(grade),
             section,
             year: parseInt(year),
-            isActive: true,
           },
         },
       },
@@ -40,29 +41,28 @@ export async function GET(req) {
         firstName: true,
         middleName: true,
         lastName: true,
-        payment: {
+        fee: {
           where: {
-            grade: parseInt(grade),
+            grade: Number(grade),
             year: parseInt(year),
+            month, // ✅ filter by month
           },
           select: {
             status: true,
           },
-          take: 1, // get only the latest/first payment for that year+grade
+          take: 1,
         },
       },
     });
 
-    // Map to flatten status (default unpaid if no payment record)
     const studentWithStatus = students.map((s) => ({
       studentID: s.studentID,
       firstName: s.firstName,
       middleName: s.middleName,
       lastName: s.lastName,
-      status: s.payment[0]?.status || "unpaid",
+      status: s.fee[0]?.status || "unpaid",
     }));
 
-    console.log("📌 Students Found:", studentWithStatus.length);
     return NextResponse.json({ students: studentWithStatus }, { status: 200 });
   } catch (error) {
     console.error("❌ Error in API:", error);
@@ -74,68 +74,10 @@ export async function GET(req) {
 }
 
 
-// export async function POST(req) {
-//   try {
-//     const session = await getServerSession(authOptions);
-//     console.log("Session data:", session);
-//     const staffID = session?.user?.staffID;
 
-//     if (!session || !staffID) {
-//       throw new ApiError(403, "Unauthorized access");
-//     }
-
-//     const body = await req.json();
-//     const { year, studentID, grade, status } = body;
-
-//     if (!year || !studentID || !grade || !status) {
-//       return NextResponse.json(
-//         { error: "year, studentID, grade and status are required" },
-//         { status: 400 }
-//       );
-//     }
-
-//     // Upsert payment record
-//     const payment = await prisma.payment.upsert({
-//       where: {
-//         studentID_year_grade: {
-//           studentID,
-//           year: Number(year),
-//           grade: Number(grade),
-//         },
-//       },
-//       update: {
-//         status,
-//       },
-//       create: {
-//         studentID,
-//         year: Number(year),
-//         grade: Number(grade),
-//         status,
-//         staffID,
-//       },
-//     });
-
-//     // 🔄 Update student status based on payment status
-//     await prisma.student.update({
-//       where: { studentID },
-//       data: {
-//         status: status === "paid" ? "active" : "inactive",
-//       },
-//     });
-
-//     return NextResponse.json(payment);
-//   } catch (error) {
-//     console.error("❌ Error in Payment POST:", error);
-//     return NextResponse.json(
-//       { error: "Failed to upsert payment" },
-//       { status: 500 }
-//     );
-//   }
-// }
 export async function POST(req) {
   try {
     const session = await getServerSession(authOptions);
-    console.log("Session data:", session);
     const staffID = session?.user?.staffID;
 
     if (!session || !staffID) {
@@ -143,38 +85,40 @@ export async function POST(req) {
     }
 
     const body = await req.json();
-    const { year, studentID, grade, status } = body;
+    const { year, studentID, grade, month, status } = body; // ✅ added month
 
-    if (!year || !studentID || !grade || !status) {
+    if (!year || !studentID || !grade || !month || !status) {
       return NextResponse.json(
-        { error: "year, studentID, grade and status are required" },
+        { error: "year, studentID, grade, month and status are required" },
         { status: 400 }
       );
     }
 
-    // Upsert payment record
-    const payment = await prisma.payment.upsert({
-      where: {
-        studentID_year_grade: {
-          studentID,
-          year: Number(year),
-          grade: Number(grade),
-        },
-      },
-      update: {
-        status,
-        staffID, // ✅ update staffID when status changes
-      },
-      create: {
-        studentID,
-        year: Number(year),
-        grade: Number(grade),
-        status,
-        staffID,
-      },
-    });
+    // ✅ Upsert payment record by year+grade+month
+  const payment = await prisma.fee.upsert({
+  where: {
+    studentID_month_year: {
+      studentID,
+      month,
+      year: Number(year),
+    },
+  },
+  update: {
+    status,
+    staffID,
+  },
+  create: {
+    studentID,
+    month,
+    year: Number(year),
+    grade: Number(grade), // grade is fine in create, just not in `where`
+    status,
+    staffID,
+  },
+});
 
-    // 🔄 Update student status based on payment status
+
+    // ✅ Update student status if needed
     await prisma.student.update({
       where: { studentID },
       data: {

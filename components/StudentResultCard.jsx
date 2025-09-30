@@ -78,13 +78,13 @@ const StudentResultCard = ({ student, results }) => {
       <div className="flex items-center justify-between mb-4">
         <div className="w-20 h-20">
           <img
-            src="/school-logo.png"
+            src="/school_logo.jpeg"
             alt="School Logo"
             className="w-full h-full object-contain"
           />
         </div>
         <div className="text-center flex-1">
-          <h1 className="text-lg font-bold uppercase">Chelelektu Secondary School</h1>
+          <h1 className="text-lg font-bold uppercase">South West Academy</h1>
           <p className="text-sm italic">Committed to Quality Education</p>
           <p className="text-[9px] mt-1">
             📧 Email: info@swa.edu.et | 📞 Phone: +251 900 000 000
@@ -103,7 +103,6 @@ const StudentResultCard = ({ student, results }) => {
           <p><strong>Sex:</strong> {student.gender}</p>
           <p><strong>Age:</strong> {student.age}</p>
           <p><strong>Nationality:</strong> Ethiopian</p>
-          <p><strong>Stream:</strong> Natural Science</p>
         </div>
         <div className="flex flex-col items-center">
           <img

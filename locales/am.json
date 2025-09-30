@@ -1,4 +1,4 @@
-{ "contact_header": "ሳዊዝ ወስት አካዳሚ ትምህርት ቤትን ያግኙ",
+{ "contact_header": "ሳውዝ ዌስት አካዳሚ ትምህርት ቤትን ያግኙ",
   "contact_subtext": "ጥያቄዎች፣ አስተያየቶች ወይም በተባባሪነት መስራት ትፈልጋላችሁ? ከእናንተ ማዳመጥ ደስ ይለናል።",
 
   "email_us": "ኢሜል ይላኩልን",
@@ -9,7 +9,7 @@
   "phone_detail": "+251  345 678",
   "visit_detail": "ላፍቶ፣ አዲስ አበባ፣ ኢትዮጵያ",
 
-  "welcome_message": "እንኳን ወደ ሳዊዝ ወስት አካዳሚ ሁለተኛ ደረጃ ትምህርት ቤት በደህና መጡ",
+  "welcome_message": "እንኳን ወደ ሳውዝ ዌስት አካዳሚ ሁለተኛ ደረጃ ትምህርት ቤት በደህና መጡ",
   "tagline": "የትምህርት ጥራትና የተማሪ እድገት ዋና ግባችን ነዉ።",
   "students": "ተማሪዎች",
   "students_text": "ከ230 በላይ ተማሪዎችን በጥራት ትምህርት ማበረታታት።",
@@ -18,7 +18,7 @@
   "reputation": "እዉቅና",
   "reputation_text": "በአካባቢው ከሶስቱ ከፍተኛ ትምህርት ቤቶች መካከል የታወቀ።",
   "home": "መነሻ",
-  "contact": "እውቂያ",
+  "contact": "ያግኙን",
   "announcement": "ማስታወቂያ",
   "login": "ግባ",
   "logout": "ውጣ",
@@ -80,6 +80,7 @@
   "enter_student_id": "የተማሪ መለያ አስገባ",
   "enter_password": "የይለፍ ቃል አስገባ",
   "enter_email":"ኢሜል አስገባ",
+  "academicParameters": "የትምህርት ጊዜ መለኪያዎች",
   "error_too_many_attempts": "በጣም ብዙ የመግቢያ ሙከራዎች። እባኮትን 10 ደቂቃ ይጠብቁ።",
   "error_invalid_credentials": "መግቢያ አልተሳካም። እባኮትን መረጃዎትን ያረጋግጡ።",
   "admin_login": "የአስተዳደር መግቢያ",

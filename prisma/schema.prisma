@@ -109,7 +109,7 @@ model Staff {
   username        String   @unique
   email           String   
   password        String
-  image           String  // Optional field to store image filename
+  image            String? // Optional field to store image filename
   role            RoleEnum? @default(staff)
   status          statusEnum @default(inactive)
   createdAt       DateTime @default(now())
@@ -123,6 +123,7 @@ model Staff {
   bookBorrow      BookBorrow[]
   disciplineRecord DisciplineRecord[]
   payment         Payment[]
+  fee             Fee[]
 }
 
 
@@ -362,6 +363,7 @@ model Fine {
 model Fee {
   id           Int             @id @default(autoincrement())
   studentID    String
+  staffID      Int?
   grade        Int
   email        String?
   month        MonthEnum
@@ -370,6 +372,7 @@ model Fee {
   year         Int             @default(2025)
   paymentDate  DateTime        @default(now())
   student      Student         @relation(fields: [studentID], references: [studentID])
+  staff        Staff?           @relation(fields: [staffID], references: [staffID])
 
   @@unique([studentID, month, year])
 }

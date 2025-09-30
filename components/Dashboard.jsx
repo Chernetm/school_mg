@@ -49,50 +49,50 @@
 //   );
 // };
 "use client";
-import {
-  ChevronDown,
-  ChevronUp
-} from "lucide-react";
+
+import { ChevronDown, ChevronUp } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
-import useDropdowns from "./DropdownLink"; // ✅ use hook, not array
+import useDropdowns from "./DropdownLink"; // ✅ custom hook
 import { useSession } from "next-auth/react";
 
 export const Dashboard = () => {
   const { data: session } = useSession();
   const [openDropdown, setOpenDropdown] = useState(null);
+  const dropdowns = useDropdowns(); // ✅ moved above conditional return
 
-  if (!session) return <div>Access denied</div>;
+  // Safe: early return after hooks
+  if (!session) {
+    return <div>Access denied</div>;
+  }
 
   const role = session.user.role;
-  const dropdowns = useDropdowns(); // ✅ call the hook here
 
   const toggleDropdown = (label) => {
     setOpenDropdown((prev) => (prev === label ? null : label));
   };
 
   return (
-   <div className="h-screen w-64 bg-gray-900 text-white flex flex-col p-4 shadow-lg relative">
-  <h2 className="text-2xl font-bold text-center mb-4">Admin Panel</h2>
+    <div className="h-screen w-64 bg-gray-900 text-white flex flex-col p-4 shadow-lg relative">
+      <h2 className="text-2xl font-bold text-center mb-4">Dashboard</h2>
 
-  <nav className="flex-1 flex flex-col">
-    <ul className="space-y-2">
-      {dropdowns
-        .filter((dropdown) => dropdown.roles.includes(role))
-        .map((dropdown) => (
-          <DropdownNav
-            key={dropdown.label}
-            label={dropdown.label}
-            icon={dropdown.icon}
-            items={dropdown.items}
-            isOpen={openDropdown === dropdown.label}
-            onToggle={() => toggleDropdown(dropdown.label)}
-          />
-        ))}
-    </ul>
-  </nav>
-</div>
-
+      <nav className="flex-1 flex flex-col">
+        <ul className="space-y-2">
+          {dropdowns
+            .filter((dropdown) => dropdown.roles.includes(role))
+            .map((dropdown) => (
+              <DropdownNav
+                key={dropdown.label}
+                label={dropdown.label}
+                icon={dropdown.icon}
+                items={dropdown.items}
+                isOpen={openDropdown === dropdown.label}
+                onToggle={() => toggleDropdown(dropdown.label)}
+              />
+            ))}
+        </ul>
+      </nav>
+    </div>
   );
 };
 
