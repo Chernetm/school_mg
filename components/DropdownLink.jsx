@@ -22,6 +22,18 @@ const useDropdowns = () => {
         { href: "/admin/announcement/post", label: t("post_announcement") },
       ],
     },
+    {
+      label: t("academic"),
+      icon: <LayoutGridIcon />,
+      roles: ["admin"],
+      items: [
+        
+        { href: "/admin/subject", label: t("subject_view_edit") },
+        { href: "/admin/grade_section", label: t("register_grade_section") },
+        { href: "/admin/grade_section/edit", label: t("edit_grade_section") },
+        
+        ],
+    },
     
     {
       label: t("admin"),
