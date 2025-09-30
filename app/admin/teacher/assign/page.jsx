@@ -1,23 +1,29 @@
 "use client";
 import AssignForm from "@/components/Assign"; // Import the AssignForm component
 import { useEffect, useState } from "react";
+import Spinner from "@/components/Loading/Spinner/page";
 
 export default function StaffPage() {
   const [staff, setStaff] = useState([]);
   const [assigningStaff, setAssigningStaff] = useState(null); // Store staff for assignment
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     fetch("/api/admin/teacher/list")
       .then((res) => res.json())
       .then(setStaff);
   }, []);
-
- 'use client';
+  if (loading) { 
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <Spinner />
+      </div>
+    );
+  }
 
 
   return (
     <div className="p-6 bg-gray-100 min-h-screen">
-      <h1 className="text-2xl font-bold mb-6 text-gray-800">Staff Management</h1>
 
       <div className="overflow-x-auto">
         <table className="min-w-full bg-white border border-gray-200 rounded-lg shadow">

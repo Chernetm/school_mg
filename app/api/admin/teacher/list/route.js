@@ -1,5 +1,3 @@
-import { s } from "framer-motion/dist/types.d-Cjd591yU";
-
 const { prisma } = require("@/utils/prisma");
 // pages/api/staff/index.js
 
