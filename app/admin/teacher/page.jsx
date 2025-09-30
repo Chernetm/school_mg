@@ -8,10 +8,21 @@ export default function StaffAssignments() {
 
   // Fetch assignments on component mount
   useEffect(() => {
-    fetch("/api/admin/assign")
-      .then((res) => res.json())
-      .then((data) => setAssignments(data));
-  }, []);
+    const fetchAssignments = async () => {
+      setLoading(true);
+      try {
+        const res = await fetch("/api/admin/assign");
+        const data = await res.json();
+        setAssignments(data);
+      } catch (error) {
+        console.error("Error fetching assignments:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchAssignments();
+  }, []); // r
 
   // Optimistic Delete Handler
   const handleDelete = async (staffID) => {
@@ -53,11 +64,12 @@ export default function StaffAssignments() {
 
   return (
     <div className="p-6 bg-gray-100 min-h-screen">
-      <h1 className="text-2xl font-bold mb-6 text-gray-800">Staff Assignments</h1>
+
       <div className="overflow-x-auto">
         <table className="w-full border-collapse shadow-lg bg-white rounded-lg">
           <thead>
             <tr className="bg-gray-800 text-white">
+              <th className="border px-6 py-3">Staff ID</th>
               <th className="border px-6 py-3">First Name</th>
               <th className="border px-6 py-3">Middle Name</th>
               <th className="border px-6 py-3">Last Name</th>
@@ -70,6 +82,7 @@ export default function StaffAssignments() {
           <tbody>
             {assignments.map((staff, index) => (
               <tr key={staff.staffID} className={index % 2 === 0 ? "bg-gray-100" : "bg-white"}>
+                <td className="border px-6 py-3 text-gray-700">{staff.staffID}</td>
                 <td className="border px-6 py-3 text-gray-700">{staff.firstName}</td>
                 <td className="border px-6 py-3 text-gray-700">{staff.middleName}</td>
                 <td className="border px-6 py-3 text-gray-700">{staff.lastName}</td>

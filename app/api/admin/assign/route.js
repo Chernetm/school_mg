@@ -4,7 +4,7 @@ export async function GET() {
   try {
     const assignments = await prisma.assignment.findMany({
       include: {
-        staff: { select: { staffID: true, firstName: true, lastName: true } },
+        staff: { select: { staffID: true, firstName: true, lastName: true,middleName:true } },
         grade: { select: { id: true, grade: true } },
         subject: { select: { id: true, name: true } },
         section: { select: { id: true, section: true } }, // ✅ Fixed this line

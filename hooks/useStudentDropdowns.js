@@ -1,6 +1,6 @@
 "use client";
 
-import { FaBell, FaChartBar, FaClipboardCheck, FaExclamationTriangle, FaFileAlt, FaFileInvoiceDollar, FaMoneyCheckAlt, FaPenAlt, FaUser } from "react-icons/fa";
+import { FaBell, FaChartBar, FaClipboardCheck, FaExclamationTriangle, FaFileAlt, FaFileInvoiceDollar, FaMoneyCheckAlt, FaPenAlt, FaUser,FaUpload } from "react-icons/fa";
 import { MdSettings } from "react-icons/md";
 import { useTranslation } from "@/app/providers";
 
@@ -22,6 +22,7 @@ const useStudentDropdowns = () => {
         { href: "/fee", label: t("payFee"), icon: <FaMoneyCheckAlt /> },
         { href: "/student/discipline", label: t("discipline"), icon: <FaExclamationTriangle /> },
         { href: "/exam", label: t("examRoom"), icon: <FaPenAlt /> },
+        { href: "/student/image", label: t("image_upload"), icon: <FaUpload/> },
         { href: "/student/setting", label: t("setting"), icon: <MdSettings /> },
       ],
     },

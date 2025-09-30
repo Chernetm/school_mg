@@ -7,12 +7,22 @@ export default function StaffPage() {
   const [staff, setStaff] = useState([]);
   const [assigningStaff, setAssigningStaff] = useState(null); // Store staff for assignment
   const [loading, setLoading] = useState(false);
-
   useEffect(() => {
-    fetch("/api/admin/teacher/list")
-      .then((res) => res.json())
-      .then(setStaff);
-  }, []);
+    const fetchStaff = async () => {
+      setLoading(true);
+      try {
+        const res = await fetch("/api/admin/teacher/list");
+        const data = await res.json();
+        setStaff(data);
+      } catch (error) {
+        console.error("Error fetching staff:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchStaff();
+  }, []); 
   if (loading) { 
     return (
       <div className="flex items-center justify-center min-h-screen">
@@ -20,10 +30,9 @@ export default function StaffPage() {
       </div>
     );
   }
-
-
   return (
     <div className="p-6 bg-gray-100 min-h-screen">
+      <h1 className="text-2xl font-bold mb-6 text-gray-800">Staff Management</h1>
 
       <div className="overflow-x-auto">
         <table className="min-w-full bg-white border border-gray-200 rounded-lg shadow">
