@@ -74,7 +74,7 @@ export async function POST(req) {
         first_name: firstName,
         tx_ref: txRef,
         callback_url: process.env.CHAPA_CALLBACK_URL,
-        return_url: `https://school-mg.vercel.app/payment-success?tx_ref=${txRef}`,
+        return_url: `https://southwestacademy.vercel.app/payment-success?tx_ref=${txRef}`,
         customization: {
           title: 'Monthly Fee',
           description: `${month} fee for Grade ${grade}`
