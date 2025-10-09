@@ -69,54 +69,6 @@ gradeOrder.forEach((grade) => {
 });
 
 });
-
-// gradeOrder.forEach((grade) => {
-//   const semesters = results[grade] || {}; // fallback
-
-//   // Real semesters
-//   displaySemesters.forEach((sem) => {
-//     columns.push({
-//       key: `${grade}-${sem}`,
-//       grade,
-//       label: sem === "Semester 1" ? "Sem |" : "Sem ||",
-//       data: allSubjects.reduce((acc, subject) => {
-//         acc[subject] = semesters[sem]?.scores?.[subject] ?? "";
-//         return acc;
-//       }, {}),
-//       average: semesters[sem]?.average ?? "",
-//       rank: semesters[sem]?.rank ?? "",
-//       status: semesters[sem]?.passStatus ?? "",
-//     });
-//   });
-
-//   // Avg column = Semester 3
-//   const avgData = {};
-//   allSubjects.forEach((subject) => {
-//     const score1 = semesters["Semester 1"]?.scores?.[subject];
-//     const score2 = semesters["Semester 2"]?.scores?.[subject];
-
-//     if (typeof score1 === "number" && typeof score2 === "number") {
-//       avgData[subject] = ((score1 + score2) / 2).toFixed(2);
-//     } else if (typeof score1 === "number") {
-//       avgData[subject] = score1.toFixed(2);
-//     } else if (typeof score2 === "number") {
-//       avgData[subject] = score2.toFixed(2);
-//     } else {
-//       avgData[subject] = "";
-//     }
-//   });
-
-//   columns.push({
-//     key: `${grade}-Avg`,
-//     grade,
-//     label: "Sem |||", // display as Semester 3
-//     data: avgData,
-//     average: ((semesters["Semester 1"]?.average + semesters["Semester 2"]?.average) / 2).toFixed(2) ?? "",
-//     rank: semesters["Semester 3"]?.rank ?? "",      // rank from backend if exists
-//     status: semesters["Semester 3"]?.passStatus ?? "", // status from backend if exists
-//   });
-// });
-
   const columnsByGrade = gradeOrder.map((grade) => ({
     grade,
     cols: columns.filter((c) => c.grade === grade),
