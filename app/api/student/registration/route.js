@@ -1,24 +1,23 @@
 import { authOptions } from '@/app/api/auth/[...nextauth]/route';
 import ApiError from '@/lib/api-error';
-import {prisma} from '@/utils/prisma';
+import { prisma } from '@/utils/prisma';
 import { getServerSession } from 'next-auth';
-
 import { NextResponse } from "next/server";
 
 export async function POST(req) {
   try {
     const body = await req.json();
     const { year, grade, stream } = body;
-    console.log("Request body:", body); // Debugging
-    
-     const session = await getServerSession(authOptions);
-        const studentID = session?.user?.studentID;
-    
-        if (!studentID) {
-          throw new ApiError(403, 'Unauthorized access');
-        }
+    console.log("Request body:", body);
 
-    
+    const session = await getServerSession(authOptions);
+    const studentID = session?.user?.studentID;
+
+    if (!studentID) {
+      throw new ApiError(403, 'Unauthorized access');
+    }
+
+    // Validate academic year
     const latestYear = await prisma.year.findFirst({
       where: { status: "active" },
       orderBy: { year: "desc" },
@@ -29,7 +28,7 @@ export async function POST(req) {
       return NextResponse.json({ message: 'Invalid academic year' }, { status: 400 });
     }
 
-    // Step 1: Get latest registration
+    // Get latest registration
     const latestRegistration = await prisma.registration.findFirst({
       where: { studentID },
       orderBy: { year: 'desc' },
@@ -41,7 +40,7 @@ export async function POST(req) {
 
     const currentGrade = latestRegistration.grade;
 
-    // Step 2: Get semester 3 result summary
+    // Get semester 3 result summary
     const semester3Summary = await prisma.resultSummary.findFirst({
       where: {
         registrationID: latestRegistration.registrationID,
@@ -53,14 +52,22 @@ export async function POST(req) {
       return NextResponse.json({ message: 'Student is not eligible for promotion' }, { status: 400 });
     }
 
-    // Step 3: Register for next grade
+    // Compute next grade
     const nextGrade = currentGrade + 1;
-    if(!nextGrade===grade){
+
+    // Validate grade input
+    if (nextGrade !== grade) {
       return NextResponse.json({ message: 'Invalid grade for registration' }, { status: 400 });
     }
-   
-    const newStream= stream || latestRegistration.stream;
 
+    // ✅ Stream requirement for Grade 11
+    if (nextGrade === 11 && !stream) {
+      return NextResponse.json({ message: 'Stream is required for grade 11 registration' }, { status: 400 });
+    }
+
+    const newStream = stream || latestRegistration.stream;
+
+    // Create new registration
     const newRegistration = await prisma.registration.create({
       data: {
         studentID,

@@ -20,8 +20,14 @@ export default function RegisterPage() {
         year: parseInt(year),
       };
 
+      // ✅ Only include stream when grade is 11
       if (parseInt(grade) === 11) {
-        body.stream = stream === 'Natural Science' ? 'science' : 'social';
+        if (!stream) {
+          setMessage('Please select a stream for grade 11');
+          setLoading(false);
+          return;
+        }
+        body.stream = stream; // send as selected (NATURAL or SOCIAL)
       }
 
       const res = await fetch('/api/student/registration', {
@@ -42,10 +48,11 @@ export default function RegisterPage() {
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-100 p-2">
       <div className="bg-white rounded-2xl shadow-xl p-8 max-w-md w-full transition-all duration-300">
-        <h1 className="text-3xl font-bold text-center text-blue-700 mb-6">Student Registration</h1>
+        <h1 className="text-3xl font-bold text-center text-blue-700 mb-6">
+          Student Registration
+        </h1>
 
         <form onSubmit={handleSubmit} className="space-y-4">
-
           <select
             value={grade}
             onChange={(e) => setGrade(e.target.value)}
@@ -59,6 +66,7 @@ export default function RegisterPage() {
             <option value="12">Grade 12</option>
           </select>
 
+          {/* ✅ Only show stream for Grade 11 */}
           {parseInt(grade) === 11 && (
             <select
               value={stream}
@@ -67,8 +75,8 @@ export default function RegisterPage() {
               required
             >
               <option value="">Select Stream</option>
-              <option value="Natural">Natural Science</option>
-              <option value="Social">Social Science</option>
+              <option value="NATURAL">Natural Science</option>
+              <option value="SOCIAL">Social Science</option>
             </select>
           )}
 
