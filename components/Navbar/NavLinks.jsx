@@ -11,9 +11,11 @@ const NavLinks = ({ role }) => {
 
   const baseLinks = [
     { name: t("home"), href: "/", current: false },
-    { name: t("contact"), href: "/#contact", current: false },
     { name: t("clubs"), href: "/#club", current: false },
     { name: t("pay_fee"), href: "/fee", current: false },
+    { name: t("contact"), href: "/#contact", current: false },
+    
+    
   ];
 
   const isLoggedIn = role;

@@ -15,7 +15,9 @@ const MobileNavLinks = () => {
   const baseLinks = [
     { name: t("home"), href: "/", current: true },
     { name: t("announcement"), href: "/announcement", current: false },
-    { name: t("contact"), href: "/contact", current: false },
+    { name: t("clubs"), href: "/#club", current: false },
+    { name: t("pay_fee"), href: "/fee", current: false },
+    { name: t("contact"), href: "/#contact", current: false },
   ];
 
   // Add "Login" link if no session
