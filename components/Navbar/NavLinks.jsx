@@ -11,7 +11,9 @@ const NavLinks = ({ role }) => {
 
   const baseLinks = [
     { name: t("home"), href: "/", current: false },
-    { name: t("contact"), href: "/contact", current: false },
+    { name: t("contact"), href: "/#contact", current: false },
+    { name: t("clubs"), href: "/#club", current: false },
+    { name: t("pay_fee"), href: "/fee", current: false },
   ];
 
   const isLoggedIn = role;
@@ -20,7 +22,7 @@ const NavLinks = ({ role }) => {
   const dynamicLinks = [
     baseLinks[0],
     { name: t("announcement"), href: announcementHref, current: false },
-    baseLinks[1],
+    ...baseLinks.slice(1),
   ];
 
 
