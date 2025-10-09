@@ -80,10 +80,15 @@ export async function GET(req) {
       });
     });
 
-    const result = Object.values(groupedByStudent); // Convert map to array
-    console.log(JSON.stringify(result?.[0].results, null, 2));
+    const result = Object.values(groupedByStudent || {}); // Ensure it's always an array
 
-    return NextResponse.json(result, { status: 200 });
+    if (result.length > 0 && result[0]?.results) {
+      console.log(JSON.stringify(result[0].results, null, 2));
+    } else {
+      console.log("No results found for any student.");
+    }
+
+    return NextResponse.json(result ?? [], { status: 200 });
   } catch (err) {
     console.error("Error fetching student transcript data:", err);
     return NextResponse.json({ message: "Internal Server Error" }, { status: 500 });

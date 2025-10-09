@@ -3,69 +3,119 @@ import React from "react";
 
 const StudentResultCard = ({ student, results }) => {
   const gradeOrder = ["Grade 9", "Grade 10", "Grade 11", "Grade 12"];
-  const displaySemesters = ["Semester 1", "Semester 2"];
+ const displaySemesters = ["Semester 1", "Semester 2"]; // include Sem 3
   const allSubjects = [
-    "MATHAMATICS",
-    "English",
-    "History",
-    "Geography",
-    "Chemistry",
-    "Physics",
+    "MATHEMATICS",
+    "ENGLISH",
+    "HISTORY",
+    "CHEMISTRY",
+    "PHYSICS",
     "Art",
     "Civic",
     "Biology",
     "IT",
   ];
-
+   console.log(student.image,"student image");
+   NaN
   const columns = [];
+gradeOrder.forEach((grade) => {
+  const semesters = results[grade] || {}; // fallback
 
-  gradeOrder.forEach((grade) => {
-    const semesters = results[grade] || {}; // always fallback to empty object
-
-    // Semester columns
-    displaySemesters.forEach((sem) => {
-      columns.push({
-        key: `${grade}-${sem}`,
-        grade,
-        label: sem === "Semester 1" ? "Sem |" : "Sem ||",
-        // Force all subjects filled
-        data: allSubjects.reduce((acc, subject) => {
-          acc[subject] = semesters[sem]?.scores?.[subject] ?? "";
-          return acc;
-        }, {}),
-        average: semesters[sem]?.average ?? "",
-        rank: semesters[sem]?.rank ?? "",
-        status: semesters[sem]?.passStatus ?? "",
-      });
-    });
-
-    // Average column (between Sem 1 & Sem 2)
-    const avgData = {};
-    allSubjects.forEach((subject) => {
-      const score1 = semesters["Semester 1"]?.scores?.[subject];
-      const score2 = semesters["Semester 2"]?.scores?.[subject];
-
-      if (typeof score1 === "number" && typeof score2 === "number") {
-        avgData[subject] = ((score1 + score2) / 2).toFixed(2);
-      } else if (typeof score1 === "number") {
-        avgData[subject] = score1.toFixed(2);
-      } else if (typeof score2 === "number") {
-        avgData[subject] = score2.toFixed(2);
-      } else {
-        avgData[subject] = "";
-      }
-    });
-
+  // Real semesters
+  displaySemesters.forEach((sem) => {
     columns.push({
-      key: `${grade}-Avg`,
+      key: `${grade}-${sem}`,
       grade,
-      label: "Avg",
-      data: avgData,
-      average: "", // yearly summary not provided by backend
-      rank: "",
-      status: "",
+      label: sem === "Semester 1" ? "Sem |" : "Sem ||",
+      data: allSubjects.reduce((acc, subject) => {
+        acc[subject] = semesters[sem]?.scores?.[subject] ?? "";
+        return acc;
+      }, {}),
+      average: semesters[sem]?.average ?? "",
+      rank: semesters[sem]?.rank ?? "",
+      status: semesters[sem]?.passStatus ?? "",
     });
   });
+
+  // Avg column = Semester 3 equivalent
+  const avgData = {};
+  allSubjects.forEach((subject) => {
+    const score1 = semesters["Semester 1"]?.scores?.[subject];
+    const score2 = semesters["Semester 2"]?.scores?.[subject];
+
+    if (typeof score1 === "number" && typeof score2 === "number") {
+      avgData[subject] = ((score1 + score2) / 2).toFixed(2);
+    } else if (typeof score1 === "number") {
+      avgData[subject] = score1.toFixed(2);
+    } else if (typeof score2 === "number") {
+      avgData[subject] = score2.toFixed(2);
+    } else {
+      avgData[subject] = "";
+    }
+  });
+
+  columns.push({
+  key: `${grade}-Avg`,
+  grade,
+  label: "Avg", // renamed column
+  data: avgData,
+  average:
+    typeof semesters["Semester 1"]?.average === "number" &&
+    typeof semesters["Semester 2"]?.average === "number"
+      ? ((semesters["Semester 1"].average + semesters["Semester 2"].average) / 2).toFixed(2)
+      : "", // leave empty if one value missing
+  rank: semesters["Semester 3"]?.rank ?? "",
+  status: semesters["Semester 3"]?.passStatus ?? "",
+});
+
+});
+
+// gradeOrder.forEach((grade) => {
+//   const semesters = results[grade] || {}; // fallback
+
+//   // Real semesters
+//   displaySemesters.forEach((sem) => {
+//     columns.push({
+//       key: `${grade}-${sem}`,
+//       grade,
+//       label: sem === "Semester 1" ? "Sem |" : "Sem ||",
+//       data: allSubjects.reduce((acc, subject) => {
+//         acc[subject] = semesters[sem]?.scores?.[subject] ?? "";
+//         return acc;
+//       }, {}),
+//       average: semesters[sem]?.average ?? "",
+//       rank: semesters[sem]?.rank ?? "",
+//       status: semesters[sem]?.passStatus ?? "",
+//     });
+//   });
+
+//   // Avg column = Semester 3
+//   const avgData = {};
+//   allSubjects.forEach((subject) => {
+//     const score1 = semesters["Semester 1"]?.scores?.[subject];
+//     const score2 = semesters["Semester 2"]?.scores?.[subject];
+
+//     if (typeof score1 === "number" && typeof score2 === "number") {
+//       avgData[subject] = ((score1 + score2) / 2).toFixed(2);
+//     } else if (typeof score1 === "number") {
+//       avgData[subject] = score1.toFixed(2);
+//     } else if (typeof score2 === "number") {
+//       avgData[subject] = score2.toFixed(2);
+//     } else {
+//       avgData[subject] = "";
+//     }
+//   });
+
+//   columns.push({
+//     key: `${grade}-Avg`,
+//     grade,
+//     label: "Sem |||", // display as Semester 3
+//     data: avgData,
+//     average: ((semesters["Semester 1"]?.average + semesters["Semester 2"]?.average) / 2).toFixed(2) ?? "",
+//     rank: semesters["Semester 3"]?.rank ?? "",      // rank from backend if exists
+//     status: semesters["Semester 3"]?.passStatus ?? "", // status from backend if exists
+//   });
+// });
 
   const columnsByGrade = gradeOrder.map((grade) => ({
     grade,
@@ -104,12 +154,15 @@ const StudentResultCard = ({ student, results }) => {
           <p><strong>Age:</strong> {student.age}</p>
           <p><strong>Nationality:</strong> Ethiopian</p>
         </div>
+       
         <div className="flex flex-col items-center">
           <img
-            src={student.image}
+            src={student?.image}
             alt="Student"
             className="w-24 h-28 object-cover border mb-1"
+            
           />
+           
           <div className="w-20 h-20 border rounded-full flex items-center justify-center text-xs text-gray-400">
             Stamp
           </div>

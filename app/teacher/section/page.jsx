@@ -572,7 +572,10 @@ export default function StaffAssignments() {
                                   </>
                                 ) : (
                                   <>
-                                    <td className="border px-2 py-1 text-center">{student.resultDetails?.[0]?.score ?? "-"}</td>
+                                    <td className="border px-2 py-1 text-center">
+  {student.results?.[0]?.score ?? "-"}
+</td>
+
                                     <td className="border px-2 py-1 text-center">
                                       <input
                                         type="number"

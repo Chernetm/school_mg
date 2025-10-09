@@ -1,12 +1,13 @@
-"use client"
+"use client";
 import LoadingButton from "@/components/LoadingButton";
 import React, { useState } from "react";
 
 export default function StudentRankUpdater() {
-  const [year, setYear] = useState();
+  // ✅ Initialize all state with controlled values
+  const [year, setYear] = useState(""); // empty string, will parse to number
   const [grade, setGrade] = useState("");
   const [section, setSection] = useState("");
-  const [semester, setSemester] = useState(""); // new state
+  const [semester, setSemester] = useState("");
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState(null);
   const [error, setError] = useState(null);
@@ -21,7 +22,12 @@ export default function StudentRankUpdater() {
       const res = await fetch("/api/admin/rank", {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ year, grade, section, semester }), // include semester
+        body: JSON.stringify({
+          year: year ? parseInt(year) : null, // parse to number
+          grade,
+          section,
+          semester,
+        }),
       });
 
       const data = await res.json();
@@ -30,7 +36,7 @@ export default function StudentRankUpdater() {
         throw new Error(data.message || "Something went wrong");
       }
 
-      setMessage(data.message);
+      setMessage(data.message || "Ranks updated successfully!");
     } catch (err) {
       setError(err.message);
     } finally {
@@ -40,7 +46,10 @@ export default function StudentRankUpdater() {
 
   return (
     <div className="max-w-lg mx-auto mt-16 p-6 bg-white border border-gray-200 rounded-xl shadow-md space-y-6">
-      <h1 className="text-1xl font-semibold text-center text-gray-800">Evaluate Student Ranks</h1>
+      <h1 className="text-1xl font-semibold text-center text-gray-800">
+        Evaluate Student Ranks
+      </h1>
+
       <form onSubmit={handleSubmit} className="space-y-4">
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-1">Year</label>
@@ -53,6 +62,7 @@ export default function StudentRankUpdater() {
             required
           />
         </div>
+
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-1">Grade</label>
           <input
@@ -64,6 +74,7 @@ export default function StudentRankUpdater() {
             required
           />
         </div>
+
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-1">Section</label>
           <input
@@ -75,6 +86,7 @@ export default function StudentRankUpdater() {
             required
           />
         </div>
+
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-1">Semester</label>
           <select
@@ -83,12 +95,15 @@ export default function StudentRankUpdater() {
             onChange={(e) => setSemester(e.target.value)}
             required
           >
-            <option value="" disabled>Select semester</option>
+            <option value="" disabled>
+              Select semester
+            </option>
             <option value="1">1</option>
             <option value="2">2</option>
             <option value="3">3</option>
           </select>
         </div>
+
         <LoadingButton
           loading={loading}
           text="Update Ranks"

@@ -154,6 +154,8 @@ const useDropdowns = () => {
       items: [
         { href: "/registrar/parent", label: t("parent_registration") },
         { href: "/registrar/parent/edit", label: t("edit_parent") },
+        { href: "/library/book/borrow", label: t("edit_parent") },
+        { href: "/library/book/borrow/list", label: t("edit_parent") },
       ],
     },
   ];
