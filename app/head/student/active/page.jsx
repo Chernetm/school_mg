@@ -20,7 +20,7 @@ const gradeColors = {
 };
 
 export default function StudentChart() {
-  const currentYear = new Date().getFullYear();
+  const currentYear = 2030;
   const [selectedYear, setSelectedYear] = useState(currentYear);
   const [studentData, setStudentData] = useState([]);
   const [loading, setLoading] = useState(false);
