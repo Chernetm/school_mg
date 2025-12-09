@@ -4,14 +4,14 @@ const Logo = () => (
     <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-full overflow-hidden">
       <img
         src="/school_logo.jpeg"
-        alt="south west academy logo"
+        alt="Liza academy logo"
         className="w-full h-full object-cover"
       />
     </div>
 
     {/* Logo text */}
     <h2 className="text-lg sm:text-lg font-bold bg-clip-text text-transparent bg-gradient-to-r from-yellow-300 to-yellow-100">
-      South West Academy
+      Liza Academy
     </h2>
   </div>
 );
